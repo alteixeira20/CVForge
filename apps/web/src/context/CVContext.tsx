@@ -13,7 +13,7 @@ import { storage } from '@/lib/storage'
  * ─── Types ──────────────────────────────────────────────────────────────────
  */
 
-export type RepeatableSectionKey = 'workExperience' | 'education'
+export type RepeatableSectionKey = 'workExperience' | 'education' | 'projects' | 'languages'
 
 type CVAction =
   | { type: 'UPDATE_PROFILE_FIELD'; field: keyof Profile; value: string }
@@ -64,6 +64,10 @@ function cvReducer(state: CVState, action: CVAction): CVState {
         newItem = { id, company: '', role: '', location: '', startDate: '', endDate: '', isCurrent: false, bullets: [] }
       } else if (action.sectionKey === 'education') {
         newItem = { id, school: '', degree: '', location: '', startDate: '', endDate: '', details: [] }
+      } else if (action.sectionKey === 'projects') {
+        newItem = { id, name: '', link: '', startDate: '', endDate: '', bullets: [] }
+      } else if (action.sectionKey === 'languages') {
+        newItem = { id, name: '', proficiency: '' }
       }
 
       newState = {

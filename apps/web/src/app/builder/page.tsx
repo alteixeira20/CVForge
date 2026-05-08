@@ -7,12 +7,14 @@ import { ProfileEditor } from '@/features/builder/profile/ProfileEditor'
 import { SettingsEditor } from '@/features/builder/settings/SettingsEditor'
 import { WorkExperienceEditor } from '@/features/builder/work/WorkExperienceEditor'
 import { EducationEditor } from '@/features/builder/education/EducationEditor'
+import { ProjectsEditor } from '@/features/builder/projects/ProjectsEditor'
+import { LanguagesEditor } from '@/features/builder/languages/LanguagesEditor'
 import { Icon } from '@/components/ui/Icon'
 
 export default function BuilderPage() {
   const { state } = useCV()
   const { resume, settings } = state
-  const { profile, workExperience, education } = resume
+  const { profile, workExperience, education, projects, languages } = resume
 
   const leftPanel = (
     <div className="p-24 lg:p-40 space-y-48 pb-80">
@@ -54,6 +56,26 @@ export default function BuilderPage() {
 
       <section className="space-y-24">
         <div className="flex items-center gap-8 border-b border-border-faint pb-8">
+          <Icon name="spark" size={14} className="text-ember" />
+          <h3 className="text-xs uppercase tracking-[0.2em] text-ink-4 font-bold">Projects</h3>
+        </div>
+        <div className="panel p-24 bg-bg-2 border border-border rounded-xl">
+          <ProjectsEditor />
+        </div>
+      </section>
+
+      <section className="space-y-24">
+        <div className="flex items-center gap-8 border-b border-border-faint pb-8">
+          <Icon name="users" size={14} className="text-ember" />
+          <h3 className="text-xs uppercase tracking-[0.2em] text-ink-4 font-bold">Languages</h3>
+        </div>
+        <div className="panel p-24 bg-bg-2 border border-border rounded-xl">
+          <LanguagesEditor />
+        </div>
+      </section>
+
+      <section className="space-y-24">
+        <div className="flex items-center gap-8 border-b border-border-faint pb-8">
           <Icon name="sun" size={14} className="text-ember" />
           <h3 className="text-xs uppercase tracking-[0.2em] text-ink-4 font-bold">Builder Settings</h3>
         </div>
@@ -65,7 +87,7 @@ export default function BuilderPage() {
       <div className="space-y-12 opacity-50">
         <h3 className="text-[10px] uppercase tracking-widest text-ink-4 font-bold">More Sections Coming Soon</h3>
         <div className="grid grid-cols-2 gap-12">
-          {['Projects', 'Skills', 'Languages'].map((section) => (
+          {['Skills', 'Custom Section'].map((section) => (
             <div key={section} className="panel p-12 bg-bg-2 border border-border rounded-lg flex items-center justify-between">
               <span className="text-xs font-medium">{section}</span>
               <span className="text-[8px] bg-bg-3 border border-border-strong px-4 py-1 rounded text-ink-4 uppercase">Planned</span>
@@ -131,6 +153,31 @@ export default function BuilderPage() {
             </div>
           )}
 
+          {/* Projects */}
+          {projects.length > 0 && (
+            <div style={{ marginTop: settings.sectionSpacing }}>
+              <h3 className="font-bold border-b border-gray-200 pb-2 uppercase tracking-wider" style={{ fontSize: settings.sectionHeadingSize }}>Projects</h3>
+              <div className="mt-12 space-y-16">
+                {projects.map((item) => (
+                  <div key={item.id} className="space-y-4">
+                    <div className="flex justify-between items-baseline">
+                      <span className="font-bold text-gray-900" style={{ fontSize: settings.fontSize }}>{item.name || 'Project Name'}</span>
+                      <span className="text-gray-500 italic" style={{ fontSize: Math.max(8, settings.fontSize - 1) }}>{item.startDate} — {item.endDate}</span>
+                    </div>
+                    {item.link && <div className="text-ember underline" style={{ fontSize: Math.max(8, settings.fontSize - 2) }}>{item.link}</div>}
+                    {item.bullets.length > 0 && (
+                      <ul className="list-disc pl-16 space-y-2 mt-4">
+                        {item.bullets.filter(b => b.trim()).map((bullet, i) => (
+                          <li key={i} className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize - 1), lineHeight: settings.lineHeight }}>{bullet}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Education */}
           {education.length > 0 && (
             <div style={{ marginTop: settings.sectionSpacing }}>
@@ -146,6 +193,21 @@ export default function BuilderPage() {
                       <span className="text-gray-700" style={{ fontSize: Math.max(9, settings.fontSize - 1) }}>{item.degree || 'Degree'}</span>
                       <span className="text-gray-500" style={{ fontSize: Math.max(8, settings.fontSize - 1) }}>{item.location}</span>
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages */}
+          {languages.length > 0 && (
+            <div style={{ marginTop: settings.sectionSpacing }}>
+              <h3 className="font-bold border-b border-gray-200 pb-2 uppercase tracking-wider" style={{ fontSize: settings.sectionHeadingSize }}>Languages</h3>
+              <div className="mt-8 flex flex-wrap gap-x-24 gap-y-8">
+                {languages.map((item) => (
+                  <div key={item.id} className="flex gap-8 items-baseline">
+                    <span className="font-bold text-gray-800" style={{ fontSize: settings.fontSize }}>{item.name}</span>
+                    <span className="text-gray-500 italic" style={{ fontSize: Math.max(8, settings.fontSize - 2) }}>({item.proficiency})</span>
                   </div>
                 ))}
               </div>
