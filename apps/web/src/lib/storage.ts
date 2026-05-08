@@ -1,10 +1,12 @@
 import type { Theme } from '@/types/ui'
+import { type CVState, parseCVState } from '@/types/cv'
 
 const KEYS = {
   theme: 'cv:theme',
   displayName: 'cv:displayName',
   lastSession: 'cv:lastSession',
   saved: 'cv:saved',
+  cvState: 'cvforge:state',
 } as const
 
 function get(key: string): string | null {
@@ -55,6 +57,21 @@ export const storage = {
   },
   setSaved(saved: boolean): void {
     set(KEYS.saved, String(saved))
+  },
+
+  // CV State Persistence
+  getCVState(): CVState | null {
+    const raw = get(KEYS.cvState)
+    if (!raw) return null
+    try {
+      const parsed = JSON.parse(raw)
+      return parseCVState(parsed)
+    } catch {
+      return null
+    }
+  },
+  setCVState(state: CVState): void {
+    set(KEYS.cvState, JSON.stringify(state))
   },
 
   clearAll(): void {
