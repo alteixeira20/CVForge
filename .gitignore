@@ -1,0 +1,26 @@
+# CVForge Initial Ignore Rules
+
+# Dependencies
+node_modules/
+.pnpm-debug.log*
+
+# Next.js
+.next/
+out/
+build/
+
+# Reference Folders (DO NOT COMMIT)
+tmp/
+
+# IDE/System
+.DS_Store
+.vscode/
+.idea/
+
+# Environment
+.env*
+!.env.example
+
+# Local scripts
+*.sh
+!scripts/
