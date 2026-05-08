@@ -34,9 +34,10 @@ export interface IconProps {
   size?: number
   stroke?: string
   strokeWidth?: number
+  className?: string
 }
 
-export function Icon({ name, size = 16, stroke = 'currentColor', strokeWidth = 1.6 }: IconProps) {
+export function Icon({ name, size = 16, stroke = 'currentColor', strokeWidth = 1.6, className = '' }: IconProps) {
   const s = {
     width: size,
     height: size,
@@ -46,6 +47,7 @@ export function Icon({ name, size = 16, stroke = 'currentColor', strokeWidth = 1
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
     viewBox: '0 0 24 24',
+    className,
   }
 
   switch (name) {
