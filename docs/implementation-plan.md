@@ -6,10 +6,10 @@
 - [x] Port Forge-family design tokens and UI atoms.
 - [x] Create placeholder routes for `/`, `/builder`, `/parser`, and `/resume-import`.
 
-## Phase 2: Core State & Types
-- [ ] Define Zod schemas for the CV model.
-- [ ] Implement Redux store or Context-based state management.
-- [ ] Establish the `useCV` hook for cross-workbench state access.
+## Phase 2: Core State & Types (COMPLETED)
+- [x] Define Zod schemas for the CV model.
+- [x] Establish the `useCV` hook with typed default state.
+- [ ] Implement full editor state management (Redux or advanced Context).
 
 ## Phase 3: Parser & ATS Engine
 - [ ] Port/Refactor `pdf.js` integration.

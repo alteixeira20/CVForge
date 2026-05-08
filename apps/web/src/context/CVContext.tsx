@@ -1,18 +1,19 @@
 'use client'
 
 import { createContext, useContext, useState, type ReactNode } from 'react'
+import { type CVState, defaultCVState } from '@/types/cv'
 
 interface CVContextValue {
-  isPlaceholder?: boolean;
+  state: CVState
 }
 
 const CVContext = createContext<CVContextValue | null>(null)
 
 export function CVProvider({ children }: { children: ReactNode }) {
-  const [state] = useState({})
+  const [state] = useState<CVState>(defaultCVState)
 
   return (
-    <CVContext.Provider value={state}>
+    <CVContext.Provider value={{ state }}>
       {children}
     </CVContext.Provider>
   )
