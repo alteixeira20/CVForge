@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase while adding parser, ATS-style diagnostics, backup/restore, and PDF export work in small slices.
+CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase while adding parser, local heuristic diagnostics, backup/restore, and PDF export work in small slices.
 
 The near-term goal is a maintainable builder that can be self-hosted without a database or account system.
 
@@ -17,22 +17,23 @@ The current app includes:
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - Major section reordering and visibility toggles.
 - A CSS-based live preview placeholder.
-- JSON backup export and validated restore.
-- PDF export generated from current CV state.
-- Local PDF upload, source preview, text extraction, and parser diagnostics.
-- ATS-style local scoring with transparent checks.
+- JSON backup export and validated restore (guaranteed session portability).
+- PDF export generated from current CV state with embedded metadata.
+- Local PDF upload, source preview, and raw text extraction.
+- Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
 
 Planned but not implemented:
 - Builder-to-parser handoff.
-- Importing parsed PDF content into the builder.
+- Importing parsed PDF content into the builder (heuristic best-effort).
 - Richer parser and scoring checks.
 
 ## 4. Current Limitations
 
 - Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
 - The CSS live preview uses web fonts (Lexend) while PDF export falls back to standard PDF fonts (Helvetica).
+- Diagnostics are heuristic: They provide signals for improvement but do not guarantee hiring outcomes or exact ATS behavior.
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
 
@@ -43,10 +44,10 @@ Planned but not implemented:
 - Responsive workbench shell.
 - Basic typography, spacing, color, and A4/Letter settings.
 - Section reordering and visibility.
-- Browser-only persistence.
-- JSON backup and restore.
-- PDF download.
-- Local PDF parser diagnostics.
+- Browser-only persistence (Private, local-first).
+- JSON backup and restore (Reliable).
+- PDF download with metadata.
+- Local PDF parser diagnostics (Heuristic).
 - ATS-style scoring.
 
 ### Planned

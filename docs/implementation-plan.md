@@ -46,25 +46,26 @@ Implementation notes:
 - [x] Skills editor.
 - [x] Custom Section editor.
 - [x] Dynamic visual CV preview placeholder.
-- [x] JSON backup export and validated restore.
-- [x] PDF download generated from current CV state.
+- [x] JSON backup export and validated restore (Reliable).
+- [x] PDF download generated from current CV state with metadata.
 - [x] Major section reordering and visibility.
 
 Current limitations:
 - The preview does not apply every setting in the schema.
 - The CSS preview is separate from PDF generation.
+- JSON is the guaranteed restore path; PDF-to-builder import is not implemented.
 
 ## Phase 4: Parser & Engine (In Progress)
 
 - [x] Add local PDF upload and text extraction.
-- [x] Implement standalone ATS-style scoring module.
+- [x] Implement standalone local heuristic scoring module.
 - [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
 - [ ] Add richer parser diagnostics and field-level extraction.
 
 Current parser status:
 - `/parser` extracts selectable PDF text locally with `pdfjs-dist`.
 - Scanned or protected PDFs may produce no text or an extraction error.
-- Parser diagnostics do not auto-fill builder fields.
+- Parser diagnostics are heuristic and do not auto-fill builder fields.
 
 ## Phase 5: Import, Export, and Launch (In Progress)
 

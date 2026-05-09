@@ -12,7 +12,14 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
   const styles = createResumePdfStyles(settings)
 
   return (
-    <Document title={resume.profile.name || 'CVForge Resume'}>
+    <Document
+      title={resume.profile.name || 'CVForge Resume'}
+      author={resume.profile.name}
+      creator="CVForge"
+      producer="CVForge (via @react-pdf/renderer)"
+      subject={`CVForge Backup Candidate | Schema ${state.schemaVersion}`}
+      keywords="cvforge,resume,cv"
+    >
       <Page size={settings.documentSize === 'Letter' ? 'LETTER' : 'A4'} style={styles.page}>
         <ResumePdfHeader profile={resume.profile} settings={settings} styles={styles} />
         
