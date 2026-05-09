@@ -59,6 +59,7 @@ Current limitations:
 
 - [x] Add local PDF upload and text extraction.
 - [x] Implement standalone local heuristic scoring module.
+- [x] Detect CVForge-generated PDFs via metadata.
 - [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
 - [ ] Add richer parser diagnostics and field-level extraction.
 

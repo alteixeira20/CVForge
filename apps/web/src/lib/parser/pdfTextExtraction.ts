@@ -1,7 +1,16 @@
+export interface PdfMetadata {
+  creator?: string
+  producer?: string
+  subject?: string
+  keywords?: string
+  [key: string]: unknown
+}
+
 export interface PdfExtractionResult {
   pageCount: number
   text: string
   pageTexts: string[]
+  metadata: PdfMetadata
   warnings: string[]
 }
 
@@ -12,11 +21,15 @@ export async function extractPdfText(file: File): Promise<PdfExtractionResult> {
   const pdf = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise
   const pageTexts = await extractPageTexts(pdf)
   const text = pageTexts.join('\n\n')
+  
+  const { info } = await pdf.getMetadata()
+  const metadata = (info || {}) as PdfMetadata
 
   return {
     pageCount: pdf.numPages,
     text,
     pageTexts,
+    metadata,
     warnings: text.trim() ? [] : ['No selectable text was found in this PDF.'],
   }
 }

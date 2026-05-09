@@ -3,15 +3,25 @@ import { createIssue, createWarning } from './scoreIssues'
 import { compactnessPoints, hasLinks, hasSkills, hasVisibleUrls, metricPoints } from './scoreSignals'
 import { type ScoreIssue, type ScoreResult } from './scoringTypes'
 
-export function scoreCV(state: CVState, extractedText = '', includeExtraction = false): ScoreResult {
-  const issues = buildIssues(state, extractedText, includeExtraction)
+export function scoreCV(
+  state: CVState, 
+  extractedText = '', 
+  includeExtraction = false,
+  isCvForge = false
+): ScoreResult {
+  const issues = buildIssues(state, extractedText, includeExtraction, isCvForge)
   const maxScore = issues.reduce((total, issue) => total + issue.maxPoints, 0)
   const score = issues.reduce((total, issue) => total + issue.points, 0)
 
   return { score: Math.round((score / maxScore) * 100), maxScore: 100, issues }
 }
 
-function buildIssues(state: CVState, extractedText: string, includeExtraction: boolean): ScoreIssue[] {
+function buildIssues(
+  state: CVState, 
+  extractedText: string, 
+  includeExtraction: boolean,
+  isCvForge: boolean
+): ScoreIssue[] {
   const { profile, workExperience, education, projects } = state.resume
 
   const issues = [
@@ -30,6 +40,10 @@ function buildIssues(state: CVState, extractedText: string, includeExtraction: b
 
   if (includeExtraction) {
     issues.push(createIssue('extraction', 'PDF Text Extraction', 'Uploaded PDFs should expose selectable text.', Boolean(extractedText.trim()), 10))
+  }
+
+  if (isCvForge) {
+    issues.push(createIssue('forge-source', 'Native PDF Structure', 'This PDF uses the optimized CVForge structure.', true, 5))
   }
 
   return issues

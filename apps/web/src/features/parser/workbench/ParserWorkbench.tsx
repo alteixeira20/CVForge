@@ -4,6 +4,7 @@ import { AppHeader } from '@/components/layout/AppHeader'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
 import { scoreCV } from '@/features/scoring/scoreCV'
+import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
 import { ScorePanel } from '../score/ScorePanel'
@@ -15,8 +16,10 @@ import { useParserDocument } from '../upload/useParserDocument'
 export function ParserWorkbench() {
   const { state } = useCV()
   const { document, handleFile } = useParserDocument()
-  const extractedText = document?.extraction?.text ?? ''
-  const score = scoreCV(state, extractedText, Boolean(document))
+  const extraction = document?.extraction
+  const extractedText = extraction?.text ?? ''
+  const isForge = extraction ? isCvForgeGenerated(extraction.metadata) : false
+  const score = scoreCV(state, extractedText, Boolean(document), isForge)
 
   return (
     <div className="app-shell">

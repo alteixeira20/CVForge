@@ -20,6 +20,7 @@ The current app includes:
 - JSON backup export and validated restore (guaranteed session portability).
 - PDF export generated from current CV state with embedded metadata.
 - Local PDF upload, source preview, and raw text extraction.
+- CVForge-generated PDF detection via document metadata.
 - Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
