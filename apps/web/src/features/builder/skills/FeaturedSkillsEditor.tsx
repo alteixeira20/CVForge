@@ -17,7 +17,7 @@ export function FeaturedSkillsEditor() {
         {featuredWithRating.map((item, index) => (
           <FeaturedSkillItem
             key={index}
-            id={String(index)}
+            index={index}
             item={item}
             isFirst={index === 0}
             isLast={index === featuredWithRating.length - 1}

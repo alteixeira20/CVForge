@@ -14,26 +14,23 @@ export function addFeaturedSkill(state: CVState): CVState {
   return setSkills(state, { featuredWithRating })
 }
 
-export function updateFeaturedSkill(state: CVState, id: string, patch: Partial<FeaturedSkill>): CVState {
-  const index = Number(id)
+export function updateFeaturedSkill(state: CVState, index: number, patch: Partial<FeaturedSkill>): CVState {
   const featuredWithRating = state.resume.skills.featuredWithRating.map((item, itemIndex) =>
     itemIndex === index ? { ...item, ...patch } : item
   )
   return setSkills(state, { featuredWithRating })
 }
 
-export function removeFeaturedSkill(state: CVState, id: string): CVState {
-  const index = Number(id)
+export function removeFeaturedSkill(state: CVState, index: number): CVState {
   const featuredWithRating = state.resume.skills.featuredWithRating.filter((_, itemIndex) => itemIndex !== index)
   return setSkills(state, { featuredWithRating })
 }
 
-export function moveFeaturedSkill(state: CVState, id: string, direction: MoveDirection): CVState {
+export function moveFeaturedSkill(state: CVState, index: number, direction: MoveDirection): CVState {
   const items = [...state.resume.skills.featuredWithRating]
-  const index = Number(id)
   const targetIndex = direction === 'up' ? index - 1 : index + 1
 
-  if (Number.isNaN(index) || targetIndex < 0 || targetIndex >= items.length) return state
+  if (targetIndex < 0 || targetIndex >= items.length) return state
 
   const [movedItem] = items.splice(index, 1)
   items.splice(targetIndex, 0, movedItem)

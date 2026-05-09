@@ -12,9 +12,9 @@ export interface CVContextValue {
   updateTechnicalSkills: (value: string[]) => void
   updateSoftSkills: (value: string[]) => void
   addFeaturedSkill: () => void
-  updateFeaturedSkill: (id: string, patch: Partial<FeaturedSkill>) => void
-  removeFeaturedSkill: (id: string) => void
-  moveFeaturedSkill: (id: string, direction: MoveDirection) => void
+  updateFeaturedSkill: (index: number, patch: Partial<FeaturedSkill>) => void
+  removeFeaturedSkill: (index: number) => void
+  moveFeaturedSkill: (index: number, direction: MoveDirection) => void
   resetState: () => void
   replaceState: (state: CVState) => void
 }

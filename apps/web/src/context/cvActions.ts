@@ -13,8 +13,8 @@ export type CVAction =
   | { type: 'UPDATE_TECHNICAL_SKILLS'; value: string[] }
   | { type: 'UPDATE_SOFT_SKILLS'; value: string[] }
   | { type: 'ADD_FEATURED_SKILL' }
-  | { type: 'UPDATE_FEATURED_SKILL'; id: string; patch: Partial<FeaturedSkill> }
-  | { type: 'REMOVE_FEATURED_SKILL'; id: string }
-  | { type: 'MOVE_FEATURED_SKILL'; id: string; direction: MoveDirection }
+  | { type: 'UPDATE_FEATURED_SKILL'; index: number; patch: Partial<FeaturedSkill> }
+  | { type: 'REMOVE_FEATURED_SKILL'; index: number }
+  | { type: 'MOVE_FEATURED_SKILL'; index: number; direction: MoveDirection }
   | { type: 'RESET_STATE' }
   | { type: 'REPLACE_STATE'; state: CVState }

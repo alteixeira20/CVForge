@@ -6,50 +6,50 @@ import { Icon } from '@/components/ui/Icon'
 import { type FeaturedSkill } from '@/types/cv'
 
 interface FeaturedSkillItemProps {
-  id: string
+  index: number
   item: FeaturedSkill
   isFirst: boolean
   isLast: boolean
-  onUpdate: (id: string, patch: Partial<FeaturedSkill>) => void
-  onRemove: (id: string) => void
-  onMove: (id: string, direction: 'up' | 'down') => void
+  onUpdate: (index: number, patch: Partial<FeaturedSkill>) => void
+  onRemove: (index: number) => void
+  onMove: (index: number, direction: 'up' | 'down') => void
 }
 
-export function FeaturedSkillItem({ id, item, isFirst, isLast, onUpdate, onRemove, onMove }: FeaturedSkillItemProps) {
+export function FeaturedSkillItem({ index, item, isFirst, isLast, onUpdate, onRemove, onMove }: FeaturedSkillItemProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-[1fr_84px_auto] gap-8 items-center border-b border-border-faint py-10 last:border-none">
       <TextInput
         placeholder="e.g. React"
         value={item.skill}
-        onChange={(event) => onUpdate(id, { skill: event.target.value })}
+        onChange={(event) => onUpdate(index, { skill: event.target.value })}
       />
       <NumberInput
         min={0}
         max={5}
         value={item.rating ?? 0}
-        onChange={(value) => onUpdate(id, { rating: value })}
+        onChange={(value) => onUpdate(index, { rating: value })}
       />
-      <FeaturedSkillActions id={id} isFirst={isFirst} isLast={isLast} onMove={onMove} onRemove={onRemove} />
+      <FeaturedSkillActions index={index} isFirst={isFirst} isLast={isLast} onMove={onMove} onRemove={onRemove} />
     </div>
   )
 }
 
 function FeaturedSkillActions({
-  id,
+  index,
   isFirst,
   isLast,
   onMove,
   onRemove,
-}: Pick<FeaturedSkillItemProps, 'id' | 'isFirst' | 'isLast' | 'onMove' | 'onRemove'>) {
+}: Pick<FeaturedSkillItemProps, 'index' | 'isFirst' | 'isLast' | 'onMove' | 'onRemove'>) {
   return (
     <div className="flex items-center gap-4">
-      <button onClick={() => onMove(id, 'up')} disabled={isFirst} className="iconbtn sm disabled:opacity-20" title="Move Up">
+      <button onClick={() => onMove(index, 'up')} disabled={isFirst} className="iconbtn sm disabled:opacity-20" title="Move Up">
         <Icon name="chevron-down" size={12} className="rotate-180" />
       </button>
-      <button onClick={() => onMove(id, 'down')} disabled={isLast} className="iconbtn sm disabled:opacity-20" title="Move Down">
+      <button onClick={() => onMove(index, 'down')} disabled={isLast} className="iconbtn sm disabled:opacity-20" title="Move Down">
         <Icon name="chevron-down" size={12} />
       </button>
-      <button onClick={() => onRemove(id)} className="iconbtn sm hover:text-ember" title="Remove">
+      <button onClick={() => onRemove(index)} className="iconbtn sm hover:text-ember" title="Remove">
         <Icon name="x" size={12} />
       </button>
     </div>

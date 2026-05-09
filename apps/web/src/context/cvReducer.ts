@@ -48,11 +48,11 @@ function reduceCVState(state: CVState, action: Exclude<CVAction, { type: 'REPLAC
     case 'ADD_FEATURED_SKILL':
       return addFeaturedSkill(state)
     case 'UPDATE_FEATURED_SKILL':
-      return updateFeaturedSkill(state, action.id, action.patch)
+      return updateFeaturedSkill(state, action.index, action.patch)
     case 'REMOVE_FEATURED_SKILL':
-      return removeFeaturedSkill(state, action.id)
+      return removeFeaturedSkill(state, action.index)
     case 'MOVE_FEATURED_SKILL':
-      return moveFeaturedSkill(state, action.id, action.direction)
+      return moveFeaturedSkill(state, action.index, action.direction)
     case 'RESET_STATE':
       return { ...defaultCVState }
   }
