@@ -1,6 +1,7 @@
 {
   "name": "cvforge",
   "private": true,
+  "packageManager": "pnpm@10.5.2",
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",

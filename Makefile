@@ -71,15 +71,15 @@ docker-build: ## Build production Docker image
 
 .PHONY: docker-up
 docker-up: ## Start production container (detached)
-	docker-compose up -d
+	docker compose up -d
 
 .PHONY: docker-down
 docker-down: ## Stop production container
-	docker-compose down
+	docker compose down
 
 .PHONY: docker-logs
 docker-logs: ## View container logs
-	docker-compose logs -f
+	docker compose logs -f
 
 .PHONY: docker-shell
 docker-shell: ## Access shell in running container
@@ -87,5 +87,5 @@ docker-shell: ## Access shell in running container
 
 .PHONY: docker-clean
 docker-clean: ## Remove Docker image and volumes
-	docker-compose down -v
+	docker compose down -v
 	docker rmi cvforge:latest || true
