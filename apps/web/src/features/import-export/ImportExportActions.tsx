@@ -44,8 +44,11 @@ export function ImportExportActions() {
 function ImportExportHeader() {
   return (
     <div>
-      <h2 className="text-sm font-semibold text-ink">Backup and Restore</h2>
-      <p className="text-xs text-ink-3 mt-4">Save or restore this browser-local CV as a validated JSON file.</p>
+      <h2 className="text-sm font-semibold text-ink">Reliable Backup & Restore</h2>
+      <p className="text-xs text-ink-3 mt-4">
+        JSON is the guaranteed way to save or restore your full CVForge session. 
+        Everything stays local in your browser.
+      </p>
     </div>
   )
 }

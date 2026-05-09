@@ -52,7 +52,10 @@ function ParserHeader() {
     <header className="workspace-head">
       <div className="crumbline">Workbench / Parser</div>
       <h1>Parser Diagnostics</h1>
-      <p className="muted text-sm">Upload a PDF to extract local text and compare it with CVForge diagnostics.</p>
+      <p className="muted text-sm">
+        Upload a PDF for best-effort local diagnostics. 
+        Note: For full session restoration, use the JSON Backup/Restore tool.
+      </p>
     </header>
   )
 }

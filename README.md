@@ -4,6 +4,12 @@ CVForge is a local-first CV builder built with Next.js, React, TypeScript, Tailw
 
 The current app focuses on structured CV editing, local browser persistence, JSON backup/restore, PDF export, and local parser diagnostics in a shared workbench UI.
 
+## Product Principles
+
+- **Local-Only Privacy**: CVForge does not use a database, account system, or server-side persistence. Your data remains in your browser's `localStorage`.
+- **Heuristic Diagnostics**: Parser scoring and diagnostics are rule-based local checks. They are intended as useful signals for manual CV polish, not as a hiring outcome guarantee or an exact simulation of server-side ATS parsing.
+- **Reliable Portability**: Validated JSON export/import is the guaranteed way to move or back up your full session data.
+
 ## Current Status
 
 Implemented:

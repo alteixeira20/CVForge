@@ -18,8 +18,10 @@ function ScoreHeader({ result }: { result: ScoreResult }) {
   return (
     <div className="flex items-end justify-between gap-16">
       <div>
-        <h2 className="text-sm font-semibold text-ink">ATS-Style Score</h2>
-        <p className="text-xs text-ink-3 mt-4">Deterministic checks from CV data and extracted PDF text.</p>
+        <h2 className="text-sm font-semibold text-ink">Heuristic Analysis</h2>
+        <p className="text-xs text-ink-3 mt-4">
+          Local, rule-based checks. Not a hiring guarantee or server-side ATS simulation.
+        </p>
       </div>
       <strong className="text-3xl text-ember">{result.score}</strong>
     </div>
