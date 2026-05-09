@@ -4,10 +4,10 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
     "lint": "pnpm --filter web lint",
-    "typecheck": "pnpm --filter web typecheck"
-  },
-  "dependencies": {
-    "lucide-react": "^1.14.0"
+    "typecheck": "pnpm --filter web typecheck",
+    "audit": "pnpm audit",
+    "audit-prod": "pnpm audit --prod"
   }
 }

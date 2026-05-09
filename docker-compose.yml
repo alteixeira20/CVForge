@@ -1,0 +1,9 @@
+services:
+  cvforge:
+    build: .
+    container_name: cvforge-app
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
