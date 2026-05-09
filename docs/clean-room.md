@@ -32,7 +32,10 @@ Current builder feature folders:
 - `src/features/builder/work`
 - `src/features/builder/education`
 - `src/features/builder/projects`
+- `src/features/builder/skills`
 - `src/features/builder/languages`
+- `src/features/builder/preview`
+- `src/features/builder/workbench`
 
 ## 3. Data Flow
 
@@ -52,6 +55,7 @@ Implemented builder sections:
 - Work experience.
 - Education.
 - Projects.
+- Skills.
 - Languages.
 
 Placeholder behavior:
@@ -64,3 +68,22 @@ Placeholder behavior:
 - `tmp/` and `.handoff/` are local-only and ignored by git.
 - TypeScript build cache files such as `tsconfig.tsbuildinfo` should not be committed.
 - Keep public docs factual. Do not claim parser, ATS scoring, PDF upload, or PDF export are implemented until they are.
+
+## 6. Forge UI Rules
+
+Forge apps should be useful, self-hostable tools with interfaces that ordinary users can understand and developers can inspect.
+
+- Keep UI minimal, organized, and task-focused.
+- Do not add shallow filler content.
+- Do not add oversized empty containers without a clear job.
+- Every visible block should collect input, show output, explain state, or support navigation.
+- Prefer responsive layout rules over duplicated mobile/desktop implementations.
+- Keep pages dense enough to be useful without becoming cluttered.
+
+Builder and Parser must stay on the shared workbench template:
+- Builder left: editing workbench.
+- Builder right: generated CV/PDF preview.
+- Parser left: diagnostics/parser workbench.
+- Parser right: uploaded/source PDF preview.
+
+Route files should compose workbench modes. Feature internals belong under `src/features`, shared UI belongs under `src/components/shared`, and responsive workbench behavior belongs in the workbench shell/hook.

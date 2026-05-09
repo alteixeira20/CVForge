@@ -14,14 +14,13 @@ The current app includes:
 - Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
 - Browser persistence through `localStorage`.
 - A responsive workbench shell for builder and parser pages.
-- Builder sections for profile, settings, work experience, education, projects, and languages.
+- Builder sections for profile, settings, work experience, education, projects, skills, and languages.
 - A CSS-based live preview placeholder.
 - Placeholder parser and import pages.
 
 ## 3. Planned Scope
 
 Planned but not implemented:
-- Skills editor.
 - Custom sections editor.
 - Major section reordering.
 - PDF export.
@@ -52,7 +51,7 @@ Planned but not implemented:
 - Parser diagnostics.
 - ATS scoring.
 - PDF generation.
-- Skills and custom sections.
+- Custom sections.
 - Import/export workflows.
 
 ## 6. Product Principles
@@ -62,3 +61,30 @@ Planned but not implemented:
 - Clear separation between implemented behavior and planned behavior.
 - Small feature folders and focused components.
 - Validation after each implementation slice.
+
+## 7. Forge App Principles
+
+CVForge should follow the same product rules as future Forge tools:
+- Practical before decorative.
+- Useful to everyday users, not only programmers.
+- Free to use and straightforward to self-host.
+- Clear enough for non-technical users to operate.
+- Inspectable enough for technical users to modify or contribute.
+
+UI rules:
+- Avoid shallow filler content.
+- Avoid oversized empty containers that do not help the task.
+- Every visible block should explain state, collect input, show output, or support navigation.
+- Prefer responsive layout techniques over duplicated mobile/desktop UI.
+- Keep the interface dense enough to be useful and calm enough to scan.
+
+## 8. Workbench Contract
+
+Builder and Parser must use the same workbench template so they feel like modes of one tool.
+
+- Builder left panel: editing workbench.
+- Builder right panel: generated CV/PDF preview.
+- Parser left panel: diagnostics/parser workbench.
+- Parser right panel: uploaded/source PDF preview.
+
+The layout should remain visually consistent across mobile, tablet, and desktop. Mobile can switch panels, but it should not duplicate the feature UI or hide core workflows behind unrelated screens.

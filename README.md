@@ -12,12 +12,11 @@ Implemented:
 - Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
-- Builder editors for profile, settings, work experience, education, projects, and languages.
+- Builder editors for profile, settings, work experience, education, projects, skills, and languages.
 - CSS-based live preview placeholder.
 - Parser and import pages with placeholder interfaces.
 
 Planned:
-- Skills editor.
 - Custom sections editor.
 - Major section reordering.
 - Real PDF export.
@@ -71,6 +70,25 @@ CVForge is currently a standard Next.js application. A basic self-hosted setup n
 - `pnpm --filter web start` as the runtime command.
 
 The current app stores CV data in the user's browser under the `cvforge:state` localStorage key. There is no database or account system in the implemented state.
+
+## Forge App Principles
+
+CVForge is part of a planned family of Forge tools. Forge apps should be practical, self-hostable, free to use, and useful to non-technical users as well as developers.
+
+Interface rules:
+- Keep screens minimal, organized, and task-focused.
+- Do not add filler sections, decorative empty blocks, or oversized containers without a job.
+- Every visible block should help the user understand the current state or complete a task.
+- Keep density useful without making the page feel cluttered.
+- Make mobile, tablet, and desktop layouts feel like the same app, not separate products.
+
+Builder and Parser use the same workbench pattern:
+- Builder left panel: editing workbench.
+- Builder right panel: generated CV/PDF preview.
+- Parser left panel: diagnostics/parser workbench.
+- Parser right panel: uploaded/source PDF preview.
+
+Switching between Builder and Parser should feel like changing modes inside one tool.
 
 ## Validation Commands
 
