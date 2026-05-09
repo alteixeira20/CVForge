@@ -1,6 +1,6 @@
 import { type CVState, type FeaturedSkill, type Profile, type Settings } from '@/types/cv'
 
-export type RepeatableSectionKey = 'workExperience' | 'education' | 'projects' | 'languages'
+export type RepeatableSectionKey = 'workExperience' | 'education' | 'projects' | 'languages' | 'customSections'
 export type MoveDirection = 'up' | 'down'
 
 export type CVAction =

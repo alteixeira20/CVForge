@@ -12,12 +12,11 @@ Implemented:
 - Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
-- Builder editors for profile, settings, work experience, education, projects, skills, and languages.
+- Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - CSS-based live preview placeholder.
 - Parser and import pages with placeholder interfaces.
 
 Planned:
-- Custom sections editor.
 - Major section reordering.
 - Real PDF export.
 - PDF upload and parser extraction.

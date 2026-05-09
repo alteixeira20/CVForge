@@ -44,12 +44,11 @@ Implementation notes:
 - [x] Work Experience & Education editors.
 - [x] Projects & Languages editors.
 - [x] Skills editor.
+- [x] Custom Section editor.
 - [x] Dynamic visual CV preview placeholder.
-- [ ] Custom Section editor.
 - [ ] Major section reordering.
 
 Current limitations:
-- Custom sections exist in the schema but do not have a builder editor yet.
 - The preview does not apply every setting in the schema.
 - The preview is not real PDF generation.
 

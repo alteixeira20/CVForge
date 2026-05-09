@@ -7,6 +7,7 @@ import { EducationEditor } from '@/features/builder/education/EducationEditor'
 import { ProjectsEditor } from '@/features/builder/projects/ProjectsEditor'
 import { LanguagesEditor } from '@/features/builder/languages/LanguagesEditor'
 import { SkillsEditor } from '@/features/builder/skills/SkillsEditor'
+import { CustomSectionsEditor } from '@/features/builder/custom-sections/CustomSectionsEditor'
 
 const BUILDER_SECTIONS = [
   { title: 'Personal Profile', icon: 'users', content: <ProfileEditor /> },
@@ -14,11 +15,12 @@ const BUILDER_SECTIONS = [
   { title: 'Education', icon: 'fold', content: <EducationEditor /> },
   { title: 'Projects', icon: 'spark', content: <ProjectsEditor /> },
   { title: 'Skills', icon: 'shield', content: <SkillsEditor /> },
+  { title: 'Custom Sections', icon: 'fold', content: <CustomSectionsEditor /> },
   { title: 'Languages', icon: 'users', content: <LanguagesEditor /> },
   { title: 'Builder Settings', icon: 'sun', content: <SettingsEditor /> },
 ] satisfies BuilderSection[]
 
-const PLANNED_SECTIONS = ['Custom Section']
+const PLANNED_SECTIONS: string[] = []
 
 interface BuilderSection {
   title: string
@@ -32,7 +34,7 @@ export function BuilderSectionList() {
       {BUILDER_SECTIONS.map((section) => (
         <BuilderSectionCard key={section.title} section={section} />
       ))}
-      <PlannedSectionList />
+      {PLANNED_SECTIONS.length > 0 && <PlannedSectionList />}
     </>
   )
 }
