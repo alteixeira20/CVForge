@@ -6,6 +6,7 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
 
   const extraction = document.extraction
   const isForge = extraction ? isCvForgeGenerated(extraction.metadata) : false
+  const reliability = isForge ? 100 : document.heuristic?.confidence ?? 0
 
   return (
     <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-12">
@@ -23,6 +24,7 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
       <DiagnosticRow label="File" value={document.fileName} />
       <DiagnosticRow label="Pages" value={extraction ? String(extraction.pageCount) : 'Unavailable'} />
       <DiagnosticRow label="Characters" value={extraction ? String(extraction.text.length) : '0'} />
+      <DiagnosticRow label="Parser Reliability" value={extraction ? `${reliability}%` : '0%'} />
       
       {isForge && (
         <p className="text-[10px] text-ink-3 italic leading-relaxed">

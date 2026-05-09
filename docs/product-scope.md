@@ -21,13 +21,14 @@ The current app includes:
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
 - CVForge-generated PDF detection and session restoration.
+- Best-effort heuristic parsing for external PDFs (Draft creation).
+- Parser reliability scoring separate from CV diagnostics.
 - Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
 
 Planned but not implemented:
 - Builder-to-parser handoff.
-- Importing parsed external PDF content into the builder (heuristic best-effort).
 - Richer parser and scoring checks.
 
 ## 4. Current Limitations

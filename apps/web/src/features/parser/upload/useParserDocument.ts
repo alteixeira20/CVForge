@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { extractPdfText } from '@/lib/parser/pdfTextExtraction'
 import { extractCVForgeAttachment } from '@/lib/parser/extractCVForgeAttachment'
+import { parseHeuristicResume } from '@/lib/parser/heuristicResumeParser'
 import { type ParserDocument } from './parserTypes'
 
 export function useParserDocument() {
@@ -22,7 +23,15 @@ export function useParserDocument() {
         extractCVForgeAttachment(file)
       ])
       
-      setDocument({ fileName: file.name, objectUrl, extraction, embeddedState: embeddedState || undefined })
+      const heuristic = !embeddedState ? parseHeuristicResume(extraction.text) : undefined
+      
+      setDocument({ 
+        fileName: file.name, 
+        objectUrl, 
+        extraction, 
+        embeddedState: embeddedState || undefined,
+        heuristic: heuristic || undefined
+      })
     } catch {
       setDocument({ fileName: file.name, objectUrl, error: 'PDF text extraction failed for this file.' })
     }
