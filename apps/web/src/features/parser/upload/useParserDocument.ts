@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { extractPdfText } from '@/lib/parser/pdfTextExtraction'
+import { extractCVForgeAttachment } from '@/lib/parser/extractCVForgeAttachment'
 import { type ParserDocument } from './parserTypes'
 
 export function useParserDocument() {
@@ -16,7 +17,12 @@ export function useParserDocument() {
 
     const objectUrl = URL.createObjectURL(file)
     try {
-      setDocument({ fileName: file.name, objectUrl, extraction: await extractPdfText(file) })
+      const [extraction, embeddedState] = await Promise.all([
+        extractPdfText(file),
+        extractCVForgeAttachment(file)
+      ])
+      
+      setDocument({ fileName: file.name, objectUrl, extraction, embeddedState: embeddedState || undefined })
     } catch {
       setDocument({ fileName: file.name, objectUrl, error: 'PDF text extraction failed for this file.' })
     }

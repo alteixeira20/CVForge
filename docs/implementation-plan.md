@@ -47,19 +47,19 @@ Implementation notes:
 - [x] Custom Section editor.
 - [x] Dynamic visual CV preview placeholder.
 - [x] JSON backup export and validated restore (Reliable).
-- [x] PDF download generated from current CV state with metadata.
+- [x] PDF download generated from current CV state with embedded session.
 - [x] Major section reordering and visibility.
 
 Current limitations:
 - The preview does not apply every setting in the schema.
 - The CSS preview is separate from PDF generation.
-- JSON is the guaranteed restore path; PDF-to-builder import is not implemented.
+- Session restoration from PDF works only for CVForge files; generic PDF-to-builder import is not implemented.
 
 ## Phase 4: Parser & Engine (In Progress)
 
 - [x] Add local PDF upload and text extraction.
 - [x] Implement standalone local heuristic scoring module.
-- [x] Detect CVForge-generated PDFs via metadata.
+- [x] Detect CVForge-generated PDFs and restore sessions from embedded attachments.
 - [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
 - [ ] Add richer parser diagnostics and field-level extraction.
 

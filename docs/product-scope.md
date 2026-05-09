@@ -18,23 +18,23 @@ The current app includes:
 - Major section reordering and visibility toggles.
 - A CSS-based live preview placeholder.
 - JSON backup export and validated restore (guaranteed session portability).
-- PDF export generated from current CV state with embedded metadata.
+- PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
-- CVForge-generated PDF detection via document metadata.
+- CVForge-generated PDF detection and session restoration.
 - Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
 
 Planned but not implemented:
 - Builder-to-parser handoff.
-- Importing parsed PDF content into the builder (heuristic best-effort).
+- Importing parsed external PDF content into the builder (heuristic best-effort).
 - Richer parser and scoring checks.
 
 ## 4. Current Limitations
 
 - Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
 - The CSS live preview uses web fonts (Lexend) while PDF export falls back to standard PDF fonts (Helvetica).
-- Diagnostics are heuristic: They provide signals for improvement but do not guarantee hiring outcomes or exact ATS behavior.
+- Session restoration from PDF works only for CVForge-generated files with embedded attachments.
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
 
@@ -47,7 +47,7 @@ Planned but not implemented:
 - Section reordering and visibility.
 - Browser-only persistence (Private, local-first).
 - JSON backup and restore (Reliable).
-- PDF download with metadata.
+- PDF download with embedded session restore.
 - Local PDF parser diagnostics (Heuristic).
 - ATS-style scoring.
 

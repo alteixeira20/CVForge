@@ -10,6 +10,7 @@ import { TextPreview } from '../diagnostics/TextPreview'
 import { ScorePanel } from '../score/ScorePanel'
 import { SourcePdfPreview } from '../source/SourcePdfPreview'
 import { PdfUploadPanel } from '../upload/PdfUploadPanel'
+import { ParserRestoreAction } from '../upload/ParserRestoreAction'
 import { type ParserDocument } from '../upload/parserTypes'
 import { useParserDocument } from '../upload/useParserDocument'
 
@@ -43,6 +44,7 @@ function ParserAnalysisPanel(props: {
     <div className="p-24 lg:p-40 space-y-32 pb-80">
       <ParserHeader />
       <PdfUploadPanel onFile={props.onFile} />
+      {props.document?.embeddedState && <ParserRestoreAction embeddedState={props.document.embeddedState} />}
       <ExtractionDiagnostics document={props.document} />
       <ScorePanel result={props.score} />
       <TextPreview document={props.document} />
