@@ -8,9 +8,11 @@ node_modules/
 .next/
 out/
 build/
+**/*.tsbuildinfo
 
 # Reference Folders (DO NOT COMMIT)
 tmp/
+.handoff/
 
 # IDE/System
 .DS_Store

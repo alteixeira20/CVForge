@@ -1,16 +1,64 @@
 # Product Scope: CVForge
 
-## 1. Vision
-To provide the world's most transparent and privacy-preserving CV optimization tool.
+## 1. Purpose
 
-## 2. Core Features (MVP)
-- **Local PDF Parsing**: Extract resume data from PDF files using `pdf.js` entirely in the browser.
-- **ATS Scoring Engine**: Heuristic analysis of resume structure, content, and formatting.
-- **CV Builder**: Interactive editor with real-time PDF generation via `@react-pdf/renderer`.
-- **Format Support**: Toggle between US Letter and EU A4 with appropriate margin and typography adjustments.
-- **Session Persistence**: Use `localStorage` to save work-in-progress without requiring an account.
+CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase before parser, ATS feedback, and PDF export work are added.
 
-## 3. Out of Scope
-- Server-side storage of resumes.
-- User accounts and social login.
-- Third-party data analytics that compromise privacy.
+The near-term goal is a maintainable builder that can be self-hosted without a database or account system.
+
+## 2. Implemented Scope
+
+The current app includes:
+- A Next.js app shell in `apps/web`.
+- A Zod CV contract in `apps/web/src/types/cv.ts`.
+- Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
+- Browser persistence through `localStorage`.
+- A responsive workbench shell for builder and parser pages.
+- Builder sections for profile, settings, work experience, education, projects, and languages.
+- A CSS-based live preview placeholder.
+- Placeholder parser and import pages.
+
+## 3. Planned Scope
+
+Planned but not implemented:
+- Skills editor.
+- Custom sections editor.
+- Major section reordering.
+- PDF export.
+- PDF upload.
+- Parser extraction.
+- ATS scoring and diagnostics.
+- Builder-to-parser handoff.
+- JSON/PDF import and restoration flows.
+
+## 4. Current Limitations
+
+- Parser upload UI is non-functional placeholder UI.
+- Import page actions are placeholders.
+- Live preview is not a production PDF renderer.
+- Settings exist for section order and visibility, but not all settings are applied in the current preview.
+- Data is saved only in the current browser's `localStorage`.
+- There is no server-side persistence, authentication, or database.
+
+## 5. MVP Status
+
+### Implemented
+- Local builder sections listed above.
+- Responsive workbench shell.
+- Basic typography, spacing, color, and A4/Letter settings.
+- Browser-only persistence.
+
+### Planned
+- Parser diagnostics.
+- ATS scoring.
+- PDF generation.
+- Skills and custom sections.
+- Import/export workflows.
+
+## 6. Product Principles
+
+- No account requirement in the local-first implementation.
+- Local browser storage by default.
+- Clear separation between implemented behavior and planned behavior.
+- Small feature folders and focused components.
+- Validation after each implementation slice.
