@@ -32,7 +32,14 @@ export function createResumePdfStyles(settings: Settings) {
 }
 
 function resolvePdfFont(fontFamily: string) {
-  if (fontFamily.toLowerCase().includes('mono')) return 'Courier'
-  if (fontFamily.toLowerCase().includes('serif')) return 'Times-Roman'
+  const font = fontFamily.toLowerCase()
+
+  // Map common font types to core PDF fonts.
+  // Note: Lexend and JetBrains Mono are used in the web app but are not yet
+  // bundled as local assets for PDF embedding. We fallback to standard PDF fonts.
+  if (font.includes('mono')) return 'Courier'
+  if (font.includes('serif') || font.includes('times') || font.includes('georgia')) return 'Times-Roman'
+  
+  // Default to Helvetica for sans-serif (Lexend, Inter, Roboto, etc.)
   return 'Helvetica'
 }

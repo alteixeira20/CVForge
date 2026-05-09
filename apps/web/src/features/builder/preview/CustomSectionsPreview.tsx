@@ -10,12 +10,16 @@ export function CustomSectionsPreview({ items, settings }: { items: CustomSectio
   const visibleItems = items.filter((item) => item.title.trim() || item.bullets.some((bullet) => bullet.trim()))
 
   return (
-    <>
+    <div className="flex flex-col">
       {visibleItems.map((item) => (
         <PreviewSection key={item.id} title={item.title || 'Custom Section'} settings={settings} marginTop={settings.sectionSpacing}>
-          <PreviewBulletList bullets={item.bullets} settings={settings} />
+          <PreviewBulletList
+            bullets={item.bullets}
+            settings={settings}
+            visible={settings.bulletVisibility.customSections}
+          />
         </PreviewSection>
       ))}
-    </>
+    </div>
   )
 }

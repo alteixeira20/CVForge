@@ -17,7 +17,8 @@ export function ResumePdfSection({ title, styles, children }: ResumePdfSectionPr
   )
 }
 
-export function ResumePdfBullets({ bullets, styles }: { bullets: string[]; styles: PdfStyles }) {
+export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets: string[]; styles: PdfStyles; visible?: boolean }) {
+  if (!visible) return null
   const visibleBullets = bullets.filter((bullet) => bullet.trim())
 
   return (

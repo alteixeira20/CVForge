@@ -48,7 +48,7 @@ Implementation notes:
 - [x] Dynamic visual CV preview placeholder.
 - [x] JSON backup export and validated restore.
 - [x] PDF download generated from current CV state.
-- [ ] Major section reordering.
+- [x] Major section reordering and visibility.
 
 Current limitations:
 - The preview does not apply every setting in the schema.

@@ -15,6 +15,7 @@ The current app includes:
 - Browser persistence through `localStorage`.
 - A responsive workbench shell for builder and parser pages.
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
+- Major section reordering and visibility toggles.
 - A CSS-based live preview placeholder.
 - JSON backup export and validated restore.
 - PDF export generated from current CV state.
@@ -24,7 +25,6 @@ The current app includes:
 ## 3. Planned Scope
 
 Planned but not implemented:
-- Major section reordering.
 - Builder-to-parser handoff.
 - Importing parsed PDF content into the builder.
 - Richer parser and scoring checks.
@@ -32,8 +32,7 @@ Planned but not implemented:
 ## 4. Current Limitations
 
 - Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
-- The CSS live preview is still separate from the generated PDF renderer.
-- Settings exist for section order and visibility, but not all settings are applied in the current preview.
+- The CSS live preview uses web fonts (Lexend) while PDF export falls back to standard PDF fonts (Helvetica).
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
 
@@ -43,6 +42,7 @@ Planned but not implemented:
 - Local builder sections listed above.
 - Responsive workbench shell.
 - Basic typography, spacing, color, and A4/Letter settings.
+- Section reordering and visibility.
 - Browser-only persistence.
 - JSON backup and restore.
 - PDF download.

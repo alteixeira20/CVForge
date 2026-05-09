@@ -20,7 +20,11 @@ function WorkPreviewItem({ item, settings }: { item: WorkExperience; settings: S
     <div className="space-y-4">
       <PreviewEntryTop title={item.company || 'Company'} dates={dates} settings={settings} />
       <PreviewEntryMeta label={item.role || 'Role'} value={item.location} settings={settings} italic />
-      <PreviewBulletList bullets={item.bullets} settings={settings} />
+      <PreviewBulletList
+        bullets={item.bullets}
+        settings={settings}
+        visible={settings.bulletVisibility.workExperience}
+      />
     </div>
   )
 }

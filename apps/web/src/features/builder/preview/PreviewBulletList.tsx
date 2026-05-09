@@ -3,9 +3,11 @@ import { type Settings } from '@/types/cv'
 interface PreviewBulletListProps {
   bullets: string[]
   settings: Settings
+  visible?: boolean
 }
 
-export function PreviewBulletList({ bullets, settings }: PreviewBulletListProps) {
+export function PreviewBulletList({ bullets, settings, visible = true }: PreviewBulletListProps) {
+  if (!visible) return null
   const visibleBullets = bullets.filter((bullet) => bullet.trim())
 
   if (visibleBullets.length === 0) return null

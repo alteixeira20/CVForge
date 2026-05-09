@@ -18,7 +18,11 @@ function ProjectPreviewItem({ item, settings }: { item: Project; settings: Setti
     <div className="space-y-4">
       <PreviewEntryTop title={item.name || 'Project Name'} dates={`${item.startDate} — ${item.endDate}`} settings={settings} />
       {item.link && <div className="text-ember underline" style={{ fontSize: Math.max(8, settings.fontSize - 2) }}>{item.link}</div>}
-      <PreviewBulletList bullets={item.bullets} settings={settings} />
+      <PreviewBulletList
+        bullets={item.bullets}
+        settings={settings}
+        visible={settings.bulletVisibility.projects}
+      />
     </div>
   )
 }
