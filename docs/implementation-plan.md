@@ -46,32 +46,37 @@ Implementation notes:
 - [x] Skills editor.
 - [x] Custom Section editor.
 - [x] Dynamic visual CV preview placeholder.
+- [x] JSON backup export and validated restore.
+- [x] PDF download generated from current CV state.
 - [ ] Major section reordering.
 
 Current limitations:
 - The preview does not apply every setting in the schema.
-- The preview is not real PDF generation.
+- The CSS preview is separate from PDF generation.
 
-## Phase 4: Parser & Engine (Planned)
+## Phase 4: Parser & Engine (In Progress)
 
-- [ ] Add local PDF extraction.
-- [ ] Implement standalone ATS scoring module.
-- [ ] Build Parser Workbench UI (Scorecard, Issues, Side-by-side view).
+- [x] Add local PDF upload and text extraction.
+- [x] Implement standalone ATS-style scoring module.
+- [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
+- [ ] Add richer parser diagnostics and field-level extraction.
 
 Current parser status:
-- `/parser` has responsive shell UI only.
-- Upload, extraction, diagnostics, and ATS scoring are not implemented.
+- `/parser` extracts selectable PDF text locally with `pdfjs-dist`.
+- Scanned or protected PDFs may produce no text or an extraction error.
+- Parser diagnostics do not auto-fill builder fields.
 
-## Phase 5: Import, Export, and Launch (Planned)
+## Phase 5: Import, Export, and Launch (In Progress)
 
-- [ ] Real PDF generation via `@react-pdf/renderer`.
-- [ ] JSON export and restore flow.
-- [ ] PDF upload flow.
+- [x] Real PDF generation via `@react-pdf/renderer`.
+- [x] JSON export and restore flow.
+- [x] PDF upload flow.
 - [ ] Builder-to-parser handoff.
 - [ ] Final visual polish and performance audit.
 
 Current import status:
-- `/resume-import` has static placeholder cards only.
+- `/resume-import` exposes the same validated JSON backup/restore action as the builder.
+- PDF-to-builder import is not implemented.
 
 ## UI Implementation Checklist
 

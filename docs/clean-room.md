@@ -22,8 +22,8 @@ CVForge is a clean-room rebuild. Comparable features can be rebuilt, but source 
 - `apps/web/src/context`: React providers for CV state and theme state.
 - `apps/web/src/types`: Zod schemas and inferred TypeScript types.
 - `apps/web/src/components`: shared layout, form, section, workbench, home, and UI components.
-- `apps/web/src/features`: feature-specific builder editors.
-- `apps/web/src/lib`: browser storage helpers.
+- `apps/web/src/features`: feature-specific builder, parser, scoring, PDF, and import/export modules.
+- `apps/web/src/lib`: browser storage and parser helpers.
 - `apps/web/src/styles`: Forge-family CSS tokens and app styles.
 
 Current builder feature folders:
@@ -36,6 +36,10 @@ Current builder feature folders:
 - `src/features/builder/languages`
 - `src/features/builder/preview`
 - `src/features/builder/workbench`
+- `src/features/import-export`
+- `src/features/parser`
+- `src/features/resume-pdf`
+- `src/features/scoring`
 
 ## 3. Data Flow
 
@@ -58,16 +62,22 @@ Implemented builder sections:
 - Skills.
 - Languages.
 
-Placeholder behavior:
-- Parser page has upload/source diagnostics placeholders only.
-- Resume import page has static action cards only.
-- Live preview is a CSS-based preview, not real PDF export.
+Implemented utility behavior:
+- JSON backup export and restore run in the browser and validate with `parseCVState`.
+- PDF export is generated from current CV state with `@react-pdf/renderer`.
+- Parser upload and extraction run locally in the browser with `pdfjs-dist`.
+- ATS-style scoring is deterministic and transparent, but it is a diagnostic signal only.
+
+Current limitations:
+- Live preview remains a CSS preview separate from the generated PDF renderer.
+- Parser extraction depends on selectable text and does not import fields into the builder.
+- No CV data is uploaded to a server by the implemented app.
 
 ## 5. Hygiene Rules
 
 - `tmp/` and `.handoff/` are local-only and ignored by git.
 - TypeScript build cache files such as `tsconfig.tsbuildinfo` should not be committed.
-- Keep public docs factual. Do not claim parser, ATS scoring, PDF upload, or PDF export are implemented until they are.
+- Keep public docs factual. Do not claim PDF-to-builder import, ATS guarantees, or server sync until implemented.
 
 ## 6. Forge UI Rules
 

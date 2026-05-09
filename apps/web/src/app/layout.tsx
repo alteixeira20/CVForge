@@ -19,9 +19,9 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'CVForge — Local-first CV Builder + Parser',
+  title: 'CVForge - Local-first CV Builder',
   description:
-    'Forge your CV locally — no account, no sign-up. Privacy-first, ATS-friendly, A4/Letter support.',
+    'Build, back up, export, and inspect a CV locally in the browser without an account.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

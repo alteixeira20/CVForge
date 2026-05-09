@@ -1,4 +1,5 @@
 import { BuilderSectionList } from './BuilderSectionList'
+import { ImportExportActions } from '@/features/import-export/ImportExportActions'
 
 export function BuilderEditorPanel() {
   return (
@@ -9,6 +10,7 @@ export function BuilderEditorPanel() {
         <p className="muted text-sm">Edit your CV sections below. Changes are saved locally.</p>
       </header>
 
+      <ImportExportActions />
       <BuilderSectionList />
     </div>
   )

@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase before parser, ATS feedback, and PDF export work are added.
+CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase while adding parser, ATS-style diagnostics, backup/restore, and PDF export work in small slices.
 
 The near-term goal is a maintainable builder that can be self-hosted without a database or account system.
 
@@ -16,24 +16,23 @@ The current app includes:
 - A responsive workbench shell for builder and parser pages.
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - A CSS-based live preview placeholder.
-- Placeholder parser and import pages.
+- JSON backup export and validated restore.
+- PDF export generated from current CV state.
+- Local PDF upload, source preview, text extraction, and parser diagnostics.
+- ATS-style local scoring with transparent checks.
 
 ## 3. Planned Scope
 
 Planned but not implemented:
 - Major section reordering.
-- PDF export.
-- PDF upload.
-- Parser extraction.
-- ATS scoring and diagnostics.
 - Builder-to-parser handoff.
-- JSON/PDF import and restoration flows.
+- Importing parsed PDF content into the builder.
+- Richer parser and scoring checks.
 
 ## 4. Current Limitations
 
-- Parser upload UI is non-functional placeholder UI.
-- Import page actions are placeholders.
-- Live preview is not a production PDF renderer.
+- Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
+- The CSS live preview is still separate from the generated PDF renderer.
 - Settings exist for section order and visibility, but not all settings are applied in the current preview.
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
@@ -45,12 +44,15 @@ Planned but not implemented:
 - Responsive workbench shell.
 - Basic typography, spacing, color, and A4/Letter settings.
 - Browser-only persistence.
+- JSON backup and restore.
+- PDF download.
+- Local PDF parser diagnostics.
+- ATS-style scoring.
 
 ### Planned
-- Parser diagnostics.
-- ATS scoring.
-- PDF generation.
-- Import/export workflows.
+- Section reordering.
+- Builder-to-parser handoff.
+- Parsed PDF import into builder fields.
 
 ## 6. Product Principles
 

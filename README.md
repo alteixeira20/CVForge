@@ -2,7 +2,7 @@
 
 CVForge is a local-first CV builder built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
 
-The current app focuses on structured CV editing, local browser persistence, and a responsive builder workbench. Parser diagnostics, ATS feedback, PDF upload, and real PDF export are planned but are not implemented yet.
+The current app focuses on structured CV editing, local browser persistence, JSON backup/restore, PDF export, and local parser diagnostics in a shared workbench UI.
 
 ## Current Status
 
@@ -14,15 +14,16 @@ Implemented:
 - Responsive shared workbench shell.
 - Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - CSS-based live preview placeholder.
-- Parser and import pages with placeholder interfaces.
+- JSON backup export and validated JSON restore.
+- PDF download generated from current CV data.
+- Local PDF upload, source preview, text extraction, and parser diagnostics.
+- ATS-style local scoring with transparent issue rows.
 
 Planned:
 - Major section reordering.
-- Real PDF export.
-- PDF upload and parser extraction.
-- ATS scoring and diagnostics.
 - Builder-to-parser handoff.
-- Import/restore workflows.
+- Richer parser extraction and scoring checks.
+- Importing parsed PDF content into the builder.
 
 ## Local Development
 
@@ -68,7 +69,7 @@ CVForge is currently a standard Next.js application. A basic self-hosted setup n
 - `pnpm build` before starting the server.
 - `pnpm --filter web start` as the runtime command.
 
-The current app stores CV data in the user's browser under the `cvforge:state` localStorage key. There is no database or account system in the implemented state.
+The current app stores CV data in the user's browser under the `cvforge:state` localStorage key. JSON backup/restore, PDF generation, PDF upload, extraction, and scoring run locally in the browser. There is no database, account system, or server upload in the implemented state.
 
 ## Forge App Principles
 
