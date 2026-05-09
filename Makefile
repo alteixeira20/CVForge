@@ -70,12 +70,18 @@ docker-build: ## Build production Docker image
 	docker build -t cvforge:latest .
 
 .PHONY: docker-up
-docker-up: ## Start production container (detached)
+docker-up: docker-build ## Build and start production container (detached)
 	docker compose up -d
 
 .PHONY: docker-down
 docker-down: ## Stop production container
 	docker compose down
+
+.PHONY: docker-status
+docker-status: ## Show Docker container status
+	docker compose ps
+	@echo "--- Container Logs (Tail) ---"
+	docker compose logs --tail 20
 
 .PHONY: docker-logs
 docker-logs: ## View container logs
