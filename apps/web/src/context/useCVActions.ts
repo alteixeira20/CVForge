@@ -16,6 +16,12 @@ function createCVActions(dispatch: Dispatch<CVAction>): CVActions {
     updateSectionItem: (sectionKey, id, field, value) => dispatch({ type: 'UPDATE_SECTION_ITEM', sectionKey, id, field, value }),
     removeSectionItem: (sectionKey, id) => dispatch({ type: 'REMOVE_SECTION_ITEM', sectionKey, id }),
     moveSectionItem: (sectionKey, id, direction) => dispatch({ type: 'MOVE_SECTION_ITEM', sectionKey, id, direction }),
+    updateTechnicalSkills: (value) => dispatch({ type: 'UPDATE_TECHNICAL_SKILLS', value }),
+    updateSoftSkills: (value) => dispatch({ type: 'UPDATE_SOFT_SKILLS', value }),
+    addFeaturedSkill: () => dispatch({ type: 'ADD_FEATURED_SKILL' }),
+    updateFeaturedSkill: (id, patch) => dispatch({ type: 'UPDATE_FEATURED_SKILL', id, patch }),
+    removeFeaturedSkill: (id) => dispatch({ type: 'REMOVE_FEATURED_SKILL', id }),
+    moveFeaturedSkill: (id, direction) => dispatch({ type: 'MOVE_FEATURED_SKILL', id, direction }),
     resetState: () => dispatch({ type: 'RESET_STATE' }),
     replaceState: (state) => dispatch({ type: 'REPLACE_STATE', state }),
   }

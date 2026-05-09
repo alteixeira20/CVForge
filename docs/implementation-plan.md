@@ -35,13 +35,13 @@ Implementation notes:
 - [x] Generic Repeatable Section engine.
 - [x] Work Experience & Education editors.
 - [x] Projects & Languages editors.
+- [x] Skills editor.
 - [x] Dynamic visual CV preview placeholder.
-- [ ] Skills editor.
 - [ ] Custom Section editor.
 - [ ] Major section reordering.
 
 Current limitations:
-- Skills and custom sections exist in the schema but do not have builder editors yet.
+- Custom sections exist in the schema but do not have a builder editor yet.
 - The preview does not apply every setting in the schema.
 - The preview is not real PDF generation.
 

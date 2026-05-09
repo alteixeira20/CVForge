@@ -1,4 +1,4 @@
-import { type CVState, type Profile, type Settings } from '@/types/cv'
+import { type CVState, type FeaturedSkill, type Profile, type Settings } from '@/types/cv'
 import { type MoveDirection, type RepeatableSectionKey } from './cvActions'
 
 export interface CVContextValue {
@@ -9,6 +9,12 @@ export interface CVContextValue {
   updateSectionItem: (sectionKey: RepeatableSectionKey, id: string, field: string, value: unknown) => void
   removeSectionItem: (sectionKey: RepeatableSectionKey, id: string) => void
   moveSectionItem: (sectionKey: RepeatableSectionKey, id: string, direction: MoveDirection) => void
+  updateTechnicalSkills: (value: string[]) => void
+  updateSoftSkills: (value: string[]) => void
+  addFeaturedSkill: () => void
+  updateFeaturedSkill: (id: string, patch: Partial<FeaturedSkill>) => void
+  removeFeaturedSkill: (id: string) => void
+  moveFeaturedSkill: (id: string, direction: MoveDirection) => void
   resetState: () => void
   replaceState: (state: CVState) => void
 }

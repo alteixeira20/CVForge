@@ -6,17 +6,19 @@ import { WorkExperienceEditor } from '@/features/builder/work/WorkExperienceEdit
 import { EducationEditor } from '@/features/builder/education/EducationEditor'
 import { ProjectsEditor } from '@/features/builder/projects/ProjectsEditor'
 import { LanguagesEditor } from '@/features/builder/languages/LanguagesEditor'
+import { SkillsEditor } from '@/features/builder/skills/SkillsEditor'
 
 const BUILDER_SECTIONS = [
   { title: 'Personal Profile', icon: 'users', content: <ProfileEditor /> },
   { title: 'Experience', icon: 'activity', content: <WorkExperienceEditor /> },
   { title: 'Education', icon: 'fold', content: <EducationEditor /> },
   { title: 'Projects', icon: 'spark', content: <ProjectsEditor /> },
+  { title: 'Skills', icon: 'shield', content: <SkillsEditor /> },
   { title: 'Languages', icon: 'users', content: <LanguagesEditor /> },
   { title: 'Builder Settings', icon: 'sun', content: <SettingsEditor /> },
 ] satisfies BuilderSection[]
 
-const PLANNED_SECTIONS = ['Skills', 'Custom Section']
+const PLANNED_SECTIONS = ['Custom Section']
 
 interface BuilderSection {
   title: string
