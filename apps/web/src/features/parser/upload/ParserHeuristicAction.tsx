@@ -1,18 +1,19 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { useCV } from '@/context/CVContext'
 import { Icon } from '@/components/ui/Icon'
 import { type HeuristicResult } from './parserTypes'
 
 export function ParserHeuristicAction({ result }: { result: HeuristicResult }) {
   const { replaceState } = useCV()
+  const router = useRouter()
 
   const handleImport = () => {
     if (window.confirm('Create an editable draft from this PDF? Current builder data will be replaced.')) {
       replaceState(result.draft)
       alert('Draft created. You have been switched to the Builder view.')
-      // Simple navigation if possible, otherwise user can click Builder tab
-      window.location.hash = '#builder' // Heuristic for single-page apps or manual switch
+      router.push('/builder')
     }
   }
 

@@ -53,9 +53,8 @@ Planned but not implemented:
 - ATS-style scoring.
 
 ### Planned
-- Section reordering.
 - Builder-to-parser handoff.
-- Parsed PDF import into builder fields.
+- Richer parser extraction and scoring checks.
 
 ## 6. Product Principles
 
