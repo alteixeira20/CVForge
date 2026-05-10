@@ -2,34 +2,190 @@
 
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { type CVState } from '@/types/cv'
-import { PreviewDocument } from '@/features/builder/preview/PreviewDocument'
 import { Icon } from '@/components/ui/Icon'
 
 const DownloadPdfButton = dynamic(
   () => import('@/features/resume-pdf/DownloadPdfButton').then((module) => module.DownloadPdfButton),
-  { ssr: false, loading: () => <span className="btn justify-center opacity-60">Preparing PDF</span> },
+  { ssr: false, loading: () => <span className="btn sm justify-center opacity-60">Preparing PDF</span> },
 )
 
 export function BuilderPreviewPanel({ state }: { state: CVState }) {
-  const { settings } = state
+  const { previewUrl, isGenerating, error } = useDebouncedPdfPreview(state)
+  const isEmpty = useMemo(() => isEmptyCV(state), [state])
 
   return (
-    <div className="h-full flex flex-col items-center justify-start py-80 px-40">
-      <PreviewDocument state={state} />
-      <div className="mt-24 flex flex-col items-center gap-4">
+    <div className="relative h-full w-full flex flex-col bg-bg-inset overflow-hidden">
+      {/* Absolute Preview Actions Cluster */}
+      <div className="absolute right-12 top-12 z-20 flex items-center gap-6">
+        {isGenerating && previewUrl && (
+          <span className="animate-pulse text-[9px] font-bold uppercase tracking-widest text-ink-4 mr-4">
+            Syncing
+          </span>
+        )}
         <DownloadPdfButton state={state} />
-        <Link href="/parser?source=builder" className="btn justify-center">
-          <Icon name="search" size={14} />
-          Analyze current CV
+        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg-2/80 backdrop-blur-sm border-border shadow-sm">
+          <Icon name="search" size={13} />
+          <span className="hidden sm:inline">Analyze</span>
         </Link>
-        <p className="text-[10px] text-ink-4 font-mono uppercase tracking-[0.2em]">
-          Live Dynamic Preview
-        </p>
-        <p className="text-[9px] text-ink-4 opacity-50 font-mono italic">
-          {settings.fontSize}pt / {settings.lineHeight}lh / {settings.sectionSpacing}px gap
-        </p>
+      </div>
+
+      <div className="h-full w-full flex-1">
+        {isEmpty && <EmptyPdfPreview />}
+        {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
+        {!isEmpty && error && !previewUrl && <PreviewError message={error} />}
+        {previewUrl && (
+          <iframe
+            title="Generated PDF preview"
+            src={`${previewUrl}#navpanes=0&view=Fit`}
+            className="h-full w-full border-0 bg-white"
+          />
+        )}
       </div>
     </div>
   )
+}
+
+function useDebouncedPdfPreview(state: CVState) {
+  const [previewUrl, setPreviewUrl] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState('')
+  const urlRef = useRef('')
+  const generationRef = useRef(0)
+  const isEmpty = isEmptyCV(state)
+
+  useEffect(() => {
+    if (isEmpty) {
+      generationRef.current += 1
+      setIsGenerating(false)
+      setError('')
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current)
+        urlRef.current = ''
+        setPreviewUrl('')
+      }
+      return
+    }
+
+    const generationId = generationRef.current + 1
+    generationRef.current = generationId
+    setIsGenerating(true)
+    setError('')
+
+    const timeout = window.setTimeout(async () => {
+      try {
+        // Dynamic imports to keep initial bundle small
+        const [{ pdf }, { ResumePdfDocument }] = await Promise.all([
+          import('@react-pdf/renderer'),
+          import('@/features/resume-pdf/ResumePdfDocument')
+        ])
+
+        const blob = await pdf(<ResumePdfDocument state={state} />).toBlob()
+        if (generationRef.current !== generationId) return
+
+        const nextUrl = URL.createObjectURL(blob)
+        const previousUrl = urlRef.current
+        urlRef.current = nextUrl
+        setPreviewUrl(nextUrl)
+        if (previousUrl) URL.revokeObjectURL(previousUrl)
+      } catch (err) {
+        console.error('PDF generation error:', err)
+        if (generationRef.current === generationId) {
+          setError('PDF preview could not be generated.')
+        }
+      } finally {
+        if (generationRef.current === generationId) {
+          setIsGenerating(false)
+        }
+      }
+    }, 800) // Slightly longer debounce for smoother typing feel
+
+    return () => {
+      window.clearTimeout(timeout)
+    }
+  }, [state, isEmpty])
+
+  useEffect(() => {
+    return () => {
+      generationRef.current += 1
+      if (urlRef.current) {
+        URL.revokeObjectURL(urlRef.current)
+        urlRef.current = ''
+      }
+    }
+  }, [])
+
+  return { previewUrl, isGenerating, error }
+}
+
+function EmptyPdfPreview() {
+  return (
+    <div className="flex h-full items-center justify-center p-32 text-center bg-bg-inset">
+      <div className="max-w-xs space-y-12">
+        <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm">
+          <Icon name="file-text" size={20} className="text-ink-4" />
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-sm font-semibold text-ink">No PDF preview yet</h2>
+          <p className="text-xs leading-relaxed text-ink-3">
+            Add profile details or an experience entry to generate the real-time PDF preview.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function GeneratingPdfPreview() {
+  return (
+    <div className="flex h-full items-center justify-center p-32 text-center">
+      <div className="max-w-xs space-y-12">
+        <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm animate-pulse">
+          <Icon name="file-text" size={20} className="text-ink-4" />
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-sm font-semibold text-ink">Building PDF</h2>
+          <p className="text-xs leading-relaxed text-ink-3">
+            Preparing your multi-page layout.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PreviewError({ message }: { message: string }) {
+  return (
+    <div className="flex h-full items-center justify-center p-32 text-center">
+      <p className="max-w-xs text-xs leading-relaxed text-red-300 bg-red-500/10 border border-red-500/20 px-12 py-8 rounded-lg">
+        {message}
+      </p>
+    </div>
+  )
+}
+
+function isEmptyCV(state: CVState) {
+  const { profile, workExperience, education, projects, skills, languages, customSections } = state.resume
+  const hasProfile = [
+    profile.name,
+    profile.email,
+    profile.phone,
+    profile.location,
+    profile.website,
+    profile.github,
+    profile.linkedin,
+    profile.summary,
+  ].some((value) => value.trim())
+
+  return !hasProfile
+    && workExperience.length === 0
+    && education.length === 0
+    && projects.length === 0
+    && skills.featured.length === 0
+    && skills.featuredWithRating.length === 0
+    && skills.technical.length === 0
+    && skills.soft.length === 0
+    && languages.length === 0
+    && customSections.length === 0
 }

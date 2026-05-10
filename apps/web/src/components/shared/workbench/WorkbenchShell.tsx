@@ -29,7 +29,7 @@ export function WorkbenchShell({
           </WorkbenchPanel>
         )}
         {showRight && (
-          <WorkbenchPanel className="bg-bg-inset h-full">
+          <WorkbenchPanel className="bg-bg-inset h-full" scroll={false}>
             {rightPanel}
           </WorkbenchPanel>
         )}

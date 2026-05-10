@@ -29,35 +29,28 @@ export function ImportExportActions() {
   }
 
   return (
-    <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-16">
-      <ImportExportHeader />
-      <div className="flex flex-col sm:flex-row gap-12">
-        <ActionButton icon="export" label="Export JSON" onClick={() => exportCVState(state)} />
-        <ActionButton icon="import" label="Restore JSON" onClick={() => inputRef.current?.click()} />
+    <section className="sticky bottom-0 z-10 border-t border-border bg-bg-2/95 px-12 py-8 backdrop-blur">
+      <div className="flex flex-col gap-8 sm:flex-row sm:items-center">
+        <p className="text-[9px] uppercase tracking-[0.12em] text-ink-4 sm:flex-1">
+          JSON backups stay local in your browser.
+        </p>
+        <div className="flex gap-6">
+          <ActionButton icon="export" label="Export" onClick={() => exportCVState(state)} />
+          <ActionButton icon="import" label="Import" onClick={() => inputRef.current?.click()} />
+        </div>
       </div>
-      {message && <p className="text-xs text-ink-3">{message}</p>}
+      {message && <p className="mt-4 text-[10px] text-amber-200/80 italic">{message}</p>}
       <input ref={inputRef} type="file" accept="application/json,.json" className="hidden" onChange={handleImport} />
     </section>
   )
 }
 
-function ImportExportHeader() {
-  return (
-    <div>
-      <h2 className="text-sm font-semibold text-ink">Reliable Backup & Restore</h2>
-      <p className="text-xs text-ink-3 mt-4">
-        JSON is the guaranteed way to save or restore your full CVForge session. 
-        Everything stays local in your browser.
-      </p>
-    </div>
-  )
-}
-
 function ActionButton({ icon, label, onClick }: { icon: 'import' | 'export'; label: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="btn flex-1 justify-center">
-      <Icon name={icon} size={14} />
+    <button type="button" onClick={onClick} className="btn sm justify-center bg-bg shadow-sm hover:border-border-strong px-10">
+      <Icon name={icon} size={13} />
       {label}
     </button>
   )
 }
+

@@ -39,10 +39,10 @@ export function DownloadPdfButton({ state }: { state: CVState }) {
       type="button"
       onClick={handleDownload}
       disabled={isGenerating}
-      className="btn justify-center"
+      className="btn sm justify-center bg-bg-2/80 backdrop-blur-sm border-border shadow-sm"
     >
-      <Icon name="download" size={14} />
-      {isGenerating ? 'Preparing PDF' : 'Download PDF'}
+      <Icon name="download" size={13} />
+      {isGenerating ? 'Preparing' : 'Download'}
     </button>
   )
 }

@@ -11,7 +11,7 @@ export function BuilderWorkbench() {
   const { profile } = state.resume
 
   return (
-    <div className="app-shell">
+    <div className="app-shell h-screen overflow-hidden">
       <AppHeader title={profile.name || 'Untitled CV'} />
       <WorkbenchShell
         leftPanel={<BuilderEditorPanel />}

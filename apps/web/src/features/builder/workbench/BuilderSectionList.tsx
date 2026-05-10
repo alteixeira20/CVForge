@@ -30,20 +30,20 @@ interface BuilderSection {
 
 export function BuilderSectionList() {
   return (
-    <>
+    <div className="space-y-20">
       {BUILDER_SECTIONS.map((section) => (
         <BuilderSectionCard key={section.title} section={section} />
       ))}
       {PLANNED_SECTIONS.length > 0 && <PlannedSectionList />}
-    </>
+    </div>
   )
 }
 
 function BuilderSectionCard({ section }: { section: BuilderSection }) {
   return (
-    <section className="space-y-24">
+    <section className="space-y-12">
       <BuilderSectionHeading title={section.title} icon={section.icon} />
-      <div className="panel p-24 bg-bg-2 border border-border rounded-xl">
+      <div className="panel p-16 lg:p-20 bg-bg-2 border border-border rounded-xl">
         {section.content}
       </div>
     </section>
