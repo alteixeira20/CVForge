@@ -30,7 +30,6 @@ The current app includes:
 ## 3. Planned Scope
 
 Planned but not implemented:
-- Builder-to-parser handoff.
 - Richer parser and scoring checks.
 
 ## 4. Current Limitations
@@ -55,11 +54,11 @@ Planned but not implemented:
 - JSON backup and restore (the simplest reliable restore path).
 - PDF download with embedded session restore.
 - Local PDF parser diagnostics (heuristic).
+- Builder-to-parser handoff for analyzing the current local Builder CV.
 - Structured review before importing an external PDF draft.
 - Local rule-based scoring and issue rows, not real ATS guarantees.
 
 ### Planned
-- Builder-to-parser handoff.
 - Richer parser extraction and scoring checks.
 
 ## 6. Product Principles

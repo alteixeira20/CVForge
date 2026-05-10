@@ -30,7 +30,6 @@ Implemented:
 - Local heuristic scoring with transparent issue rows.
 
 Planned:
-- Builder-to-parser handoff.
 - Richer parser extraction and scoring checks.
 
 ## Development Workflow
