@@ -1,17 +1,20 @@
 import { Text, View } from '@react-pdf/renderer'
 import { type Profile, type Settings } from '@/types/cv'
+import { cleanText, joinNonEmpty } from '@/features/resume-formatting'
 import { type PdfStyles } from './types'
 
 export function ResumePdfHeader({ profile, settings, styles }: { profile: Profile; settings: Settings; styles: PdfStyles }) {
-  const contacts = [profile.email, profile.phone, profile.location, profile.website, profile.github, profile.linkedin]
-    .filter(Boolean)
-    .join(' | ')
+  const contacts = joinNonEmpty([profile.email, profile.phone, profile.location, profile.website, profile.github, profile.linkedin])
+  const name = cleanText(profile.name)
+  const summary = cleanText(profile.summary)
+
+  if (!name && !contacts && !summary) return null
 
   return (
     <View>
-      <Text style={styles.name}>{profile.name || 'Untitled CV'}</Text>
+      {name && <Text style={styles.name}>{name}</Text>}
       {contacts && <Text style={styles.muted}>{contacts}</Text>}
-      {profile.summary && <Text style={{ marginTop: settings.profileSpacing }}>{profile.summary}</Text>}
+      {summary && <Text style={{ marginTop: settings.profileSpacing }}>{summary}</Text>}
     </View>
   )
 }

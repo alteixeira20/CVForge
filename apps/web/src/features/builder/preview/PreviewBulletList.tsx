@@ -18,7 +18,7 @@ export function PreviewBulletList({ bullets, settings, visible = true }: Preview
         <li
           key={i}
           className="text-gray-700"
-          style={{ fontSize: Math.max(8, settings.fontSize - 1), lineHeight: settings.lineHeight }}
+          style={{ fontSize: Math.max(8, settings.fontSize-1), lineHeight: settings.lineHeight }}
         >
           {bullet}
         </li>

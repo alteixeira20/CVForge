@@ -1,5 +1,6 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer'
 import { type CVState } from '@/types/cv'
+import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/features/resume-formatting'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEntry } from './ResumePdfEntry'
 import { ResumePdfHeader } from './ResumePdfHeader'
@@ -52,12 +53,18 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
 }
 
 function WorkSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  if (state.resume.workExperience.length === 0) return null
+  const items = state.resume.workExperience.filter((item) => hasWorkContent(item, state.settings.bulletVisibility.workExperience))
+  if (items.length === 0) return null
   return (
     <ResumePdfSection title="Experience" styles={styles}>
-      {state.resume.workExperience.map((item) => (
+      {items.map((item) => (
         <View key={item.id}>
-          <ResumePdfEntry title={item.role || 'Role'} subtitle={item.company} dates={`${item.startDate} - ${item.endDate}`} styles={styles} />
+          <ResumePdfEntry
+            title={joinNonEmpty([item.role, item.company], ' at ')}
+            subtitle={joinNonEmpty([item.location])}
+            dates={formatDateRange(item.startDate, item.endDate, item.isCurrent)}
+            styles={styles}
+          />
           <ResumePdfBullets
             bullets={item.bullets}
             styles={styles}
@@ -70,12 +77,18 @@ function WorkSection({ state, styles }: { state: CVState; styles: ReturnType<typ
 }
 
 function ProjectSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  if (state.resume.projects.length === 0) return null
+  const items = state.resume.projects.filter((item) => hasProjectContent(item, state.settings.bulletVisibility.projects))
+  if (items.length === 0) return null
   return (
     <ResumePdfSection title="Projects" styles={styles}>
-      {state.resume.projects.map((item) => (
+      {items.map((item) => (
         <View key={item.id}>
-          <ResumePdfEntry title={item.name || 'Project'} subtitle={item.link} dates={`${item.startDate} - ${item.endDate}`} styles={styles} />
+          <ResumePdfEntry
+            title={cleanText(item.name)}
+            subtitle={cleanText(item.link)}
+            dates={formatDateRange(item.startDate, item.endDate)}
+            styles={styles}
+          />
           <ResumePdfBullets
             bullets={item.bullets}
             styles={styles}
@@ -88,12 +101,18 @@ function ProjectSection({ state, styles }: { state: CVState; styles: ReturnType<
 }
 
 function EducationSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  if (state.resume.education.length === 0) return null
+  const items = state.resume.education.filter((item) => hasEducationContent(item, state.settings.bulletVisibility.education))
+  if (items.length === 0) return null
   return (
     <ResumePdfSection title="Education" styles={styles}>
-      {state.resume.education.map((item) => (
+      {items.map((item) => (
         <View key={item.id}>
-          <ResumePdfEntry title={item.degree || 'Degree'} subtitle={item.school} dates={`${item.startDate} - ${item.endDate}`} styles={styles} />
+          <ResumePdfEntry
+            title={joinNonEmpty([item.degree, item.school], ', ')}
+            subtitle={cleanText(item.location)}
+            dates={formatDateRange(item.startDate, item.endDate)}
+            styles={styles}
+          />
           <ResumePdfBullets
             bullets={item.details}
             styles={styles}
@@ -106,10 +125,42 @@ function EducationSection({ state, styles }: { state: CVState; styles: ReturnTyp
 }
 
 function LanguageSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  if (state.resume.languages.length === 0) return null
+  const languages = state.resume.languages
+    .map((item) => joinNonEmpty([item.name, item.proficiency ? `(${cleanText(item.proficiency)})` : ''], ' '))
+    .filter(Boolean)
+  if (languages.length === 0) return null
   return (
     <ResumePdfSection title="Languages" styles={styles}>
-      <Text>{state.resume.languages.map((item) => `${item.name}${item.proficiency ? ` (${item.proficiency})` : ''}`).join(', ')}</Text>
+      <Text>{languages.join(', ')}</Text>
     </ResumePdfSection>
+  )
+}
+
+function hasWorkContent(item: CVState['resume']['workExperience'][number], bulletsVisible: boolean) {
+  return Boolean(
+    cleanText(item.role)
+    || cleanText(item.company)
+    || cleanText(item.location)
+    || formatDateRange(item.startDate, item.endDate, item.isCurrent)
+    || (bulletsVisible && cleanList(item.bullets).length > 0),
+  )
+}
+
+function hasProjectContent(item: CVState['resume']['projects'][number], bulletsVisible: boolean) {
+  return Boolean(
+    cleanText(item.name)
+    || cleanText(item.link)
+    || formatDateRange(item.startDate, item.endDate)
+    || (bulletsVisible && cleanList(item.bullets).length > 0),
+  )
+}
+
+function hasEducationContent(item: CVState['resume']['education'][number], detailsVisible: boolean) {
+  return Boolean(
+    cleanText(item.school)
+    || cleanText(item.degree)
+    || cleanText(item.location)
+    || formatDateRange(item.startDate, item.endDate)
+    || (detailsVisible && cleanList(item.details).length > 0),
   )
 }

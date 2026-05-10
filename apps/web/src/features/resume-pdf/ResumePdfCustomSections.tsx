@@ -1,12 +1,13 @@
 import { type CustomSection, type Settings } from '@/types/cv'
+import { cleanList, cleanText } from '@/features/resume-formatting'
 import { ResumePdfBullets, ResumePdfSection } from './ResumePdfSection'
 import { type PdfStyles } from './types'
 
 export function ResumePdfCustomSections({ items, styles, settings }: { items: CustomSection[]; styles: PdfStyles; settings: Settings }) {
   return (
     <>
-      {items.filter(hasCustomSectionContent).map((item) => (
-        <ResumePdfSection key={item.id} title={item.title || 'Custom Section'} styles={styles}>
+      {items.filter((item) => hasCustomSectionContent(item, settings.bulletVisibility.customSections)).map((item) => (
+        <ResumePdfSection key={item.id} title={cleanText(item.title)} styles={styles}>
           <ResumePdfBullets
             bullets={item.bullets}
             styles={styles}
@@ -18,6 +19,6 @@ export function ResumePdfCustomSections({ items, styles, settings }: { items: Cu
   )
 }
 
-function hasCustomSectionContent(item: CustomSection) {
-  return item.title.trim() || item.bullets.some((bullet) => bullet.trim())
+function hasCustomSectionContent(item: CustomSection, bulletsVisible: boolean) {
+  return Boolean(cleanText(item.title) && bulletsVisible && cleanList(item.bullets).length > 0)
 }

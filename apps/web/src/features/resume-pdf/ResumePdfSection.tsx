@@ -1,5 +1,6 @@
 import { Text, View } from '@react-pdf/renderer'
 import { type ReactNode } from 'react'
+import { cleanList } from '@/features/resume-formatting'
 import { type PdfStyles } from './types'
 
 interface ResumePdfSectionProps {
@@ -19,12 +20,14 @@ export function ResumePdfSection({ title, styles, children }: ResumePdfSectionPr
 
 export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets: string[]; styles: PdfStyles; visible?: boolean }) {
   if (!visible) return null
-  const visibleBullets = bullets.filter((bullet) => bullet.trim())
+  const visibleBullets = cleanList(bullets)
+
+  if (visibleBullets.length === 0) return null
 
   return (
     <View>
       {visibleBullets.map((bullet) => (
-        <Text key={bullet} style={styles.bullet}>- {bullet}</Text>
+        <Text key={bullet} style={styles.bullet} wrap>- {bullet}</Text>
       ))}
     </View>
   )

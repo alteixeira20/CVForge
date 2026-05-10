@@ -31,12 +31,12 @@ function FeaturedSkills({ skills, settings }: { skills: Skills; settings: Settin
   return (
     <div className="flex flex-wrap gap-x-16 gap-y-4">
       {simpleItems.map((item, index) => (
-        <span key={`${item}-${index}`} className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize - 1) }}>
+        <span key={`${item}-${index}`} className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize-1) }}>
           {item}
         </span>
       ))}
       {ratedItems.map((item, index) => (
-        <span key={`${item.skill}-${index}`} className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize - 1) }}>
+        <span key={`${item.skill}-${index}`} className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize-1) }}>
           {item.skill}{typeof item.rating === 'number' ? ` (${item.rating}/5)` : ''}
         </span>
       ))}
@@ -50,7 +50,7 @@ function SkillLine({ label, items, settings }: { label: string; items: string[];
   if (visibleItems.length === 0) return null
 
   return (
-    <p className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize - 1), lineHeight: settings.lineHeight }}>
+    <p className="text-gray-700" style={{ fontSize: Math.max(8, settings.fontSize-1), lineHeight: settings.lineHeight }}>
       <span className="font-bold text-gray-800">{label}: </span>
       {visibleItems.join(', ')}
     </p>
