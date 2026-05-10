@@ -3,7 +3,8 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useRef, useState, useMemo } from 'react'
-import { type CVState, isEmptyCV } from '@/types/cv'
+import { type CVState } from '@/types/cv'
+import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
 
 const DownloadPdfButton = dynamic(

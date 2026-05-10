@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, type ChangeEvent } from 'react'
 import { useCV } from '@/context/CVContext'
-import { isEmptyCV } from '@/types/cv'
+import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
 import { importCVState } from '@/features/import-export/importCVState'
 
