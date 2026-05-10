@@ -12,7 +12,6 @@ import {
   Moon,
   Sun,
   Lock,
-  Cloud,
   Monitor,
   Users,
   FileDown,
@@ -23,7 +22,6 @@ import {
   ArrowRight,
   Sparkles,
   Shield,
-  Bot,
   FoldVertical,
   Activity,
   Eye,
@@ -51,7 +49,6 @@ export type IconName =
   | 'moon'
   | 'sun'
   | 'lock'
-  | 'cloud'
   | 'device'
   | 'users'
   | 'import'
@@ -63,7 +60,6 @@ export type IconName =
   | 'github'
   | 'spark'
   | 'shield'
-  | 'robot'
   | 'fold'
   | 'activity'
   | 'eye'
@@ -89,7 +85,6 @@ const iconMap: Record<string, LucideIcon> = {
   moon: Moon,
   sun: Sun,
   lock: Lock,
-  cloud: Cloud,
   device: Monitor,
   users: Users,
   import: FileDown,
@@ -100,7 +95,6 @@ const iconMap: Record<string, LucideIcon> = {
   'arrow-right': ArrowRight,
   spark: Sparkles,
   shield: Shield,
-  robot: Bot,
   fold: FoldVertical,
   activity: Activity,
   eye: Eye,
@@ -144,7 +138,7 @@ export function Icon({
     )
   }
 
-  const LucideIcon = iconMap[name] || Activity
+  const LucideIcon = iconMap[name] || Search
 
   return (
     <LucideIcon

@@ -68,6 +68,14 @@ function DraftReviewTable({ result }: { result: HeuristicResult }) {
           label="Detected sections"
           value={sections.length ? sections.map((section) => section.label).join(', ') : 'None detected'}
         />
+        <ReviewRow
+          label="Entries"
+          value={`Work ${result.stats.workEntries}, education ${result.stats.educationEntries}, projects ${result.stats.projectEntries}`}
+        />
+        <ReviewRow
+          label="Parser signals"
+          value={`Dates ${result.stats.dateRanges}, custom sections ${result.stats.customSections}, unmapped samples ${result.stats.unmappedLines}`}
+        />
         <ReviewRow label="Import behavior" value="Uncertain titles, employers, schools, and dates are left blank." />
       </div>
 
