@@ -19,7 +19,7 @@ Implemented:
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
 - Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
-- CSS-based live preview for the current builder state.
+- PDF-backed live preview for the current builder state.
 - JSON backup export and validated JSON restore.
 - PDF download generated from current CV data with embedded session metadata.
 - Section reordering, section visibility, and bullet visibility controls.

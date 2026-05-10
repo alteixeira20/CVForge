@@ -6,6 +6,7 @@ import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
 import { scoreCV } from '@/features/scoring/scoreCV'
 import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
+import { isEmptyCV } from '@/lib/cvState'
 import { type CVState } from '@/types/cv'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
@@ -118,7 +119,7 @@ function resolveAnalysisTarget(state: CVState, document: ParserDocument | null, 
   if (!document?.extraction) {
     return {
       score: scoreCV(state),
-      isEmpty: isBuilderCVEmpty(state),
+      isEmpty: isEmptyCV(state),
       target: {
         label: 'Current Builder CV',
         description: fromBuilder
@@ -167,26 +168,3 @@ function resolveAnalysisTarget(state: CVState, document: ParserDocument | null, 
   }
 }
 
-function isBuilderCVEmpty(state: CVState) {
-  const { profile, workExperience, education, projects, skills, languages, customSections } = state.resume
-
-  return ![
-    profile.name,
-    profile.email,
-    profile.phone,
-    profile.location,
-    profile.website,
-    profile.github,
-    profile.linkedin,
-    profile.summary,
-  ].some((value) => value.trim())
-    && workExperience.length === 0
-    && education.length === 0
-    && projects.length === 0
-    && skills.featured.length === 0
-    && skills.featuredWithRating.length === 0
-    && skills.technical.length === 0
-    && skills.soft.length === 0
-    && languages.length === 0
-    && customSections.length === 0
-}

@@ -34,7 +34,6 @@ Current builder feature folders:
 - `src/features/builder/projects`
 - `src/features/builder/skills`
 - `src/features/builder/languages`
-- `src/features/builder/preview`
 - `src/features/builder/workbench`
 - `src/features/import-export`
 - `src/features/parser`
