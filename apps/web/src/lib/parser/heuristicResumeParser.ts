@@ -219,7 +219,7 @@ function toContentLines(value: string) {
 
   const lineCandidates = normalized
     .split(/\n+|;\s+|\.\s+/)
-    .map((line) => line.trim().replace(/^[-–—*]\s*/, ''))
+    .map((line) => line.trim().replace(/^[-\u2013\u2014*]\s*/, ''))
     .filter((line) => line.length > 1)
 
   return lineCandidates
