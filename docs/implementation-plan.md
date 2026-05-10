@@ -82,11 +82,12 @@ Current parser status:
 - [x] PDF upload flow.
 - [x] High-fidelity session restoration from CVForge PDFs.
 - [x] Best-effort heuristic import from external PDFs.
-- [ ] Builder-to-parser handoff.
+- [x] Builder-to-parser handoff for analyzing the current local Builder CV.
 - [ ] Final visual polish and performance audit.
 
 Current import status:
 - JSON backup/restore is accessible within the Builder.
+- Current Builder CV analysis is accessible from Builder without PDF export/upload.
 - PDF restoration and heuristic import are accessible within the Parser.
 - Standalone `/resume-import` route is deprecated.
 

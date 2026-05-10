@@ -20,6 +20,7 @@ The current app includes:
 - JSON backup export and validated restore (the simplest reliable session portability path).
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
+- Direct analysis of the current Builder CV in Parser without PDF download/upload.
 - CVForge-generated PDF detection and session restoration.
 - Best-effort heuristic parsing for external PDFs with a structured draft review before replacement.
 - Parser reliability scoring and CV diagnostics presented as local rule-based signals.
@@ -40,6 +41,7 @@ Planned but not implemented:
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
 - Parser reliability is separate from CV quality diagnostics.
 - Data is saved only in the current browser's `localStorage`.
+- Current Builder CV analysis in Parser uses in-browser state only and does not upload CV data.
 - There is no server-side persistence, authentication, or database.
 
 ## 5. MVP Status

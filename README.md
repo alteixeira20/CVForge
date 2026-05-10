@@ -24,6 +24,7 @@ Implemented:
 - PDF download generated from current CV data with embedded session metadata.
 - Section reordering, section visibility, and bullet visibility controls.
 - Local PDF upload, source preview, text extraction, and parser diagnostics.
+- Direct Builder-to-Parser analysis for the current local Builder CV without exporting or uploading a file.
 - CVForge-generated PDF detection and embedded session restore.
 - Best-effort external PDF draft review and import that must be checked before use.
 - Local heuristic scoring with transparent issue rows.
