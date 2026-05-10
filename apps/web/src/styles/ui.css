@@ -1,6 +1,6 @@
-/* ─── Common UI primitives ─────────────────────────────────────────────────── */
+/* --- Common UI primitives --------------------------------------------------- */
 
-/* ─── Buttons ──────────────────────────────────────────────────────────────── */
+/* --- Buttons ---------------------------------------------------------------- */
 .btn {
   height: 44px;
   padding: 0 18px;
@@ -42,7 +42,7 @@
 }
 .iconbtn:hover { background: var(--bg-2); border-color: var(--border); color: var(--ink); }
 
-/* ─── Brand ────────────────────────────────────────────────────────────────── */
+/* --- Brand ------------------------------------------------------------------ */
 .brand {
   display: inline-flex; align-items: center; gap: 10px;
   font-weight: 600; font-size: 17px;
@@ -64,7 +64,7 @@
 }
 .brand .mark svg { position: relative; z-index: 1; }
 
-/* ─── Theme toggle ─────────────────────────────────────────────────────────── */
+/* --- Theme toggle ----------------------------------------------------------- */
 .theme-toggle {
   display: inline-flex;
   background: var(--bg-2);
@@ -85,39 +85,4 @@
   background: var(--bg-3);
   color: var(--ember);
   box-shadow: 0 0 0 1px var(--border-strong) inset;
-}
-
-/* ─── Toast ────────────────────────────────────────────────────────────────── */
-.toast {
-  position: fixed;
-  bottom: 24px; left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg-3);
-  border: 1px solid var(--border-strong);
-  color: var(--ink);
-  padding: 12px 18px;
-  border-radius: 10px;
-  font-size: 14.5px;
-  display: flex; align-items: center; gap: 10px;
-  box-shadow: var(--shadow-md);
-  z-index: 200;
-  animation: toastIn 280ms cubic-bezier(.2,.8,.2,1);
-}
-.toast .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
-@keyframes toastIn {
-  from { opacity: 0; transform: translate(-50%, 12px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-/* ─── Avatar ───────────────────────────────────────────────────────────────── */
-.avatar {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  background: linear-gradient(140deg, #2c2520, #1a1410);
-  border: 1px solid var(--border-strong);
-  display: grid; place-items: center;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink);
 }

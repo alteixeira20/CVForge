@@ -1,4 +1,4 @@
-/* ─── Base reset and global element styles ─────────────────────────────────── */
+/* --- Base reset and global element styles ----------------------------------- */
 
 * { box-sizing: border-box; }
 html, body {
@@ -23,7 +23,7 @@ section[id] { scroll-margin-top: var(--header-h); }
 .mono { font-family: var(--font-mono); }
 .muted { color: var(--ink-3); }
 
-/* ─── Scrollbar ────────────────────────────────────────────────────────────── */
+/* --- Scrollbar -------------------------------------------------------------- */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -34,7 +34,7 @@ section[id] { scroll-margin-top: var(--header-h); }
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); background-clip: padding-box; }
 
-/* ─── Utilities ────────────────────────────────────────────────────────────── */
+/* --- Utilities -------------------------------------------------------------- */
 .flex-1 { flex: 1; }
 .gap-8 { gap: 8px; }
 .gap-12 { gap: 12px; }

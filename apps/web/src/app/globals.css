@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ============================================================
-   Roadforge Design System - entry point
+   CVForge Design System - entry point
    CSS is split by concern into src/styles/*.css
    Import order matters for cascade - do not reorder.
    ============================================================ */
@@ -13,4 +13,12 @@
 @import '../styles/ui.css';
 @import '../styles/site.css';
 @import '../styles/workspace.css';
-@import '../styles/modals.css';
+
+@layer base {
+  :root {
+    --header-h: 76px;
+    --container: 1120px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
+  }
+}

@@ -1,6 +1,6 @@
-/* ─── Homepage and site layout ─────────────────────────────────────────────── */
+/* --- Homepage and site layout ----------------------------------------------- */
 
-/* ─── Site header ──────────────────────────────────────────────────────────── */
+/* --- Site header ------------------------------------------------------------ */
 .site-header {
   position: sticky; top: 0; z-index: 50;
   display: flex; align-items: center; gap: 24px;
@@ -30,7 +30,7 @@
   .site-header nav { display: none; }
 }
 
-/* ─── Homepage shell ───────────────────────────────────────────────────────── */
+/* --- Homepage shell --------------------------------------------------------- */
 .home {
   position: relative;
   background-image:
@@ -44,7 +44,7 @@
 }
 @media (max-width: 720px) { .container { padding: 0 20px; } }
 
-/* ─── Hero ─────────────────────────────────────────────────────────────────── */
+/* --- Hero ------------------------------------------------------------------- */
 .hero {
   padding: clamp(18px, 3vh, 40px) 0 16px;
   display: grid;
@@ -90,7 +90,7 @@
 }
 .hero .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
 
-/* ─── Hero preview chrome ──────────────────────────────────────────────────── */
+/* --- Hero preview chrome ---------------------------------------------------- */
 .preview-wrap {
   margin: clamp(16px, 2.5vh, 32px) auto 0;
   max-width: 1080px;
@@ -146,7 +146,7 @@
   .preview-wrap { margin-top: 16px; }
 }
 
-/* ─── Product preview (inside hero chrome) ────────────────────────────────── */
+/* --- Product preview (inside hero chrome) ---------------------------------- */
 .product-preview {
   display: grid;
   grid-template-columns: minmax(220px, 0.9fr) minmax(280px, 1.2fr) minmax(220px, 0.9fr);
@@ -280,7 +280,7 @@
   .document-pane { order: -1; }
 }
 
-/* ─── Content sections ─────────────────────────────────────────────────────── */
+/* --- Content sections ------------------------------------------------------- */
 .section { padding: 64px 0 48px; }
 @media (min-width: 960px) {
   .section {
@@ -312,7 +312,7 @@
 .section-head { text-align: center; margin: 0 auto 40px; max-width: 720px; }
 .section-head .section-lede { margin-left: auto; margin-right: auto; }
 
-/* ─── How it works ─────────────────────────────────────────────────────────── */
+/* --- How it works ----------------------------------------------------------- */
 .steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -382,7 +382,7 @@
   font-size: 15px;
 }
 
-/* ─── Features ─────────────────────────────────────────────────────────────── */
+/* --- Features --------------------------------------------------------------- */
 .features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -421,7 +421,7 @@
   line-height: 1.55;
 }
 
-/* ─── GitHub CTA strip ─────────────────────────────────────────────────────── */
+/* --- GitHub CTA strip ------------------------------------------------------- */
 .gh-cta {
   display: flex;
   align-items: center;
@@ -452,7 +452,7 @@
   letter-spacing: 0.03em;
 }
 
-/* ─── GitHub pill ──────────────────────────────────────────────────────────── */
+/* --- GitHub pill ------------------------------------------------------------ */
 .gh-pill {
   display: inline-flex; align-items: center; gap: 10px;
   height: 44px;
@@ -476,7 +476,7 @@
   font-size: 13px;
 }
 
-/* ─── Site footer ──────────────────────────────────────────────────────────── */
+/* --- Site footer ------------------------------------------------------------ */
 .site-footer {
   padding: 24px 32px;
   border-top: 1px solid var(--border);
@@ -496,7 +496,7 @@
 .site-footer a:hover { color: var(--ink); }
 .site-footer .links { display: flex; gap: 18px; flex-wrap: wrap; }
 
-/* ─── Responsive ───────────────────────────────────────────────────────────── */
+/* --- Responsive ------------------------------------------------------------- */
 @media (max-width: 580px) {
   .hero { padding: 24px 0 12px; gap: 14px; }
   .preview-wrap { margin-top: 20px; }
