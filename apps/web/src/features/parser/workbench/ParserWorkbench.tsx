@@ -1,10 +1,12 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
 import { scoreCV } from '@/features/scoring/scoreCV'
 import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
+import { type CVState } from '@/types/cv'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
 import { ScorePanel } from '../score/ScorePanel'
@@ -17,14 +19,26 @@ import { useParserDocument } from '../upload/useParserDocument'
 
 export function ParserWorkbench() {
   const { state } = useCV()
-  const { document, handleFile } = useParserDocument()
-  const analysis = resolveAnalysisTarget(state, document)
+  const [fromBuilder, setFromBuilder] = useState(false)
+  const { document, handleFile, clearDocument } = useParserDocument()
+  const analysis = resolveAnalysisTarget(state, document, fromBuilder)
+
+  useEffect(() => {
+    setFromBuilder(new URLSearchParams(window.location.search).get('source') === 'builder')
+  }, [])
 
   return (
     <div className="app-shell">
       <AppHeader title="Parser Diagnostics" />
       <WorkbenchShell
-        leftPanel={<ParserAnalysisPanel document={document} analysis={analysis} onFile={handleFile} />}
+        leftPanel={(
+          <ParserAnalysisPanel
+            document={document}
+            analysis={analysis}
+            onFile={handleFile}
+            onClearFile={clearDocument}
+          />
+        )}
         rightPanel={<SourcePdfPreview document={document} />}
         leftLabel="Analysis"
         rightLabel="Source"
@@ -37,11 +51,18 @@ function ParserAnalysisPanel(props: {
   document: ParserDocument | null
   analysis: ParserAnalysisTarget
   onFile: (file: File) => void
+  onClearFile: () => void
 }) {
   return (
     <div className="p-24 lg:p-40 space-y-32 pb-80">
       <ParserHeader />
       <PdfUploadPanel onFile={props.onFile} />
+      {props.document && (
+        <button type="button" onClick={props.onClearFile} className="btn w-full justify-center">
+          Clear uploaded PDF
+        </button>
+      )}
+      {!props.document && <BuilderSourceNotice analysis={props.analysis} />}
       {props.document?.embeddedState && <ParserRestoreAction embeddedState={props.document.embeddedState} />}
       {!props.document?.embeddedState && props.document?.heuristic && (
         <ParserHeuristicAction result={props.document.heuristic} />
@@ -61,6 +82,7 @@ function ParserHeader() {
       <p className="muted text-sm">
         Upload a PDF for local extraction diagnostics. CVForge PDFs can restore
         embedded sessions; external PDFs can only create best-effort drafts that need review.
+        You can also analyze the current Builder CV without uploading a file.
       </p>
     </header>
   )
@@ -68,6 +90,7 @@ function ParserHeader() {
 
 type ParserAnalysisTarget = {
   score: ReturnType<typeof scoreCV> | null
+  isEmpty: boolean
   target: {
     label: string
     description: string
@@ -75,14 +98,36 @@ type ParserAnalysisTarget = {
   }
 }
 
-function resolveAnalysisTarget(state: ReturnType<typeof useCV>['state'], document: ParserDocument | null): ParserAnalysisTarget {
+function BuilderSourceNotice({ analysis }: { analysis: ParserAnalysisTarget }) {
+  return (
+    <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-8">
+      <div className="flex items-center justify-between gap-16">
+        <h2 className="text-sm font-semibold text-ink">{analysis.target.label}</h2>
+        <span className="text-[10px] uppercase tracking-[0.16em] text-ink-4">No upload</span>
+      </div>
+      <p className="text-xs text-ink-3 leading-relaxed">
+        {analysis.target.description}
+      </p>
+      {analysis.isEmpty && (
+        <p className="text-xs text-amber-200 leading-relaxed">
+          The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful diagnostics.
+        </p>
+      )}
+    </section>
+  )
+}
+
+function resolveAnalysisTarget(state: CVState, document: ParserDocument | null, fromBuilder: boolean): ParserAnalysisTarget {
   if (!document?.extraction) {
     return {
       score: scoreCV(state),
+      isEmpty: isBuilderCVEmpty(state),
       target: {
         label: 'Current Builder CV',
-        description: 'These checks use the CV currently stored in the Builder.',
-        caveat: 'Upload results are not mixed into this score until CVForge has a restored session or best-effort draft to evaluate.',
+        description: fromBuilder
+          ? 'These checks use the active CV from Builder. No PDF was uploaded and no server storage is used.'
+          : 'These checks use the CV currently stored in the Builder. Upload a PDF to analyze a file instead.',
+        caveat: 'Uploaded PDF results are not mixed into this score until CVForge has a restored session or best-effort draft to evaluate.',
       },
     }
   }
@@ -93,6 +138,7 @@ function resolveAnalysisTarget(state: ReturnType<typeof useCV>['state'], documen
   if (document.embeddedState) {
     return {
       score: scoreCV(document.embeddedState, extractedText),
+      isEmpty: false,
       target: {
         label: 'CVForge Embedded Session',
         description: 'These checks use the structured session embedded inside the uploaded CVForge PDF.',
@@ -104,6 +150,7 @@ function resolveAnalysisTarget(state: ReturnType<typeof useCV>['state'], documen
   if (document.heuristic) {
     return {
       score: scoreCV(document.heuristic.draft, extractedText),
+      isEmpty: false,
       target: {
         label: 'Best-Effort External PDF Draft',
         description: 'These checks use the conservative draft parsed from the uploaded external PDF.',
@@ -114,10 +161,35 @@ function resolveAnalysisTarget(state: ReturnType<typeof useCV>['state'], documen
 
   return {
     score: null,
+    isEmpty: false,
     target: {
       label: isForge ? 'CVForge PDF Extraction Only' : 'Raw PDF Extraction Only',
       description: 'CVForge extracted text from this PDF, but there is no structured CV draft to score.',
       caveat: 'The current Builder CV is intentionally not scored as a proxy for this upload.',
     },
   }
+}
+
+function isBuilderCVEmpty(state: CVState) {
+  const { profile, workExperience, education, projects, skills, languages, customSections } = state.resume
+
+  return ![
+    profile.name,
+    profile.email,
+    profile.phone,
+    profile.location,
+    profile.website,
+    profile.github,
+    profile.linkedin,
+    profile.summary,
+  ].some((value) => value.trim())
+    && workExperience.length === 0
+    && education.length === 0
+    && projects.length === 0
+    && skills.featured.length === 0
+    && skills.featuredWithRating.length === 0
+    && skills.technical.length === 0
+    && skills.soft.length === 0
+    && languages.length === 0
+    && customSections.length === 0
 }

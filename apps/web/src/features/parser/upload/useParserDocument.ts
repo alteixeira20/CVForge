@@ -37,7 +37,12 @@ export function useParserDocument() {
     }
   }
 
-  return { document, handleFile }
+  const clearDocument = () => {
+    if (document?.objectUrl) URL.revokeObjectURL(document.objectUrl)
+    setDocument(null)
+  }
+
+  return { document, handleFile, clearDocument }
 }
 
 function isPdfFile(file: File) {
