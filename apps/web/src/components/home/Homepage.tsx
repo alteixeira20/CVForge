@@ -7,15 +7,11 @@ import { HeroSection } from './HeroSection'
 import { HowItWorksSection } from './HowItWorksSection'
 import { FeaturesSection } from './FeaturesSection'
 
-interface HomepageProps {
-  onCreate?: () => void
-}
-
-export function Homepage({ onCreate = () => {} }: HomepageProps) {
+export function Homepage() {
   return (
     <div className="home">
-      <SiteHeader onCreate={onCreate} />
-      <HeroSection onCreate={onCreate} />
+      <SiteHeader />
+      <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />
       <SiteFooter />

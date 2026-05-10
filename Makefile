@@ -23,7 +23,7 @@ build: ## Build the production application
 	pnpm build
 
 .PHONY: start
-start: ## Start the production server locally
+start: build ## Build and start the production server locally
 	pnpm start
 
 .PHONY: lint

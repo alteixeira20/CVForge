@@ -1,14 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Brand } from '@/components/ui/Brand'
-import { Icon } from '@/components/ui/Icon'
 
-interface SiteHeaderProps {
-  onCreate?: () => void
-}
-
-export function SiteHeader({ onCreate = () => {} }: SiteHeaderProps) {
+export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -21,23 +17,14 @@ export function SiteHeader({ onCreate = () => {} }: SiteHeaderProps) {
     <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <Brand href="/" />
       <nav>
-        <a href="#how">How it works</a>
-        <a href="#features">Features</a>
+        <Link href="/builder">Builder</Link>
+        <Link href="/parser">Parser</Link>
       </nav>
       <span className="spacer" />
       <div className="actions">
-        <a
-          className="gh-pill"
-          href="#"
-          onClick={(e) => e.preventDefault()}
-        >
-          <Icon name="github" size={18} />
-          <span>GitHub</span>
-          <span className="stars">★ 2.4k</span>
-        </a>
-        <button className="btn primary" onClick={onCreate}>
+        <Link href="/builder" className="btn primary">
           Create CV
-        </button>
+        </Link>
       </div>
     </header>
   )

@@ -1,14 +1,14 @@
 # CVForge
 
-CVForge is a local-first CV builder built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
+CVForge is a local-first CV builder and parser workbench built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
 
-The current app focuses on structured CV editing, local browser persistence, JSON backup/restore, PDF export with session embedding, and local parser diagnostics in a shared workbench UI.
+The current app focuses on structured CV editing, browser localStorage persistence, JSON backup/import, PDF export with session embedding, CVForge PDF session restore, and local parser diagnostics in a shared workbench UI.
 
 ## Product Principles
 
 - **Local-Only Privacy**: CVForge does not use a database, account system, or server-side persistence. Your data remains in your browser's `localStorage`.
 - **Heuristic Diagnostics**: Parser scoring and diagnostics are rule-based local checks. They are intended as useful signals for manual CV polish, not as a hiring outcome guarantee or an exact simulation of server-side ATS parsing.
-- **Reliable Portability**: Validated JSON export/import is the guaranteed way to move or back up your full session data. CVForge-generated PDFs also include an embedded session attachment for easy restoration.
+- **Reliable Portability**: Validated JSON export/import is the simplest reliable way to move or back up your full session data. CVForge-generated PDFs can also include an embedded session attachment for restoration when that attachment is present.
 
 ## Current Status
 
@@ -19,21 +19,22 @@ Implemented:
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
 - Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
-- CSS-based live preview placeholder.
+- CSS-based live preview for the current builder state.
 - JSON backup export and validated JSON restore.
-- PDF download generated from current CV data.
+- PDF download generated from current CV data with embedded session metadata.
+- Section reordering, section visibility, and bullet visibility controls.
 - Local PDF upload, source preview, text extraction, and parser diagnostics.
-- ATS-style local scoring with transparent issue rows.
+- CVForge-generated PDF detection and embedded session restore.
+- Best-effort external PDF draft import that must be reviewed before use.
+- Local heuristic scoring with transparent issue rows.
 
 Planned:
-- Major section reordering.
 - Builder-to-parser handoff.
 - Richer parser extraction and scoring checks.
-- Importing parsed PDF content into the builder.
 
 ## Development Workflow
 
-CVForge uses a `Makefile` to simplify common tasks.
+CVForge uses a `Makefile` to simplify common commands.
 
 ### Local Setup
 
@@ -102,7 +103,7 @@ pnpm typecheck
 pnpm build
 ```
 
-Run validation after each implementation slice.
+Run validation after each implementation slice. Parser diagnostics are local rule-based checks and should not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
 
 ## Clean-Room Rebuild
 
@@ -112,4 +113,4 @@ CVForge is a clean-room rebuild. Comparable features may be rebuilt from scratch
 
 - `docs/product-scope.md`: product scope, implemented status, and planned work.
 - `docs/clean-room.md`: clean-room rules, folder structure, and state/storage notes.
-- `docs/implementation-plan.md`: implementation phases and validation expectations.
+- `docs/implementation-plan.md`: implementation plan and validation expectations.

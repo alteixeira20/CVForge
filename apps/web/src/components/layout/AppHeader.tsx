@@ -6,32 +6,11 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface AppHeaderProps {
   title?: string
-  displayName?: string
-  saved?: boolean
-  readOnly?: boolean
-  onSave?: () => void
-  onShare?: () => void
-  onIO?: () => void
-  onCreateOwn?: () => void
 }
 
 export function AppHeader({
   title = 'Workbench',
-  displayName = 'User',
-  saved = false,
-  readOnly = false,
-  onSave,
-  onShare,
-  onIO,
-  onCreateOwn,
 }: AppHeaderProps) {
-  const initials = ((displayName || 'You')
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('') || 'Y'
-  ).toUpperCase()
-
   return (
     <header className="app-header">
       <Link href="/" className="brand-mini" style={{ cursor: 'pointer', textDecoration: 'none' }}>
@@ -67,54 +46,21 @@ export function AppHeader({
         <span className="active">{title}</span>
       </div>
 
-      {!readOnly && (
-        <span className={`badge ${saved ? 'synced' : ''}`}>
-          <span className="dot" />
-          {saved ? 'SYNCED' : 'LOCAL ONLY'}
-        </span>
-      )}
-      {readOnly && (
-        <span className="badge">
-          <span className="dot" />
-          READ ONLY
-        </span>
-      )}
+      <span className="badge">
+        <span className="dot" />
+        LOCAL ONLY
+      </span>
 
       <span className="spacer" />
 
       <div className="actions">
-        {!readOnly && (
-          <>
-            <button className="iconbtn" title="Import / Export" onClick={onIO}>
-              <Icon name="export" size={16} />
-            </button>
-            <button
-              className="iconbtn"
-              title="Share"
-              onClick={saved ? onShare : onSave}
-            >
-              <Icon name="share" size={16} />
-            </button>
-            {!saved ? (
-              <button className="btn sm" onClick={onSave}>
-                <Icon name="cloud" size={14} /> Save to server
-              </button>
-            ) : (
-              <button className="btn sm" onClick={onShare}>
-                <Icon name="share" size={14} /> Share
-              </button>
-            )}
-          </>
-        )}
-        {readOnly && (
-          <button className="btn sm primary" onClick={onCreateOwn}>
-            <Icon name="plus" size={14} stroke="#fff" /> Create your own
-          </button>
-        )}
+        <Link href="/builder" className="btn sm">
+          Builder
+        </Link>
+        <Link href="/parser" className="btn sm">
+          Parser
+        </Link>
         <ThemeToggle />
-        <span className="avatar" title={displayName}>
-          {initials}
-        </span>
       </div>
     </header>
   )

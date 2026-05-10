@@ -6,66 +6,83 @@ export function FeaturesSection() {
   return (
     <section className="section container" id="features">
       <div className="section-head">
-        <h2>Built for solo builders and small teams.</h2>
+        <h2>Real CVForge features, kept local.</h2>
         <p className="section-lede">
-          A small set of features, chosen carefully, sized to fit how real
-          planning works.
+          Everything here is part of the browser app today: structured editing,
+          local persistence, portable exports, and best-effort PDF diagnostics.
         </p>
       </div>
       <div className="features">
         <div className="feature">
-          <div className="ic"><Icon name="device" size={20} /></div>
-          <h3>Local-first</h3>
-          <p>
-            Edits land on your device first. No round-trips, no spinner, no
-            internet required.
-          </p>
-        </div>
-        <div className="feature">
           <div className="ic"><Icon name="users" size={20} /></div>
-          <h3>Optional collaboration</h3>
+          <h3>Structured CV Builder</h3>
           <p>
-            Save a CV to a server when you want to share. Presence,
-            activity log, signed links.
+            Edit profile, experience, education, projects, skills,
+            languages, and custom sections with focused forms.
           </p>
         </div>
         <div className="feature">
-          <div className="ic"><Icon name="robot" size={20} /></div>
-          <h3>AI-friendly schema</h3>
+          <div className="ic"><Icon name="device" size={20} /></div>
+          <h3>Local Browser Storage</h3>
           <p>
-            One stable JSON file that humans and coding agents both read.
-            Agents propose; you approve.
+            CV data is stored in browser localStorage. There is no
+            account system, backend CV storage, or user database.
           </p>
         </div>
         <div className="feature">
-          <div className="ic"><Icon name="shield" size={20} /></div>
-          <h3>Self-hostable</h3>
-          <p>Single binary, SQLite by default. Deploy on any box you trust.</p>
+          <div className="ic"><Icon name="download" size={20} /></div>
+          <h3>PDF Export</h3>
+          <p>
+            Generate a PDF from the current builder state with the
+            selected document size, section order, and visibility.
+          </p>
         </div>
         <div className="feature">
           <div className="ic"><Icon name="export" size={20} /></div>
-          <h3>Portable</h3>
+          <h3>JSON Backup and Import</h3>
           <p>
-            Export to JSON or Markdown. Import from either. No lock-in, ever.
+            Export a validated JSON backup and import it later to
+            replace the current local builder session.
           </p>
         </div>
         <div className="feature">
-          <div className="ic"><Icon name="github" size={20} /></div>
-          <h3>Open source</h3>
+          <div className="ic"><Icon name="file-text" size={20} /></div>
+          <h3>CVForge PDF Session Restore</h3>
           <p>
-            MIT-licensed and built in public. Fork it, fix it, ship it your
-            way.
+            CVForge PDFs can include an embedded session attachment.
+            Upload one in Parser to restore the builder state.
+          </p>
+        </div>
+        <div className="feature">
+          <div className="ic"><Icon name="search" size={20} /></div>
+          <h3>Parser Diagnostics</h3>
+          <p>
+            Upload a PDF locally to inspect extracted text, page count,
+            parser confidence, and rule-based diagnostic signals.
+          </p>
+        </div>
+        <div className="feature">
+          <div className="ic"><Icon name="import" size={20} /></div>
+          <h3>Best-Effort External Draft Import</h3>
+          <p>
+            External PDFs can create an editable draft when text is
+            readable, but every imported field must be reviewed.
+          </p>
+        </div>
+        <div className="feature">
+          <div className="ic"><Icon name="eye" size={20} /></div>
+          <h3>Section Controls</h3>
+          <p>
+            Reorder major sections, hide sections, and control bullet
+            visibility before previewing or exporting.
           </p>
         </div>
       </div>
       <div className="gh-cta">
         <div className="gh-cta-text">
-          <strong>Open-source, self-hostable, and built to stay portable.</strong>
-          <span>MIT licensed · Exportable JSON · Local hosting</span>
+          <strong>Local diagnostics are rule-based checks, not hiring guarantees.</strong>
+          <span>JSON is the simplest reliable restore path · External PDF import is best-effort</span>
         </div>
-        <a className="btn lg" href="#" onClick={(e) => e.preventDefault()}>
-          <Icon name="github" size={16} /> Star on GitHub
-        </a>
       </div>
     </section>
   )

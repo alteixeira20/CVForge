@@ -16,13 +16,13 @@ The current app includes:
 - A responsive workbench shell for builder and parser pages.
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - Major section reordering and visibility toggles.
-- A CSS-based live preview placeholder.
-- JSON backup export and validated restore (guaranteed session portability).
+- A CSS-based live preview for the current builder state.
+- JSON backup export and validated restore (the simplest reliable session portability path).
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
 - CVForge-generated PDF detection and session restoration.
-- Best-effort heuristic parsing for external PDFs (Draft creation).
-- Parser reliability scoring separate from CV diagnostics.
+- Best-effort heuristic parsing for external PDFs (draft creation that must be reviewed).
+- Parser reliability scoring and CV diagnostics presented as local rule-based signals.
 - Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
@@ -35,7 +35,8 @@ Planned but not implemented:
 
 - Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
 - The CSS live preview uses web fonts (Lexend) while PDF export falls back to standard PDF fonts (Helvetica).
-- Session restoration from PDF works only for CVForge-generated files with embedded attachments.
+- Session restoration from PDF works only for CVForge-generated files when an embedded session attachment is present.
+- External PDF draft import is heuristic and may create incomplete or inaccurate fields.
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
 
@@ -47,10 +48,10 @@ Planned but not implemented:
 - Basic typography, spacing, color, and A4/Letter settings.
 - Section reordering and visibility.
 - Browser-only persistence (Private, local-first).
-- JSON backup and restore (Reliable).
+- JSON backup and restore (the simplest reliable restore path).
 - PDF download with embedded session restore.
-- Local PDF parser diagnostics (Heuristic).
-- ATS-style scoring.
+- Local PDF parser diagnostics (heuristic).
+- Local rule-based scoring and issue rows, not real ATS guarantees.
 
 ### Planned
 - Builder-to-parser handoff.

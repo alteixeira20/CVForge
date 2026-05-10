@@ -14,7 +14,6 @@ import {
   Lock,
   Cloud,
   Monitor,
-  Share2,
   Users,
   FileDown,
   FileUp,
@@ -54,7 +53,6 @@ export type IconName =
   | 'lock'
   | 'cloud'
   | 'device'
-  | 'share'
   | 'users'
   | 'import'
   | 'export'
@@ -93,7 +91,6 @@ const iconMap: Record<string, LucideIcon> = {
   lock: Lock,
   cloud: Cloud,
   device: Monitor,
-  share: Share2,
   users: Users,
   import: FileDown,
   export: FileUp,

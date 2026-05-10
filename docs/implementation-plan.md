@@ -45,7 +45,7 @@ Implementation notes:
 - [x] Projects & Languages editors.
 - [x] Skills editor.
 - [x] Custom Section editor.
-- [x] Dynamic visual CV preview placeholder.
+- [x] Dynamic visual CV preview for the current builder state.
 - [x] JSON backup export and validated restore (Reliable).
 - [x] PDF download generated from current CV state with embedded session.
 - [x] Major section reordering and visibility.
@@ -53,7 +53,8 @@ Implementation notes:
 Current limitations:
 - The preview does not apply every setting in the schema.
 - The CSS preview is separate from PDF generation.
-- Session restoration from PDF works only for CVForge files; generic PDF-to-builder import is not implemented.
+- Session restoration from PDF works only for CVForge files with an embedded attachment.
+- External PDF-to-builder draft import is heuristic and requires review.
 
 ## Phase 4: Parser & Engine (In Progress)
 
@@ -67,19 +68,24 @@ Current limitations:
 Current parser status:
 - `/parser` extracts selectable PDF text locally with `pdfjs-dist`.
 - Scanned or protected PDFs may produce no text or an extraction error.
-- Parser diagnostics are heuristic and do not auto-fill builder fields.
+- Parser diagnostics are heuristic and are not real ATS guarantees.
+- CVForge PDFs with embedded session attachments can restore builder state.
+- External PDFs can create best-effort editable drafts, but imported fields must be reviewed.
 
 ## Phase 5: Import, Export, and Launch (In Progress)
 
 - [x] Real PDF generation via `@react-pdf/renderer`.
 - [x] JSON export and restore flow.
 - [x] PDF upload flow.
+- [x] High-fidelity session restoration from CVForge PDFs.
+- [x] Best-effort heuristic import from external PDFs.
 - [ ] Builder-to-parser handoff.
 - [ ] Final visual polish and performance audit.
 
 Current import status:
-- `/resume-import` exposes the same validated JSON backup/restore action as the builder.
-- PDF-to-builder import is not implemented.
+- JSON backup/restore is accessible within the Builder.
+- PDF restoration and heuristic import are accessible within the Parser.
+- Standalone `/resume-import` route is deprecated.
 
 ## UI Implementation Checklist
 

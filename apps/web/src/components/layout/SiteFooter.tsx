@@ -8,24 +8,14 @@ export function SiteFooter() {
       <div className="row">
         <Brand />
         <span style={{ color: 'var(--ink-4)' }}>·</span>
-        <span>MIT licensed · v1.0</span>
+        <span>Local-first CV builder and parser</span>
         <span className="flex-1" />
-        <div className="links">
-          <a href="#" onClick={(e) => e.preventDefault()}>GitHub</a>
-          <a href="#" onClick={(e) => e.preventDefault()}>Docs</a>
-          <a href="#" onClick={(e) => e.preventDefault()}>Self-host guide</a>
-          <a href="#" onClick={(e) => e.preventDefault()}>Changelog</a>
-        </div>
+        <span>No account or backend CV storage.</span>
       </div>
       <div className="row sub" style={{ marginTop: 16, color: 'var(--ink-4)', fontSize: 13 }}>
-        <span>
-          Created by{' '}
-          <a href="https://github.com/alteixeira20/" target="_blank" rel="noopener noreferrer">
-            Alexandre Teixeira
-          </a>
-        </span>
+        <span>CVForge stores CV data in your browser localStorage.</span>
         <span className="flex-1" />
-        <span>Built locally. Optionally yours to host.</span>
+        <span>Use JSON export for the simplest reliable backup and restore path.</span>
       </div>
     </footer>
   )
