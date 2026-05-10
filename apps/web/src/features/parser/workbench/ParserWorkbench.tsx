@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
@@ -19,13 +19,10 @@ import { useParserDocument } from '../upload/useParserDocument'
 
 export function ParserWorkbench() {
   const { state } = useCV()
-  const [fromBuilder, setFromBuilder] = useState(false)
+  const searchParams = useSearchParams()
+  const fromBuilder = searchParams.get('source') === 'builder'
   const { document, handleFile, clearDocument } = useParserDocument()
   const analysis = resolveAnalysisTarget(state, document, fromBuilder)
-
-  useEffect(() => {
-    setFromBuilder(new URLSearchParams(window.location.search).get('source') === 'builder')
-  }, [])
 
   return (
     <div className="app-shell">
