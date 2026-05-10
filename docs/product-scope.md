@@ -21,8 +21,9 @@ The current app includes:
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
 - CVForge-generated PDF detection and session restoration.
-- Best-effort heuristic parsing for external PDFs (draft creation that must be reviewed).
+- Best-effort heuristic parsing for external PDFs with a structured draft review before replacement.
 - Parser reliability scoring and CV diagnostics presented as local rule-based signals.
+- Uploaded PDF analysis scores the embedded CVForge session or best-effort draft when one exists, not unrelated current Builder data.
 - Local heuristic scoring and transparent diagnostic checks.
 
 ## 3. Planned Scope
@@ -37,6 +38,7 @@ Planned but not implemented:
 - The CSS live preview uses web fonts (Lexend) while PDF export falls back to standard PDF fonts (Helvetica).
 - Session restoration from PDF works only for CVForge-generated files when an embedded session attachment is present.
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
+- Parser reliability is separate from CV quality diagnostics.
 - Data is saved only in the current browser's `localStorage`.
 - There is no server-side persistence, authentication, or database.
 
@@ -51,6 +53,7 @@ Planned but not implemented:
 - JSON backup and restore (the simplest reliable restore path).
 - PDF download with embedded session restore.
 - Local PDF parser diagnostics (heuristic).
+- Structured review before importing an external PDF draft.
 - Local rule-based scoring and issue rows, not real ATS guarantees.
 
 ### Planned

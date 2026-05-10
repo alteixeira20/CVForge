@@ -1,29 +1,43 @@
 import { type ScoreIssue, type ScoreResult } from '@/features/scoring/scoringTypes'
 
-export function ScorePanel({ result }: { result: ScoreResult }) {
+export interface ScorePanelTarget {
+  label: string
+  description: string
+  caveat: string
+}
+
+export function ScorePanel({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
   return (
     <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-16">
-      <ScoreHeader result={result} />
-      <div className="space-y-8">
-        {result.issues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
-      </div>
+      <ScoreHeader result={result} target={target} />
+      {result ? (
+        <div className="space-y-8">
+          {result.issues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
+        </div>
+      ) : (
+        <p className="text-xs text-ink-3 leading-relaxed">
+          This upload produced extraction diagnostics only. CVForge is not scoring your current Builder CV as a stand-in for this PDF.
+        </p>
+      )}
       <p className="text-[10px] uppercase tracking-[0.18em] text-ink-4">
-        Local ATS-style diagnostic, not a hiring outcome guarantee.
+        Local rule-based diagnostics, not a hiring outcome guarantee.
       </p>
     </section>
   )
 }
 
-function ScoreHeader({ result }: { result: ScoreResult }) {
+function ScoreHeader({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
   return (
     <div className="flex items-end justify-between gap-16">
       <div>
         <h2 className="text-sm font-semibold text-ink">Heuristic Analysis</h2>
+        <p className="text-[10px] uppercase tracking-[0.16em] text-ember mt-2">{target.label}</p>
         <p className="text-xs text-ink-3 mt-4">
-          Local, rule-based checks. Not a hiring guarantee or server-side ATS simulation.
+          {target.description}
         </p>
+        <p className="text-[10px] text-ink-4 mt-3 leading-relaxed">{target.caveat}</p>
       </div>
-      <strong className="text-3xl text-ember">{result.score}</strong>
+      {result && <strong className="text-3xl text-ember">{result.score}</strong>}
     </div>
   )
 }

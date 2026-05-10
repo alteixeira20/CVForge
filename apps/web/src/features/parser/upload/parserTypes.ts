@@ -1,12 +1,8 @@
 import { type PdfExtractionResult } from '@/lib/parser/pdfTextExtraction'
+import { type HeuristicResult as ParserHeuristicResult } from '@/lib/parser/heuristicResumeParser'
 import { type CVState } from '@/types/cv'
 
-export interface HeuristicResult {
-  draft: CVState
-  confidence: number
-  warnings: string[]
-  detectedFields: string[]
-}
+export type HeuristicResult = ParserHeuristicResult
 
 export interface ParserDocument {
   fileName: string

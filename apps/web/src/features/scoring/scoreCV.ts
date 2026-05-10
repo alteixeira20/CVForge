@@ -5,11 +5,11 @@ import { type ScoreIssue, type ScoreResult } from './scoringTypes'
 
 export function scoreCV(
   state: CVState, 
-  extractedText = '', 
-  includeExtraction = false,
-  isCvForge = false
+  extractedText = '',
+  _includeExtraction = false,
+  _isCvForge = false
 ): ScoreResult {
-  const issues = buildIssues(state, extractedText, includeExtraction, isCvForge)
+  const issues = buildIssues(state, extractedText)
   const maxScore = issues.reduce((total, issue) => total + issue.maxPoints, 0)
   const score = issues.reduce((total, issue) => total + issue.points, 0)
 
@@ -18,9 +18,7 @@ export function scoreCV(
 
 function buildIssues(
   state: CVState, 
-  extractedText: string, 
-  includeExtraction: boolean,
-  isCvForge: boolean
+  extractedText: string
 ): ScoreIssue[] {
   const { profile, workExperience, education, projects } = state.resume
 
@@ -37,14 +35,6 @@ function buildIssues(
     createWarning('metrics', 'Metrics in Bullets', 'Use numbers in bullets where they are honest and useful.', metricPoints(state), 12),
     createWarning('compactness', 'Compactness', 'Keep the CV concise enough for a first screening pass.', compactnessPoints(state, extractedText), 8),
   ]
-
-  if (includeExtraction) {
-    issues.push(createIssue('extraction', 'PDF Text Extraction', 'Uploaded PDFs should expose selectable text.', Boolean(extractedText.trim()), 10))
-  }
-
-  if (isCvForge) {
-    issues.push(createIssue('forge-source', 'Native PDF Structure', 'This PDF uses the optimized CVForge structure.', true, 5))
-  }
 
   return issues
 }

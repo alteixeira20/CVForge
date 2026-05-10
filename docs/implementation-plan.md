@@ -62,6 +62,8 @@ Current limitations:
 - [x] Implement standalone local heuristic scoring module.
 - [x] Detect CVForge-generated PDFs and restore sessions from embedded attachments.
 - [x] Implement best-effort heuristic import for external PDFs.
+- [x] Add structured review before replacing Builder data with an external PDF draft.
+- [x] Keep uploaded PDF draft/session scoring separate from unrelated current Builder state.
 - [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
 - [ ] Add richer parser diagnostics and field-level extraction.
 
@@ -71,6 +73,7 @@ Current parser status:
 - Parser diagnostics are heuristic and are not real ATS guarantees.
 - CVForge PDFs with embedded session attachments can restore builder state.
 - External PDFs can create best-effort editable drafts, but imported fields must be reviewed.
+- Parser reliability describes extraction and draft confidence. It is separate from CV quality checks.
 
 ## Phase 5: Import, Export, and Launch (In Progress)
 
