@@ -23,7 +23,7 @@ function set(key: string, value: string): void {
   try {
     window.localStorage.setItem(key, value)
   } catch {
-    // storage full or blocked — silently ignore
+    // storage full or blocked - silently ignore
   }
 }
 

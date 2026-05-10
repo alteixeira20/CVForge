@@ -42,7 +42,7 @@ export function SectionItemHeader({
           </span>
           {subtitle && (
             <span className="text-xs text-ink-3 truncate opacity-60">
-              — {subtitle}
+              - {subtitle}
             </span>
           )}
         </div>
