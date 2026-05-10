@@ -1,5 +1,8 @@
-import { type ReactNode } from 'react'
+'use client'
+
+import { useState, type ReactNode } from 'react'
 import { Icon, type IconName } from '@/components/ui/Icon'
+import { useCV } from '@/context/CVContext'
 import { ProfileEditor } from '@/features/builder/profile/ProfileEditor'
 import { SettingsEditor } from '@/features/builder/settings/SettingsEditor'
 import { WorkExperienceEditor } from '@/features/builder/work/WorkExperienceEditor'
@@ -9,76 +12,125 @@ import { LanguagesEditor } from '@/features/builder/languages/LanguagesEditor'
 import { SkillsEditor } from '@/features/builder/skills/SkillsEditor'
 import { CustomSectionsEditor } from '@/features/builder/custom-sections/CustomSectionsEditor'
 
-const BUILDER_SECTIONS = [
-  { title: 'Personal Profile', icon: 'users', content: <ProfileEditor /> },
-  { title: 'Experience', icon: 'activity', content: <WorkExperienceEditor /> },
-  { title: 'Education', icon: 'fold', content: <EducationEditor /> },
-  { title: 'Projects', icon: 'spark', content: <ProjectsEditor /> },
-  { title: 'Skills', icon: 'shield', content: <SkillsEditor /> },
-  { title: 'Custom Sections', icon: 'fold', content: <CustomSectionsEditor /> },
-  { title: 'Languages', icon: 'users', content: <LanguagesEditor /> },
-  { title: 'Builder Settings', icon: 'sun', content: <SettingsEditor /> },
-] satisfies BuilderSection[]
-
-const PLANNED_SECTIONS: string[] = []
-
-interface BuilderSection {
-  title: string
-  icon: IconName
-  content: ReactNode
-}
-
 export function BuilderSectionList() {
+  const { state } = useCV()
+  const { resume } = state
+  const [expandedId, setExpandedId] = useState<string | null>('profile')
+
+  const toggleSection = (id: string) => {
+    setExpandedId(expandedId === id ? null : id)
+  }
+
+  const getStatus = (id: string) => {
+    switch (id) {
+      case 'profile':
+        return resume.profile.name ? 'Filled' : 'Empty'
+      case 'experience':
+        return resume.workExperience.length > 0 ? `${resume.workExperience.length} items` : 'Empty'
+      case 'education':
+        return resume.education.length > 0 ? `${resume.education.length} items` : 'Empty'
+      case 'projects':
+        return resume.projects.length > 0 ? `${resume.projects.length} items` : 'Empty'
+      case 'skills':
+        const skillCount = resume.skills.featured.length + resume.skills.featuredWithRating.length + resume.skills.technical.length + resume.skills.soft.length
+        return skillCount > 0 ? `${skillCount} skills` : 'Empty'
+      case 'languages':
+        return resume.languages.length > 0 ? `${resume.languages.length} items` : 'Empty'
+      case 'custom':
+        return resume.customSections.length > 0 ? `${resume.customSections.length} sections` : 'Empty'
+      default:
+        return ''
+    }
+  }
+
+  const BUILDER_SECTIONS = [
+    { id: 'profile', title: 'Personal Profile', icon: 'users', content: <ProfileEditor /> },
+    { id: 'experience', title: 'Experience', icon: 'activity', content: <WorkExperienceEditor /> },
+    { id: 'education', title: 'Education', icon: 'fold', content: <EducationEditor /> },
+    { id: 'projects', title: 'Projects', icon: 'spark', content: <ProjectsEditor /> },
+    { id: 'skills', title: 'Skills', icon: 'shield', content: <SkillsEditor /> },
+    { id: 'custom', title: 'Custom Sections', icon: 'fold', content: <CustomSectionsEditor /> },
+    { id: 'languages', title: 'Languages', icon: 'users', content: <LanguagesEditor /> },
+    { id: 'settings', title: 'Builder Settings', icon: 'sun', content: <SettingsEditor /> },
+  ] satisfies Array<{ id: string; title: string; icon: IconName; content: ReactNode }>
+
   return (
-    <div className="space-y-20">
+    <div className="space-y-4">
       {BUILDER_SECTIONS.map((section) => (
-        <BuilderSectionCard key={section.title} section={section} />
+        <BuilderSectionAccordion
+          key={section.id}
+          section={section}
+          status={getStatus(section.id)}
+          isExpanded={expandedId === section.id}
+          onToggle={() => toggleSection(section.id)}
+        />
       ))}
-      {PLANNED_SECTIONS.length > 0 && <PlannedSectionList />}
     </div>
   )
 }
 
-function BuilderSectionCard({ section }: { section: BuilderSection }) {
+function BuilderSectionAccordion({
+  section,
+  status,
+  isExpanded,
+  onToggle,
+}: {
+  section: { title: string; icon: IconName; content: ReactNode }
+  status: string
+  isExpanded: boolean
+  onToggle: () => void
+}) {
   return (
-    <section className="space-y-12">
-      <BuilderSectionHeading title={section.title} icon={section.icon} />
-      <div className="panel p-16 lg:p-20 bg-bg-2 border border-border rounded-xl">
-        {section.content}
-      </div>
-    </section>
-  )
-}
+    <div
+      className={`group overflow-hidden rounded-xl border transition-all duration-200 ${
+        isExpanded
+          ? 'border-border-strong bg-bg-2 shadow-sm'
+          : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
+      }`}
+    >
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-12 p-16 text-left outline-none"
+      >
+        <div className="flex items-center gap-12 overflow-hidden">
+          <div
+            className={`flex h-32 w-32 shrink-0 items-center justify-center rounded-lg border transition-colors ${
+              isExpanded
+                ? 'border-ember/30 bg-ember/10 text-ember'
+                : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
+            }`}
+          >
+            <Icon name={section.icon} size={16} />
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span
+              className={`truncate text-sm font-medium transition-colors ${
+                isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
+              }`}
+            >
+              {section.title}
+            </span>
+            {status && (
+              <span className="text-[10px] text-ink-4 uppercase tracking-wider truncate">
+                {status}
+              </span>
+            )}
+          </div>
+        </div>
+        <Icon
+          name="chevron-down"
+          size={14}
+          className={`shrink-0 text-ink-4 transition-transform duration-200 ${
+            isExpanded ? 'rotate-180 text-ink-3' : ''
+          }`}
+        />
+      </button>
 
-function BuilderSectionHeading({ title, icon }: { title: string; icon: IconName }) {
-  return (
-    <div className="flex items-center gap-8 border-b border-border-faint pb-8">
-      <Icon name={icon} size={14} className="text-ember" />
-      <h3 className="text-xs uppercase tracking-[0.2em] text-ink-4 font-bold">{title}</h3>
-    </div>
-  )
-}
-
-function PlannedSectionList() {
-  return (
-    <div className="space-y-12 opacity-50">
-      <h3 className="text-[10px] uppercase tracking-widest text-ink-4 font-bold">
-        More Sections Coming Soon
-      </h3>
-      <div className="grid grid-cols-2 gap-12">
-        {PLANNED_SECTIONS.map((section) => <PlannedSectionCard key={section} section={section} />)}
-      </div>
-    </div>
-  )
-}
-
-function PlannedSectionCard({ section }: { section: string }) {
-  return (
-    <div className="panel p-12 bg-bg-2 border border-border rounded-lg flex items-center justify-between">
-      <span className="text-xs font-medium">{section}</span>
-      <span className="text-[8px] bg-bg-3 border border-border-strong px-4 py-1 rounded text-ink-4 uppercase">
-        Planned
-      </span>
+      {isExpanded && (
+        <div className="border-t border-border-faint p-16 lg:p-24 animate-in fade-in slide-in-from-top-1 duration-200">
+          {section.content}
+        </div>
+      )}
     </div>
   )
 }
