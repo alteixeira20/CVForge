@@ -9,7 +9,7 @@ export function SkillsEditor() {
   const { technical, soft } = state.resume.skills
 
   return (
-    <div className="space-y-32">
+    <div className="space-y-10">
       <FeaturedSkillsEditor />
       <SkillListEditor
         label="Technical Skills (One per line)"

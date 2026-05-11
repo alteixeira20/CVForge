@@ -82,36 +82,43 @@ function BuilderSectionAccordion({
 }) {
   return (
     <div
-      className={`group overflow-hidden rounded-xl border transition-all duration-200 ${
+      className={`group relative overflow-hidden rounded-xl border transition-all duration-200 ${
         isExpanded
           ? 'border-border-strong bg-bg-2 shadow-sm'
           : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
       }`}
     >
+      {/* Accent Line */}
+      <div
+        className={`absolute left-0 top-12 bottom-12 w-3 rounded-r-sm transition-opacity ${
+          isExpanded ? 'bg-ember opacity-100' : 'bg-ink-4 opacity-0 group-hover:opacity-40'
+        }`}
+      />
+
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-12 p-16 text-left outline-none"
+        className="flex w-full items-center justify-between gap-12 p-16 pl-20 text-left outline-none"
       >
         <div className="flex items-center gap-12 overflow-hidden">
           <div
-            className={`flex h-32 w-32 shrink-0 items-center justify-center rounded-lg border transition-colors ${
+            className={`flex h-28 w-28 shrink-0 items-center justify-center rounded-lg border transition-colors ${
               isExpanded
                 ? 'border-ember/30 bg-ember/10 text-ember'
                 : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
             }`}
           >
-            <Icon name={section.icon} size={16} />
+            <Icon name={section.icon} size={14} />
           </div>
           <div className="flex flex-col min-w-0">
             <span
-              className={`truncate text-sm font-medium transition-colors ${
+              className={`truncate text-sm font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
               }`}
             >
               {section.title}
             </span>
             {status && (
-              <span className="text-[10px] text-ink-4 uppercase tracking-wider truncate">
+              <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.08em] truncate">
                 {status}
               </span>
             )}
@@ -119,7 +126,7 @@ function BuilderSectionAccordion({
         </div>
         <Icon
           name="chevron-down"
-          size={14}
+          size={12}
           className={`shrink-0 text-ink-4 transition-transform duration-200 ${
             isExpanded ? 'rotate-180 text-ink-3' : ''
           }`}
@@ -127,7 +134,7 @@ function BuilderSectionAccordion({
       </button>
 
       {isExpanded && (
-        <div className="border-t border-border-faint p-16 lg:p-24 animate-in fade-in slide-in-from-top-1 duration-200">
+        <div className="border-t border-border-faint p-6 lg:p-8 animate-in fade-in slide-in-from-top-1 duration-200">
           {section.content}
         </div>
       )}

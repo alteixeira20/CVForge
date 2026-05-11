@@ -17,31 +17,33 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
   const isEmpty = useMemo(() => isEmptyCV(state), [state])
 
   return (
-    <div className="relative h-full w-full flex flex-col bg-bg-inset overflow-hidden">
+    <div className="relative h-full w-full flex flex-col overflow-hidden">
       {/* Absolute Preview Actions Cluster */}
-      <div className="absolute right-12 top-12 z-20 flex items-center gap-6">
+      <div className="absolute right-8 top-8 z-20 flex items-center gap-4">
         {isGenerating && previewUrl && (
-          <span className="animate-pulse text-[9px] font-bold uppercase tracking-widest text-ink-4 mr-4">
+          <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4 mr-2">
             Syncing
           </span>
         )}
         <DownloadPdfButton state={state} />
-        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg-2/80 backdrop-blur-sm border-border shadow-sm">
+        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/80 backdrop-blur-sm border-border shadow-sm hover:border-border-strong">
           <Icon name="search" size={13} />
           <span className="hidden sm:inline">Analyze</span>
         </Link>
       </div>
 
-      <div className="h-full w-full flex-1">
+      <div className="h-full w-full flex-1 canvas">
         {isEmpty && <EmptyPdfPreview />}
         {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
         {!isEmpty && error && !previewUrl && <PreviewError message={error} />}
         {previewUrl && (
-          <iframe
-            title="Generated PDF preview"
-            src={`${previewUrl}#navpanes=0&view=Fit`}
-            className="h-full w-full border-0 bg-white"
-          />
+          <div className="canvas-frame">
+            <iframe
+              title="Generated PDF preview"
+              src={`${previewUrl}#navpanes=0&view=Fit`}
+              className="h-full w-full border-0 bg-white"
+            />
+          </div>
         )}
       </div>
     </div>
@@ -123,7 +125,7 @@ function useDebouncedPdfPreview(state: CVState) {
 function EmptyPdfPreview() {
   return (
     <div className="flex h-full items-center justify-center p-32 text-center bg-bg-inset">
-      <div className="max-w-xs space-y-12">
+      <div className="max-w-xs space-y-6">
         <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm">
           <Icon name="file-text" size={20} className="text-ink-4" />
         </div>
@@ -141,7 +143,7 @@ function EmptyPdfPreview() {
 function GeneratingPdfPreview() {
   return (
     <div className="flex h-full items-center justify-center p-32 text-center">
-      <div className="max-w-xs space-y-12">
+      <div className="max-w-xs space-y-6">
         <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm animate-pulse">
           <Icon name="file-text" size={20} className="text-ink-4" />
         </div>

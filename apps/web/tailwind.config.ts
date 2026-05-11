@@ -9,11 +9,24 @@ const config: Config = {
         molten: 'var(--molten)',
         copper: 'var(--copper)',
         panel: 'var(--panel)',
+        'lava-glow': 'var(--lava-glow)',
+        'lava-glow-2': 'var(--lava-glow-2)',
         ink: {
           DEFAULT: 'var(--ink)',
           2: 'var(--ink-2)',
           3: 'var(--ink-3)',
           4: 'var(--ink-4)',
+        },
+        bg: {
+          DEFAULT: 'var(--bg)',
+          2: 'var(--bg-2)',
+          3: 'var(--bg-3)',
+          inset: 'var(--bg-inset)',
+        },
+        border: {
+          DEFAULT: 'var(--border)',
+          strong: 'var(--border-strong)',
+          faint: 'var(--border-faint)',
         },
         surface: {
           DEFAULT: 'var(--bg)',

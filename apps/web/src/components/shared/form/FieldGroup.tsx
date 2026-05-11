@@ -9,7 +9,7 @@ interface FieldGroupProps {
 }
 
 export function FieldGroup({ children, columns = 1, className = '' }: FieldGroupProps) {
-  const gridClass = columns === 2 ? 'grid grid-cols-1 md:grid-cols-2 gap-16' : 'space-y-16'
+  const gridClass = columns === 2 ? 'grid grid-cols-1 md:grid-cols-2 gap-4' : 'space-y-4'
   
   return (
     <div className={`${gridClass} ${className}`}>

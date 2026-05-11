@@ -16,7 +16,7 @@ export function ProfileEditor() {
   }
 
   return (
-    <div className="space-y-24">
+    <div className="space-y-6">
       <FormField label="Full Name" required>
         <TextInput
           placeholder="e.g. John Doe"

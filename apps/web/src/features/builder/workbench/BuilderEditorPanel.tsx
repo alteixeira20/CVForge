@@ -4,14 +4,16 @@ import { ImportExportActions } from '@/features/import-export/ImportExportAction
 export function BuilderEditorPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto p-16 lg:p-24 pb-16">
+      <div className="min-h-0 flex-1 overflow-y-auto p-6 lg:p-10 pb-20">
         <header className="workspace-head compact">
           <div className="crumbline">Workbench / Builder</div>
           <h1>CV Builder</h1>
-          <p className="muted text-sm">Edit your CV sections below. Changes are saved locally.</p>
+          <p className="muted text-xs leading-relaxed max-w-md">
+            Edit your CV sections below. Changes are saved locally in your browser.
+          </p>
         </header>
 
-        <div className="mt-24">
+        <div className="mt-8">
           <BuilderSectionList />
         </div>
       </div>
