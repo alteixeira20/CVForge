@@ -1,40 +1,39 @@
 'use client'
 
-import { useEffect, useState, useRef, type ChangeEvent } from 'react'
+import { useRef, type ChangeEvent } from 'react'
 import { useCV } from '@/context/CVContext'
 import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
 import { importCVState } from '@/features/import-export/importCVState'
 
-const SESSION_KEY = 'cvforge_builder_entry_seen'
+interface BuilderEntryModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onComplete: () => void
+}
 
-export function BuilderEntryModal() {
-  const [isOpen, setIsOpen] = useState(false)
+export function BuilderEntryModal({ 
+  isOpen, 
+  onClose,
+  onComplete 
+}: BuilderEntryModalProps) {
   const { state, resetState, replaceState } = useCV()
   const hasContent = !isEmptyCV(state)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    const seen = sessionStorage.getItem(SESSION_KEY)
-    if (!seen) {
-      setIsOpen(true)
-    }
-  }, [])
-
-  const handleClose = () => {
-    sessionStorage.setItem(SESSION_KEY, 'true')
-    setIsOpen(false)
+  const handleContinue = () => {
+    onComplete()
   }
 
   const handleStartFresh = () => {
     if (hasContent) {
       if (window.confirm('This will replace your current local CV. Continue?')) {
         resetState()
-        handleClose()
+        onComplete()
       }
     } else {
       resetState()
-      handleClose()
+      onComplete()
     }
   }
 
@@ -46,66 +45,84 @@ export function BuilderEntryModal() {
       const nextState = await importCVState(file)
       if (window.confirm('Replace the current local CV with this backup?')) {
         replaceState(nextState)
-        handleClose()
+        onComplete()
       }
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Import failed')
     } finally {
-      event.target.value = ''
+      if (event.target) event.target.value = ''
     }
   }
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-24">
-      <div className="w-full max-w-[480px] bg-bg-2 border border-border rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="p-32 space-y-24">
-          <div className="space-y-8 text-center">
-            <div className="w-48 h-48 rounded-2xl bg-bg border border-border flex items-center justify-center mx-auto shadow-sm">
-              <Icon name="anvil" size={24} className="text-ember" />
-            </div>
-            <h2 className="text-xl font-semibold text-ink">Welcome to CVForge</h2>
-            <p className="text-sm text-ink-3 leading-relaxed">
-              CVForge stores your data locally in your browser. 
-              No account is required and no data ever leaves your machine.
+    <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal" style={{ width: '460px' }}>
+        <div className="modal-head">
+          <div className="ic plain">
+            <Icon name="anvil" size={20} className="text-ember" />
+          </div>
+          <div className="text">
+            <h2>Welcome to CVForge</h2>
+            <p className="sub">
+              Your data is stored locally in your browser. No account required.
             </p>
           </div>
+          <button type="button" className="close" onClick={onClose} aria-label="Close">
+            <Icon name="x" size={16} />
+          </button>
+        </div>
 
-          <div className="space-y-12">
-            {hasContent ? (
-              <button
-                onClick={handleClose}
-                className="btn primary w-full justify-center h-48"
-              >
-                Continue current CV
-              </button>
-            ) : null}
-
+        <div className="modal-body" style={{ gap: '12px', paddingBottom: '24px' }}>
+          {hasContent && (
             <button
-              onClick={handleStartFresh}
-              className={`btn w-full justify-center h-48 ${!hasContent ? 'primary' : 'bg-bg'}`}
+              type="button"
+              onClick={handleContinue}
+              className="btn primary w-full justify-between h-[52px]"
             >
+              <span>Continue current CV</span>
+              <Icon name="arrow-right" size={16} />
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={handleStartFresh}
+            className={`btn w-full justify-between h-[52px] ${!hasContent ? 'primary' : ''}`}
+          >
+            <div className="flex items-center gap-12">
               <Icon name="plus" size={16} />
-              Start fresh
-            </button>
+              <span>Start fresh</span>
+            </div>
+            {!hasContent && <Icon name="arrow-right" size={16} />}
+          </button>
 
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="btn w-full justify-center h-48 bg-bg"
-            >
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="btn w-full justify-between h-[52px]"
+          >
+            <div className="flex items-center gap-12">
               <Icon name="import" size={16} />
-              Import JSON
-            </button>
-          </div>
+              <span>Import JSON</span>
+            </div>
+            <span className="text-[10px] uppercase tracking-wider opacity-50">.json backup</span>
+          </button>
+        </div>
 
-          <div className="pt-8 border-t border-border-faint text-center">
-            <p className="text-[10px] uppercase tracking-widest text-ink-4">
-              JSON is the reliable backup path
-            </p>
+        <div className="modal-foot">
+          <div className="note">
+            <Icon name="lock" size={12} />
+            <span>Local-only storage</span>
           </div>
+          <div className="spacer" />
+          <p className="text-[10px] uppercase tracking-widest text-ink-4">
+            Private & Secure
+          </p>
         </div>
       </div>
+      
       <input
         ref={fileInputRef}
         type="file"

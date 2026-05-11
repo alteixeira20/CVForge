@@ -3,8 +3,13 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Brand } from '@/components/ui/Brand'
+import { Icon } from '@/components/ui/Icon'
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  onBuilderClick?: () => void
+}
+
+export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -16,15 +21,37 @@ export function SiteHeader() {
   return (
     <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <Brand href="/" />
-      <nav>
-        <Link href="/builder">Builder</Link>
-        <Link href="/parser">Parser</Link>
-      </nav>
+      
       <span className="spacer" />
+      
       <div className="actions">
-        <Link href="/builder" className="btn primary">
-          Create CV
+        {onBuilderClick ? (
+          <button 
+            type="button"
+            className="nav-link"
+            onClick={onBuilderClick}
+          >
+            Builder
+          </button>
+        ) : (
+          <Link href="/builder" className="nav-link">
+            Builder
+          </Link>
+        )}
+        
+        <Link href="/parser" className="nav-link">
+          Parser
         </Link>
+        
+        <a 
+          href="https://github.com/alteixeira20/CVForge" 
+          target="_blank" 
+          rel="noreferrer"
+          className="btn sm bg-bg shadow-sm ml-4"
+        >
+          <Icon name="github" size={14} />
+          <span>Star</span>
+        </a>
       </div>
     </header>
   )

@@ -13,6 +13,7 @@
 @import '../styles/ui.css';
 @import '../styles/site.css';
 @import '../styles/workspace.css';
+@import '../styles/modals.css';
 
 @layer base {
   :root {

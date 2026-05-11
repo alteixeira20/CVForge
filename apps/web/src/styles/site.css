@@ -13,14 +13,16 @@
 }
 .site-header.scrolled { border-bottom-color: var(--border); }
 .site-header nav { display: inline-flex; gap: 6px; margin-left: 12px; }
-.site-header nav a {
+.site-header nav a,
+.site-header .nav-link {
   padding: 8px 12px;
   color: var(--ink-2);
   border-radius: 8px;
   font-size: 14px;
   transition: color 160ms, background 160ms;
 }
-.site-header nav a:hover { color: var(--ink); background: var(--bg-2); }
+.site-header nav a:hover,
+.site-header .nav-link:hover { color: var(--ink); background: var(--bg-2); }
 .site-header .spacer { flex: 1; }
 .site-header .actions { display: flex; align-items: center; gap: 8px; }
 

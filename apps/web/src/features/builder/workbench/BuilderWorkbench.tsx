@@ -5,7 +5,6 @@ import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
 import { BuilderEditorPanel } from './BuilderEditorPanel'
 import { BuilderPreviewPanel } from './BuilderPreviewPanel'
-import { BuilderEntryModal } from './BuilderEntryModal'
 
 export function BuilderWorkbench() {
   const { state } = useCV()
@@ -20,7 +19,6 @@ export function BuilderWorkbench() {
         leftLabel="Edit"
         rightLabel="Preview"
       />
-      <BuilderEntryModal />
     </div>
   )
 }

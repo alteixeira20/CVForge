@@ -3,7 +3,11 @@
 import Link from 'next/link'
 import { Icon } from '@/components/ui/Icon'
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onCreateClick?: () => void
+}
+
+export function HeroSection({ onCreateClick }: HeroSectionProps) {
   return (
     <>
       <section className="hero container">
@@ -17,9 +21,9 @@ export function HeroSection() {
           No account, no database, no server-side CV storage.
         </p>
         <div className="ctas">
-          <Link href="/builder" className="btn primary lg">
+          <button type="button" onClick={onCreateClick} className="btn primary lg">
             Create CV <Icon name="plus" size={16} />
-          </Link>
+          </button>
           <Link href="/parser" className="btn lg">
             Analyze PDF <Icon name="file-text" size={16} />
           </Link>
