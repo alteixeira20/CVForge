@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Icon } from '@/components/ui/Icon'
 import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { BrandMark } from '@/components/ui/BrandMark'
 
 interface AppHeaderProps {
   title?: string
@@ -14,29 +14,7 @@ export function AppHeader({
   return (
     <header className="app-header">
       <Link href="/" className="brand-mini" style={{ cursor: 'pointer', textDecoration: 'none' }}>
-        <div
-          style={{
-            width: 26,
-            height: 26,
-            borderRadius: 6,
-            background: 'linear-gradient(180deg, #2a2018, #161114)',
-            border: '1px solid var(--border-strong)',
-            display: 'grid',
-            placeItems: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(circle at 50% 110%, var(--molten), transparent 60%)',
-              opacity: 0.95,
-            }}
-          />
-          <Icon name="anvil" size={13} stroke="#f5853f" strokeWidth={1.7} />
-        </div>
+        <BrandMark variant="tight" style={{ width: '34px' }} />
         <span>CVForge</span>
       </Link>
 

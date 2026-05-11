@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Icon } from './Icon'
+import { BrandMark } from './BrandMark'
 
 interface BrandProps {
   href?: string
@@ -10,9 +10,7 @@ interface BrandProps {
 export function Brand({ href }: BrandProps) {
   const inner = (
     <>
-      <div className="mark">
-        <Icon name="anvil" size={15} stroke="#f5853f" strokeWidth={1.7} />
-      </div>
+      <BrandMark variant="tight" style={{ width: '42px' }} />
       <span>CVForge</span>
     </>
   )
