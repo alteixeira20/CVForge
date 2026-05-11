@@ -21,7 +21,7 @@ export function TextArea({ className = '', autoResize = true, ...props }: TextAr
   return (
     <textarea
       ref={ref}
-      className={`w-full bg-bg-2 border border-border rounded-lg px-12 py-10 text-sm text-ink placeholder:text-ink-4 focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all resize-none min-h-[80px] ${className}`}
+      className={`w-full bg-bg-2 border border-border rounded-lg px-3 py-2 text-sm text-ink placeholder:text-ink-4 focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all resize-none min-h-[60px] ${className}`}
       {...props}
     />
   )

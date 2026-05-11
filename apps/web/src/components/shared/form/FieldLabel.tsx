@@ -13,7 +13,7 @@ export function FieldLabel({ children, htmlFor, required, className = '' }: Fiel
   return (
     <label
       htmlFor={htmlFor}
-      className={`block text-[11px] font-semibold text-ink-4 uppercase tracking-wider mb-6 ${className}`}
+      className={`block text-[11px] font-semibold text-ink-4 uppercase tracking-wider mb-1.5 ${className}`}
     >
       {children}
       {required && <span className="text-ember ml-4">*</span>}

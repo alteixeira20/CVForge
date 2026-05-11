@@ -4,7 +4,7 @@ import { ImportExportActions } from '@/features/import-export/ImportExportAction
 export function BuilderEditorPanel() {
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="min-h-0 flex-1 overflow-y-auto p-6 lg:p-10 pb-20">
+      <div className="min-h-0 flex-1 overflow-y-auto p-5 lg:p-8 pb-12">
         <header className="workspace-head compact">
           <div className="crumbline">Workbench / Builder</div>
           <h1>CV Builder</h1>

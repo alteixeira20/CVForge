@@ -43,7 +43,7 @@ export function RepeatableSectionItemShell({
         onToggle={onToggle}
       />
       {isExpanded && (
-        <div className="pb-24 pt-4 space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="pb-24 pt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
           {children}
         </div>
       )}

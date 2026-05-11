@@ -18,20 +18,6 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
 
   return (
     <div className="relative h-full w-full flex flex-col overflow-hidden">
-      {/* Absolute Preview Actions Cluster */}
-      <div className="absolute right-8 top-8 z-20 flex items-center gap-4">
-        {isGenerating && previewUrl && (
-          <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4 mr-2">
-            Syncing
-          </span>
-        )}
-        <DownloadPdfButton state={state} />
-        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/80 backdrop-blur-sm border-border shadow-sm hover:border-border-strong">
-          <Icon name="search" size={13} />
-          <span className="hidden sm:inline">Analyze</span>
-        </Link>
-      </div>
-
       <div className="h-full w-full flex-1 canvas">
         {isEmpty && <EmptyPdfPreview />}
         {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
@@ -45,6 +31,24 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
             />
           </div>
         )}
+      </div>
+
+      {/* Floating Preview Actions (Bottom-Left) */}
+      <div className="absolute left-6 bottom-6 z-20 flex items-center gap-2">
+        {isGenerating && previewUrl && (
+          <div className="bg-bg/60 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg flex items-center gap-3">
+            <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4">
+              Syncing
+            </span>
+          </div>
+        )}
+        <div className="flex items-center gap-2 bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg">
+          <DownloadPdfButton state={state} />
+          <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3">
+            <Icon name="search" size={13} />
+            <span className="hidden sm:inline">Analyze</span>
+          </Link>
+        </div>
       </div>
     </div>
   )

@@ -65,15 +65,15 @@ export function WorkExperienceItem({
             onChange={(e) => handleChange('location', e.target.value)}
           />
         </FormField>
-        <div className="flex items-end h-full pb-10">
-          <label className="flex items-center gap-8 cursor-pointer select-none">
+        <div className="flex items-end h-full pb-2.5">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
-              className="w-16 h-16 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
+              className="w-4 h-4 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
               checked={item.isCurrent}
               onChange={(e) => handleChange('isCurrent', e.target.checked)}
             />
-            <span className="text-xs text-ink-3 uppercase tracking-wider font-semibold">Currently Work Here</span>
+            <span className="text-[11px] text-ink-3 uppercase tracking-wider font-semibold">Currently Work Here</span>
           </label>
         </div>
       </FieldGroup>

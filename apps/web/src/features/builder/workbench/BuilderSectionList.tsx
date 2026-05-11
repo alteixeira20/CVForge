@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useState, useRef, useEffect, type ReactNode } from 'react'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import { useCV } from '@/context/CVContext'
 import { ProfileEditor } from '@/features/builder/profile/ProfileEditor'
@@ -16,10 +16,24 @@ export function BuilderSectionList() {
   const { state } = useCV()
   const { resume } = state
   const [expandedId, setExpandedId] = useState<string | null>('profile')
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
 
   const toggleSection = (id: string) => {
     setExpandedId(expandedId === id ? null : id)
   }
+
+  useEffect(() => {
+    if (expandedId && sectionRefs.current[expandedId]) {
+      // Small timeout to allow the transition/render to start
+      const timer = setTimeout(() => {
+        sectionRefs.current[expandedId]?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        })
+      }, 100)
+      return () => clearTimeout(timer)
+    }
+  }, [expandedId])
 
   const getStatus = (id: string) => {
     switch (id) {
@@ -55,15 +69,20 @@ export function BuilderSectionList() {
   ] satisfies Array<{ id: string; title: string; icon: IconName; content: ReactNode }>
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 pb-16">
       {BUILDER_SECTIONS.map((section) => (
-        <BuilderSectionAccordion
-          key={section.id}
-          section={section}
-          status={getStatus(section.id)}
-          isExpanded={expandedId === section.id}
-          onToggle={() => toggleSection(section.id)}
-        />
+        <div 
+          key={section.id} 
+          ref={(el) => { sectionRefs.current[section.id] = el }}
+          className="scroll-mt-6"
+        >
+          <BuilderSectionAccordion
+            section={section}
+            status={getStatus(section.id)}
+            isExpanded={expandedId === section.id}
+            onToggle={() => toggleSection(section.id)}
+          />
+        </div>
       ))}
     </div>
   )
@@ -90,35 +109,35 @@ function BuilderSectionAccordion({
     >
       {/* Accent Line */}
       <div
-        className={`absolute left-0 top-12 bottom-12 w-3 rounded-r-sm transition-opacity ${
+        className={`absolute left-0 top-10 bottom-10 w-[3px] rounded-r-sm transition-opacity ${
           isExpanded ? 'bg-ember opacity-100' : 'bg-ink-4 opacity-0 group-hover:opacity-40'
         }`}
       />
 
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-12 p-16 pl-20 text-left outline-none"
+        className="flex w-full items-center justify-between gap-10 p-4 pl-16 text-left outline-none"
       >
-        <div className="flex items-center gap-12 overflow-hidden">
+        <div className="flex items-center gap-10 overflow-hidden">
           <div
-            className={`flex h-28 w-28 shrink-0 items-center justify-center rounded-lg border transition-colors ${
+            className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-md border transition-colors ${
               isExpanded
                 ? 'border-ember/30 bg-ember/10 text-ember'
                 : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
             }`}
           >
-            <Icon name={section.icon} size={14} />
+            <Icon name={section.icon} size={13} />
           </div>
           <div className="flex flex-col min-w-0">
             <span
-              className={`truncate text-sm font-medium tracking-tight transition-colors ${
+              className={`truncate text-[13px] font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
               }`}
             >
               {section.title}
             </span>
             {status && (
-              <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.08em] truncate">
+              <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.06em] truncate">
                 {status}
               </span>
             )}
@@ -126,7 +145,7 @@ function BuilderSectionAccordion({
         </div>
         <Icon
           name="chevron-down"
-          size={12}
+          size={11}
           className={`shrink-0 text-ink-4 transition-transform duration-200 ${
             isExpanded ? 'rotate-180 text-ink-3' : ''
           }`}
@@ -134,7 +153,7 @@ function BuilderSectionAccordion({
       </button>
 
       {isExpanded && (
-        <div className="border-t border-border-faint p-6 lg:p-8 animate-in fade-in slide-in-from-top-1 duration-200">
+        <div className="border-t border-border-faint p-5 lg:p-6 animate-in fade-in slide-in-from-top-1 duration-200">
           {section.content}
         </div>
       )}

@@ -17,7 +17,7 @@ interface FeaturedSkillItemProps {
 
 export function FeaturedSkillItem({ index, item, isFirst, isLast, onUpdate, onRemove, onMove }: FeaturedSkillItemProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-[1fr_84px_auto] gap-8 items-center border-b border-border-faint py-10 last:border-none">
+    <div className="grid grid-cols-1 sm:grid-cols-[1fr_60px_auto] gap-2 items-center border-b border-border-faint py-2 last:border-none">
       <TextInput
         placeholder="e.g. React"
         value={item.skill}

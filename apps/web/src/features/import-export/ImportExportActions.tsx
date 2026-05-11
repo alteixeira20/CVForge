@@ -30,16 +30,16 @@ export function ImportExportActions() {
 
   return (
     <section className="workbench-bar">
-      <div className="flex flex-col gap-10 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
         <p className="text-[10px] font-mono uppercase tracking-wider text-ink-4 sm:flex-1">
-          JSON backups stay local in your browser.
+          JSON backups stay local.
         </p>
-        <div className="flex gap-8">
+        <div className="flex gap-4">
           <ActionButton icon="export" label="Export" onClick={() => exportCVState(state)} />
           <ActionButton icon="import" label="Import" onClick={() => inputRef.current?.click()} />
         </div>
       </div>
-      {message && <p className="mt-6 text-[11px] text-amber-200/60 italic">{message}</p>}
+      {message && <p className="mt-4 text-[11px] text-amber-200/60 italic">{message}</p>}
       <input ref={inputRef} type="file" accept="application/json,.json" className="hidden" onChange={handleImport} />
     </section>
   )
@@ -47,8 +47,8 @@ export function ImportExportActions() {
 
 function ActionButton({ icon, label, onClick }: { icon: 'import' | 'export'; label: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="btn sm justify-center bg-bg/50 hover:bg-bg-3 shadow-sm hover:border-border-strong px-12 transition-all">
-      <Icon name={icon} size={14} />
+    <button type="button" onClick={onClick} className="btn sm justify-center bg-bg/50 hover:bg-bg-3 shadow-sm hover:border-border-strong px-3 transition-all">
+      <Icon name={icon} size={13} />
       <span className="font-medium">{label}</span>
     </button>
   )

@@ -11,8 +11,8 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, icon, onAdd, addLabel = 'Add' }: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-12 mb-4">
-      <div className="flex items-center gap-8">
+    <div className="flex items-center justify-between gap-12 mb-2">
+      <div className="flex items-center gap-6">
         {icon && <Icon name={icon} size={14} className="text-ember" />}
         <h3 className="text-xs uppercase tracking-widest text-ink-4 font-semibold">{title}</h3>
       </div>

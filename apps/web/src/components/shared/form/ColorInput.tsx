@@ -10,8 +10,8 @@ interface ColorInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'o
 
 export function ColorInput({ value, onChange, className = '', ...props }: ColorInputProps) {
   return (
-    <div className={`flex items-center gap-10 ${className}`}>
-      <div className="relative w-36 h-36 shrink-0 rounded-lg border border-border overflow-hidden bg-bg-3 shadow-sm">
+    <div className={`flex items-center gap-2 ${className}`}>
+      <div className="relative w-8 h-8 shrink-0 rounded-md border border-border overflow-hidden bg-bg-3 shadow-sm">
         <input
           type="color"
           className="absolute inset-[-50%] w-[200%] h-[200%] cursor-pointer border-none bg-transparent"
@@ -22,7 +22,7 @@ export function ColorInput({ value, onChange, className = '', ...props }: ColorI
       </div>
       <input
         type="text"
-        className="flex-1 bg-bg-2 border border-border rounded-lg px-12 py-8 text-xs text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all"
+        className="flex-1 bg-bg-2 border border-border rounded-md px-2 py-1.5 text-xs text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
