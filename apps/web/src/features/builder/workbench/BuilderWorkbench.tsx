@@ -18,6 +18,7 @@ export function BuilderWorkbench() {
         rightPanel={<BuilderPreviewPanel state={state} />}
         leftLabel="Edit"
         rightLabel="Preview"
+        variant="builder"
       />
     </div>
   )

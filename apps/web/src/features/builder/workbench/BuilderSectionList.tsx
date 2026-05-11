@@ -120,7 +120,7 @@ function BuilderSectionAccordion({
       >
         <div className="flex items-center gap-10 overflow-hidden">
           <div
-            className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-md border transition-colors ${
+            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
               isExpanded
                 ? 'border-ember/30 bg-ember/10 text-ember'
                 : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
