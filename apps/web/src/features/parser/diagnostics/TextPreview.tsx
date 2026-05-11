@@ -1,16 +1,28 @@
+'use client'
+
+import { useState } from 'react'
+import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { type ParserDocument } from '../upload/parserTypes'
 
 export function TextPreview({ document }: { document: ParserDocument | null }) {
+  const [isExpanded, setIsExpanded] = useState(false)
   const text = document?.extraction?.text.trim()
 
   return (
-    <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-12">
-      <h2 className="text-sm font-semibold text-ink">Extracted Text</h2>
+    <WorkbenchSectionCard
+      title="Extracted Text"
+      icon="fold"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+      status={text ? 'Preview available' : 'Empty'}
+    >
       {text ? (
-        <pre className="max-h-72 overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-ink-3 font-mono">{text}</pre>
+        <pre className="max-h-72 overflow-auto whitespace-pre-wrap text-[11px] leading-relaxed text-ink-3 font-mono bg-bg-inset p-4 rounded border border-border-faint">
+          {text}
+        </pre>
       ) : (
         <p className="text-xs text-ink-3">No extracted text is available yet.</p>
       )}
-    </section>
+    </WorkbenchSectionCard>
   )
 }

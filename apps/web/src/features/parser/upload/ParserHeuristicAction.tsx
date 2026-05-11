@@ -1,13 +1,16 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCV } from '@/context/CVContext'
 import { Icon } from '@/components/ui/Icon'
+import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { type HeuristicResult } from './parserTypes'
 
 export function ParserHeuristicAction({ result }: { result: HeuristicResult }) {
   const { replaceState } = useCV()
   const router = useRouter()
+  const [isExpanded, setIsExpanded] = useState(true)
 
   const handleImport = () => {
     if (window.confirm('Create an editable draft from this PDF? Current builder data will be replaced.')) {
@@ -18,41 +21,44 @@ export function ParserHeuristicAction({ result }: { result: HeuristicResult }) {
   }
 
   return (
-    <div className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-16">
-      <div className="flex items-start justify-between gap-16">
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-ink">Best-Effort Draft Review</h2>
+    <WorkbenchSectionCard
+      title="Best-Effort Draft Review"
+      icon="shield"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+      status={`Confidence: ${result.confidence}%`}
+      className="border-molten/30 shadow-molten/5"
+    >
+      <div className="space-y-6">
+        <div className="space-y-2">
           <p className="text-xs text-ink-3 leading-relaxed">
             Review what CVForge found before replacing your Builder data.
             External PDF import is heuristic and may be incomplete.
           </p>
         </div>
-        <div className="text-right">
-          <span className="text-[10px] uppercase tracking-wider text-ink-4">Confidence</span>
-          <div className="text-lg font-bold text-molten">{result.confidence}%</div>
+
+        <DraftReviewTable result={result} />
+
+        {result.warnings.map(warning => (
+          <p key={warning} className="text-[10px] text-amber-200 italic font-medium">{warning}</p>
+        ))}
+
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={handleImport}
+            className="btn w-full justify-center bg-molten/10 border-molten/30 text-molten hover:bg-molten/20 hover:border-molten/50 transition-all font-semibold"
+          >
+            <Icon name="plus" size={14} />
+            Create Editable Draft
+          </button>
+          
+          <p className="text-[9px] text-ink-4 text-center mt-4">
+            After import, review and correct every section before exporting.
+          </p>
         </div>
       </div>
-
-      <DraftReviewTable result={result} />
-
-      {result.warnings.map(warning => (
-        <p key={warning} className="text-[10px] text-amber-200 italic">{warning}</p>
-      ))}
-
-      <button
-        type="button"
-        onClick={handleImport}
-        className="btn w-full justify-center"
-        style={{ borderColor: 'var(--molten)', color: 'var(--molten)' }}
-      >
-        <Icon name="plus" size={14} />
-        Create Editable Draft
-      </button>
-      
-      <p className="text-[9px] text-ink-4 text-center">
-        After import, review and correct every section before exporting.
-      </p>
-    </div>
+    </WorkbenchSectionCard>
   )
 }
 

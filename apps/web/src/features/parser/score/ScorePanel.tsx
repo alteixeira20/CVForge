@@ -1,3 +1,7 @@
+'use client'
+
+import { useState } from 'react'
+import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { type ScoreIssue, type ScoreResult } from '@/features/scoring/scoringTypes'
 
 export interface ScorePanelTarget {
@@ -7,37 +11,48 @@ export interface ScorePanelTarget {
 }
 
 export function ScorePanel({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
+  const [isExpanded, setIsExpanded] = useState(true)
+
   return (
-    <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-16">
-      <ScoreHeader result={result} target={target} />
-      {result ? (
-        <div className="space-y-8">
-          {result.issues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
-        </div>
-      ) : (
-        <p className="text-xs text-ink-3 leading-relaxed">
-          This upload produced extraction diagnostics only. CVForge is not scoring your current Builder CV as a stand-in for this PDF.
+    <WorkbenchSectionCard
+      title="Heuristic Analysis"
+      icon="spark"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+      status={result ? `${result.score}/100` : 'No score'}
+    >
+      <div className="space-y-6">
+        <ScoreHeader result={result} target={target} />
+        {result ? (
+          <div className="space-y-3">
+            {result.issues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
+          </div>
+        ) : (
+          <p className="text-xs text-ink-3 leading-relaxed">
+            This upload produced extraction diagnostics only. CVForge is not scoring your current Builder CV as a stand-in for this PDF.
+          </p>
+        )}
+        <p className="text-[10px] uppercase tracking-[0.18em] text-ink-4 pt-2">
+          Local rule-based diagnostics, not a hiring outcome guarantee.
         </p>
-      )}
-      <p className="text-[10px] uppercase tracking-[0.18em] text-ink-4">
-        Local rule-based diagnostics, not a hiring outcome guarantee.
-      </p>
-    </section>
+      </div>
+    </WorkbenchSectionCard>
   )
 }
 
 function ScoreHeader({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
   return (
-    <div className="flex items-end justify-between gap-16">
-      <div>
-        <h2 className="text-sm font-semibold text-ink">Heuristic Analysis</h2>
-        <p className="text-[10px] uppercase tracking-[0.16em] text-ember mt-2">{target.label}</p>
-        <p className="text-xs text-ink-3 mt-4">
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-[10px] uppercase tracking-[0.16em] text-ember font-semibold">{target.label}</p>
+        {result && <strong className="text-2xl text-ember font-bold">{result.score}</strong>}
+      </div>
+      <div className="space-y-2">
+        <p className="text-xs text-ink-3 leading-relaxed">
           {target.description}
         </p>
-        <p className="text-[10px] text-ink-4 mt-3 leading-relaxed">{target.caveat}</p>
+        <p className="text-[10px] text-ink-4 leading-relaxed italic">{target.caveat}</p>
       </div>
-      {result && <strong className="text-3xl text-ember">{result.score}</strong>}
     </div>
   )
 }

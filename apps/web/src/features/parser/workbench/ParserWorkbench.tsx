@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
@@ -18,6 +19,10 @@ import { ParserHeuristicAction } from '../upload/ParserHeuristicAction'
 import { type ParserDocument } from '../upload/parserTypes'
 import { useParserDocument } from '../upload/useParserDocument'
 
+import { Icon } from '@/components/ui/Icon'
+import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
+import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
+
 export function ParserWorkbench() {
   const { state } = useCV()
   const searchParams = useSearchParams()
@@ -26,7 +31,7 @@ export function ParserWorkbench() {
   const analysis = resolveAnalysisTarget(state, document, fromBuilder)
 
   return (
-    <div className="app-shell">
+    <div className="app-shell h-screen overflow-hidden">
       <AppHeader title="Parser Diagnostics" />
       <WorkbenchShell
         leftPanel={(
@@ -40,6 +45,7 @@ export function ParserWorkbench() {
         rightPanel={<SourcePdfPreview document={document} />}
         leftLabel="Analysis"
         rightLabel="Source"
+        variant="builder"
       />
     </div>
   )
@@ -52,37 +58,43 @@ function ParserAnalysisPanel(props: {
   onClearFile: () => void
 }) {
   return (
-    <div className="p-24 lg:p-40 space-y-32 pb-80">
-      <ParserHeader />
-      <PdfUploadPanel onFile={props.onFile} />
-      {props.document && (
-        <button type="button" onClick={props.onClearFile} className="btn w-full justify-center">
-          Clear uploaded PDF
-        </button>
-      )}
-      {!props.document && <BuilderSourceNotice analysis={props.analysis} />}
-      {props.document?.embeddedState && <ParserRestoreAction embeddedState={props.document.embeddedState} />}
-      {!props.document?.embeddedState && props.document?.heuristic && (
-        <ParserHeuristicAction result={props.document.heuristic} />
-      )}
-      <ExtractionDiagnostics document={props.document} />
-      <ScorePanel result={props.analysis.score} target={props.analysis.target} />
-      <TextPreview document={props.document} />
-    </div>
-  )
-}
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <WorkbenchHeader
+          eyebrow="Workbench / Parser"
+          title="Parser Diagnostics"
+          description="Upload a PDF for local extraction diagnostics. CVForge PDFs can restore embedded sessions; external PDFs can only create best-effort drafts."
+          actions={props.document && (
+            <button 
+              type="button" 
+              onClick={props.onClearFile} 
+              className="btn sm bg-bg-3 border-border-strong hover:border-border px-3"
+            >
+              <Icon name="x" size={13} />
+              <span className="hidden sm:inline">Clear PDF</span>
+            </button>
+          )}
+        />
 
-function ParserHeader() {
-  return (
-    <header className="workspace-head">
-      <div className="crumbline">Workbench / Parser</div>
-      <h1>Parser Diagnostics</h1>
-      <p className="muted text-sm">
-        Upload a PDF for local extraction diagnostics. CVForge PDFs can restore
-        embedded sessions; external PDFs can only create best-effort drafts that need review.
-        You can also analyze the current Builder CV without uploading a file.
-      </p>
-    </header>
+        <div className="p-5 lg:p-8 pt-6 space-y-6 pb-20">
+          <PdfUploadPanel onFile={props.onFile} />
+          
+          {!props.document && <BuilderSourceNotice analysis={props.analysis} />}
+          
+          {props.document?.embeddedState && (
+            <ParserRestoreAction embeddedState={props.document.embeddedState} />
+          )}
+          
+          {!props.document?.embeddedState && props.document?.heuristic && (
+            <ParserHeuristicAction result={props.document.heuristic} />
+          )}
+          
+          <ExtractionDiagnostics document={props.document} />
+          <ScorePanel result={props.analysis.score} target={props.analysis.target} />
+          <TextPreview document={props.document} />
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -97,21 +109,27 @@ type ParserAnalysisTarget = {
 }
 
 function BuilderSourceNotice({ analysis }: { analysis: ParserAnalysisTarget }) {
+  const [isExpanded, setIsExpanded] = useState(true)
+
   return (
-    <section className="panel p-20 bg-bg-2 border border-border rounded-xl space-y-8">
-      <div className="flex items-center justify-between gap-16">
-        <h2 className="text-sm font-semibold text-ink">{analysis.target.label}</h2>
-        <span className="text-[10px] uppercase tracking-[0.16em] text-ink-4">No upload</span>
-      </div>
-      <p className="text-xs text-ink-3 leading-relaxed">
-        {analysis.target.description}
-      </p>
-      {analysis.isEmpty && (
-        <p className="text-xs text-amber-200 leading-relaxed">
-          The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful diagnostics.
+    <WorkbenchSectionCard
+      title={analysis.target.label}
+      icon="users"
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+      status="No upload"
+    >
+      <div className="space-y-3">
+        <p className="text-xs text-ink-3 leading-relaxed">
+          {analysis.target.description}
         </p>
-      )}
-    </section>
+        {analysis.isEmpty && (
+          <p className="text-xs text-amber-200 leading-relaxed font-medium">
+            The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful diagnostics.
+          </p>
+        )}
+      </div>
+    </WorkbenchSectionCard>
   )
 }
 

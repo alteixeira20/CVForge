@@ -13,25 +13,19 @@ export function PdfUploadPanel({ onFile }: { onFile: (file: File) => void }) {
   }
 
   return (
-    <section className="space-y-16">
+    <section className="space-y-4">
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="panel w-full p-32 bg-bg-2 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center hover:border-ember transition-colors"
+        className="w-full p-8 lg:p-12 bg-bg-inset border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center hover:border-ember hover:bg-bg-2 transition-all group"
       >
-        <UploadIcon />
-        <h3 className="font-medium text-ink">Upload PDF</h3>
-        <p className="text-xs text-ink-3 mt-4">Choose a local PDF for text extraction and diagnostics.</p>
+        <div className="w-12 h-12 rounded-full bg-bg-2 border border-border-strong flex items-center justify-center mb-4 group-hover:border-ember/50 transition-colors">
+          <Icon name="upload" size={16} className="text-ink-3 group-hover:text-ember transition-colors" />
+        </div>
+        <h3 className="text-sm font-medium text-ink">Upload PDF</h3>
+        <p className="text-[11px] text-ink-3 mt-1">Choose a local PDF for extraction diagnostics.</p>
       </button>
       <input ref={inputRef} type="file" accept="application/pdf,.pdf" className="hidden" onChange={handleChange} />
     </section>
-  )
-}
-
-function UploadIcon() {
-  return (
-    <span className="w-48 h-48 rounded-full bg-bg-3 border border-border-strong flex items-center justify-center mb-16">
-      <Icon name="import" size={20} />
-    </span>
   )
 }
