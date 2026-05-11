@@ -6,6 +6,9 @@ import { useEffect, useRef, useState, useMemo } from 'react'
 import { type CVState } from '@/types/cv'
 import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
+import { PreviewCanvas } from '@/components/shared/workbench/PreviewCanvas'
+
+import { WorkbenchActionGroup } from '@/components/shared/workbench/WorkbenchActionGroup'
 
 const DownloadPdfButton = dynamic(
   () => import('@/features/resume-pdf/DownloadPdfButton').then((module) => module.DownloadPdfButton),
@@ -16,41 +19,40 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
   const { previewUrl, isGenerating, error } = useDebouncedPdfPreview(state)
   const isEmpty = useMemo(() => isEmptyCV(state), [state])
 
-  return (
-    <div className="relative h-full w-full flex flex-col overflow-hidden">
-      <div className="h-full w-full flex-1 canvas">
-        {isEmpty && <EmptyPdfPreview />}
-        {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
-        {!isEmpty && error && !previewUrl && <PreviewError message={error} />}
-        {previewUrl && (
-          <div className="canvas-frame">
-            <iframe
-              title="Generated PDF preview"
-              src={`${previewUrl}#navpanes=0&view=Fit`}
-              className="h-full w-full border-0 bg-white"
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Floating Preview Actions (Bottom-Left) */}
-      <div className="absolute left-6 bottom-6 z-20 flex items-center gap-2">
-        {isGenerating && previewUrl && (
-          <div className="bg-bg/60 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg flex items-center gap-3">
-            <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4">
-              Syncing
-            </span>
-          </div>
-        )}
-        <div className="flex items-center gap-2 bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg">
-          <DownloadPdfButton state={state} />
-          <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3">
-            <Icon name="search" size={13} />
-            <span className="hidden sm:inline">Analyze</span>
-          </Link>
+  const floatingActions = (
+    <>
+      {isGenerating && previewUrl && (
+        <div className="bg-bg/60 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg flex items-center gap-3">
+          <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4">
+            Syncing
+          </span>
         </div>
-      </div>
-    </div>
+      )}
+      <WorkbenchActionGroup className="bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg">
+        <DownloadPdfButton state={state} />
+        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3">
+          <Icon name="search" size={13} />
+          <span className="hidden sm:inline">Analyze</span>
+        </Link>
+      </WorkbenchActionGroup>
+    </>
+  )
+
+  return (
+    <PreviewCanvas floatingActions={floatingActions}>
+      {isEmpty && <EmptyPdfPreview />}
+      {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
+      {!isEmpty && error && !previewUrl && <PreviewError message={error} />}
+      {previewUrl && (
+        <div className="canvas-frame">
+          <iframe
+            title="Generated PDF preview"
+            src={`${previewUrl}#navpanes=0&view=Fit`}
+            className="h-full w-full border-0 bg-white"
+          />
+        </div>
+      )}
+    </PreviewCanvas>
   )
 }
 

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useRef, useEffect, type ReactNode } from 'react'
-import { Icon, type IconName } from '@/components/ui/Icon'
+import { type IconName } from '@/components/ui/Icon'
 import { useCV } from '@/context/CVContext'
+import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { ProfileEditor } from '@/features/builder/profile/ProfileEditor'
 import { SettingsEditor } from '@/features/builder/settings/SettingsEditor'
 import { WorkExperienceEditor } from '@/features/builder/work/WorkExperienceEditor'
@@ -76,87 +77,17 @@ export function BuilderSectionList() {
           ref={(el) => { sectionRefs.current[section.id] = el }}
           className="scroll-mt-6"
         >
-          <BuilderSectionAccordion
-            section={section}
+          <WorkbenchSectionCard
+            title={section.title}
+            icon={section.icon}
             status={getStatus(section.id)}
             isExpanded={expandedId === section.id}
             onToggle={() => toggleSection(section.id)}
-          />
+          >
+            {section.content}
+          </WorkbenchSectionCard>
         </div>
       ))}
-    </div>
-  )
-}
-
-function BuilderSectionAccordion({
-  section,
-  status,
-  isExpanded,
-  onToggle,
-}: {
-  section: { title: string; icon: IconName; content: ReactNode }
-  status: string
-  isExpanded: boolean
-  onToggle: () => void
-}) {
-  return (
-    <div
-      className={`group relative overflow-hidden rounded-xl border transition-all duration-200 ${
-        isExpanded
-          ? 'border-border-strong bg-bg-2 shadow-sm'
-          : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
-      }`}
-    >
-      {/* Accent Line */}
-      <div
-        className={`absolute left-0 top-10 bottom-10 w-[3px] rounded-r-sm transition-opacity ${
-          isExpanded ? 'bg-ember opacity-100' : 'bg-ink-4 opacity-0 group-hover:opacity-40'
-        }`}
-      />
-
-      <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-10 p-4 pl-16 text-left outline-none"
-      >
-        <div className="flex items-center gap-10 overflow-hidden">
-          <div
-            className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
-              isExpanded
-                ? 'border-ember/30 bg-ember/10 text-ember'
-                : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
-            }`}
-          >
-            <Icon name={section.icon} size={13} />
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span
-              className={`truncate text-[13px] font-medium tracking-tight transition-colors ${
-                isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
-              }`}
-            >
-              {section.title}
-            </span>
-            {status && (
-              <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.06em] truncate">
-                {status}
-              </span>
-            )}
-          </div>
-        </div>
-        <Icon
-          name="chevron-down"
-          size={11}
-          className={`shrink-0 text-ink-4 transition-transform duration-200 ${
-            isExpanded ? 'rotate-180 text-ink-3' : ''
-          }`}
-        />
-      </button>
-
-      {isExpanded && (
-        <div className="border-t border-border-faint p-5 lg:p-6 animate-in fade-in slide-in-from-top-1 duration-200">
-          {section.content}
-        </div>
-      )}
     </div>
   )
 }

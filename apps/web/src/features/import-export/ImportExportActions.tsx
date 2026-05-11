@@ -3,6 +3,7 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useCV } from '@/context/CVContext'
 import { Icon } from '@/components/ui/Icon'
+import { WorkbenchActionGroup } from '@/components/shared/workbench/WorkbenchActionGroup'
 import { exportCVState } from './exportCVState'
 import { importCVState } from './importCVState'
 
@@ -24,16 +25,16 @@ export function ImportExportActions() {
     } catch {
       setMessage('Import failed. Choose a valid CVForge JSON backup.')
     } finally {
-      event.target.value = ''
+      if (event.target) event.target.value = ''
     }
   }
 
   return (
     <div className="flex flex-col items-end gap-2">
-      <div className="flex gap-2">
+      <WorkbenchActionGroup>
         <ActionButton icon="export" label="Export" onClick={() => exportCVState(state)} />
         <ActionButton icon="import" label="Import" onClick={() => inputRef.current?.click()} />
-      </div>
+      </WorkbenchActionGroup>
       {message && <p className="text-[10px] text-amber-200/60 italic text-right whitespace-nowrap">{message}</p>}
       <input ref={inputRef} type="file" accept="application/json,.json" className="hidden" onChange={handleImport} />
     </div>
@@ -53,4 +54,3 @@ function ActionButton({ icon, label, onClick }: { icon: 'import' | 'export'; lab
     </button>
   )
 }
-
