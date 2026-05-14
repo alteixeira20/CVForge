@@ -17,24 +17,15 @@ export function ProfileEditor() {
 
   return (
     <div className="space-y-4">
-      <FormField label="Full Name" required>
-        <TextInput
-          placeholder="e.g. John Doe"
-          value={profile.name}
-          onChange={(e) => handleChange('name', e.target.value)}
-        />
-      </FormField>
-
       <FieldGroup columns={2}>
-        <FormField label="Email">
+        <FormField label="Full Name" required>
           <TextInput
-            type="email"
-            placeholder="john@example.com"
-            value={profile.email}
-            onChange={(e) => handleChange('email', e.target.value)}
+            placeholder="e.g. John Doe"
+            value={profile.name}
+            onChange={(e) => handleChange('name', e.target.value)}
           />
         </FormField>
-        <FormField label="Phone">
+        <FormField label="Phone" required>
           <TextInput
             type="tel"
             placeholder="+1 234 567 890"
@@ -44,21 +35,30 @@ export function ProfileEditor() {
         </FormField>
       </FieldGroup>
 
-      <FormField label="Location">
-        <TextInput
-          placeholder="e.g. New York, NY"
-          value={profile.location}
-          onChange={(e) => handleChange('location', e.target.value)}
-        />
-      </FormField>
+      <FieldGroup columns={2}>
+        <FormField label="Email" required>
+          <TextInput
+            type="email"
+            placeholder="john@example.com"
+            value={profile.email}
+            onChange={(e) => handleChange('email', e.target.value)}
+          />
+        </FormField>
+        <FormField label="Location" required>
+          <TextInput
+            placeholder="e.g. New York, NY"
+            value={profile.location}
+            onChange={(e) => handleChange('location', e.target.value)}
+          />
+        </FormField>
+      </FieldGroup>
 
       <FieldGroup columns={2}>
-        <FormField label="Website">
+        <FormField label="LinkedIn">
           <TextInput
-            type="url"
-            placeholder="https://example.com"
-            value={profile.website}
-            onChange={(e) => handleChange('website', e.target.value)}
+            placeholder="linkedin.com/in/username"
+            value={profile.linkedin}
+            onChange={(e) => handleChange('linkedin', e.target.value)}
           />
         </FormField>
         <FormField label="GitHub">
@@ -70,11 +70,12 @@ export function ProfileEditor() {
         </FormField>
       </FieldGroup>
 
-      <FormField label="LinkedIn">
+      <FormField label="Personal Website">
         <TextInput
-          placeholder="linkedin.com/in/username"
-          value={profile.linkedin}
-          onChange={(e) => handleChange('linkedin', e.target.value)}
+          type="url"
+          placeholder="https://example.com"
+          value={profile.website}
+          onChange={(e) => handleChange('website', e.target.value)}
         />
       </FormField>
 

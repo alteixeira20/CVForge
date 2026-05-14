@@ -69,13 +69,19 @@ export function WorkbenchSectionCard({
             )}
           </div>
         </div>
-        <Icon
-          name="chevron-down"
-          size={11}
-          className={`shrink-0 text-ink-4 transition-transform duration-200 ${
-            isExpanded ? 'rotate-180 text-ink-3' : ''
+        <div
+          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors ${
+            isExpanded
+              ? 'bg-ember/10 text-ink-3'
+              : 'bg-bg-3 text-ink-4 group-hover:bg-bg-2 group-hover:text-ink-3'
           }`}
-        />
+        >
+          <Icon
+            name="chevron-down"
+            size={13}
+            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        </div>
       </button>
 
       {isExpanded && (
