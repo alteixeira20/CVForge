@@ -5,6 +5,7 @@ import { useCV } from '@/context/CVContext'
 import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
 import { importCVState } from '@/features/import-export/importCVState'
+import { BrandMark } from '@/components/ui/BrandMark'
 
 interface BuilderEntryModalProps {
   isOpen: boolean
@@ -61,7 +62,7 @@ export function BuilderEntryModal({
       <div className="modal" style={{ width: '460px' }}>
         <div className="modal-head">
           <div className="ic plain">
-            <Icon name="anvil" size={20} className="text-ember" />
+            <BrandMark variant="square" className="w-10 h-10" />
           </div>
           <div className="text">
             <h2>Welcome to CVForge</h2>
