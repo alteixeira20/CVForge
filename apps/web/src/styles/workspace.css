@@ -123,6 +123,7 @@
   background: var(--bg-inset);
   padding: 24px;
   overflow: auto;
+  scrollbar-gutter: stable;
   display: flex;
   justify-content: center;
   align-items: flex-start;

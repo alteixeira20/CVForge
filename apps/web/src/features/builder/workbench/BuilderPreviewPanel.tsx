@@ -2,130 +2,105 @@
 
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { type CVState } from '@/types/cv'
 import { isEmptyCV } from '@/lib/cvState'
 import { Icon } from '@/components/ui/Icon'
 import { PreviewCanvas } from '@/components/shared/workbench/PreviewCanvas'
-
-import { WorkbenchActionGroup } from '@/components/shared/workbench/WorkbenchActionGroup'
+import { PdfCanvasPreview } from './PdfCanvasPreview'
+import { usePdfCanvasPreview } from './usePdfCanvasPreview'
 
 const DownloadPdfButton = dynamic(
-  () => import('@/features/resume-pdf/DownloadPdfButton').then((module) => module.DownloadPdfButton),
+  () => import('@/features/resume-pdf/DownloadPdfButton').then((m) => m.DownloadPdfButton),
   { ssr: false, loading: () => <span className="btn sm justify-center opacity-60">Preparing PDF</span> },
 )
 
-export function BuilderPreviewPanel({ state }: { state: CVState }) {
-  const { previewUrl, isGenerating, error } = useDebouncedPdfPreview(state)
-  const isEmpty = useMemo(() => isEmptyCV(state), [state])
+const SPIN_VISIBLE_MS = 600
 
-  const floatingActions = (
+export function BuilderPreviewPanel({ state }: { state: CVState }) {
+  const [renderScale, setRenderScale] = useState(0)
+  const { pages, isRendering, progress, error } = usePdfCanvasPreview(state, renderScale)
+  const isEmpty = isEmptyCV(state)
+
+  // One-shot spin: each successful page swap increments spinKey (remounts the SVG,
+  // restarting the animation) and keeps the icon visible for SPIN_VISIBLE_MS.
+  const [spinKey, setSpinKey] = useState(0)
+  const [showSpin, setShowSpin] = useState(false)
+  const spinTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (pages.length === 0) return
+    if (spinTimerRef.current !== null) clearTimeout(spinTimerRef.current)
+    setSpinKey(k => k + 1)
+    setShowSpin(true)
+    spinTimerRef.current = setTimeout(() => setShowSpin(false), SPIN_VISIBLE_MS)
+  }, [pages])
+
+  useEffect(() => () => {
+    if (spinTimerRef.current !== null) clearTimeout(spinTimerRef.current)
+  }, [])
+
+  const actionSlot = (
     <>
-      {isGenerating && previewUrl && (
-        <div className="bg-bg/60 backdrop-blur-sm border border-border px-3 py-1.5 rounded-lg flex items-center gap-3">
-          <span className="animate-pulse text-[9px] font-mono font-bold uppercase tracking-widest text-ink-4">
-            Syncing
-          </span>
-        </div>
-      )}
-      <WorkbenchActionGroup className="bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg">
-        <DownloadPdfButton state={state} />
-        <Link href="/parser?source=builder" className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3">
-          <Icon name="search" size={13} />
-          <span className="hidden sm:inline">Analyze</span>
-        </Link>
-      </WorkbenchActionGroup>
+      <DownloadPdfButton state={state} />
+      <Link
+        href="/parser?source=builder"
+        className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3"
+      >
+        <Icon name="search" size={13} />
+        <span className="hidden sm:inline">Analyze</span>
+      </Link>
     </>
   )
 
   return (
-    <PreviewCanvas floatingActions={floatingActions}>
-      {isEmpty && <EmptyPdfPreview />}
-      {!isEmpty && !previewUrl && !error && <GeneratingPdfPreview />}
-      {!isEmpty && error && !previewUrl && <PreviewError message={error} />}
-      {previewUrl && (
-        <div className="canvas-frame">
-          <iframe
-            title="Generated PDF preview"
-            src={`${previewUrl}#navpanes=0&view=Fit`}
-            className="h-full w-full border-0 bg-white"
+    <div className="relative h-full w-full">
+      <PreviewCanvas>
+        {isEmpty && <EmptyPdfPreview />}
+        {!isEmpty && (
+          <PdfCanvasPreview
+            pages={pages}
+            error={error}
+            progress={progress}
+            actionSlot={actionSlot}
+            onRenderScaleChange={setRenderScale}
           />
-        </div>
-      )}
-    </PreviewCanvas>
+        )}
+      </PreviewCanvas>
+      {!isEmpty && showSpin && <SpinIcon spinKey={spinKey} />}
+    </div>
   )
 }
 
-function useDebouncedPdfPreview(state: CVState) {
-  const [previewUrl, setPreviewUrl] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [error, setError] = useState('')
-  const urlRef = useRef('')
-  const generationRef = useRef(0)
-  const isEmpty = isEmptyCV(state)
-
-  useEffect(() => {
-    if (isEmpty) {
-      generationRef.current += 1
-      setIsGenerating(false)
-      setError('')
-      if (urlRef.current) {
-        URL.revokeObjectURL(urlRef.current)
-        urlRef.current = ''
-        setPreviewUrl('')
-      }
-      return
-    }
-
-    const generationId = generationRef.current + 1
-    generationRef.current = generationId
-    setIsGenerating(true)
-    setError('')
-
-    const timeout = window.setTimeout(async () => {
-      try {
-        // Dynamic imports to keep initial bundle small
-        const [{ pdf }, { ResumePdfDocument }] = await Promise.all([
-          import('@react-pdf/renderer'),
-          import('@/features/resume-pdf/ResumePdfDocument')
-        ])
-
-        const blob = await pdf(<ResumePdfDocument state={state} />).toBlob()
-        if (generationRef.current !== generationId) return
-
-        const nextUrl = URL.createObjectURL(blob)
-        const previousUrl = urlRef.current
-        urlRef.current = nextUrl
-        setPreviewUrl(nextUrl)
-        if (previousUrl) URL.revokeObjectURL(previousUrl)
-      } catch (err) {
-        console.error('PDF generation error:', err)
-        if (generationRef.current === generationId) {
-          setError('PDF preview could not be generated.')
-        }
-      } finally {
-        if (generationRef.current === generationId) {
-          setIsGenerating(false)
-        }
-      }
-    }, 800) // Slightly longer debounce for smoother typing feel
-
-    return () => {
-      window.clearTimeout(timeout)
-    }
-  }, [state, isEmpty])
-
-  useEffect(() => {
-    return () => {
-      generationRef.current += 1
-      if (urlRef.current) {
-        URL.revokeObjectURL(urlRef.current)
-        urlRef.current = ''
-      }
-    }
-  }, [])
-
-  return { previewUrl, isGenerating, error }
+// Appears for SPIN_VISIBLE_MS after each valid render lands. No text, no labels.
+// key={spinKey} remounts the SVG each time so the animation restarts cleanly.
+function SpinIcon({ spinKey }: { spinKey: number }) {
+  return (
+    <div className="absolute top-3 right-3 z-20 pointer-events-none">
+      <svg
+        key={spinKey}
+        className="animate-spin text-ink-4/50"
+        style={{
+          animationIterationCount: 1,
+          animationDuration: '550ms',
+          animationTimingFunction: 'ease-in-out',
+        }}
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        fill="none"
+        aria-hidden="true"
+      >
+        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2" />
+        <path
+          d="M7 1.5A5.5 5.5 0 0 1 12.5 7"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  )
 }
 
 function EmptyPdfPreview() {
@@ -145,32 +120,3 @@ function EmptyPdfPreview() {
     </div>
   )
 }
-
-function GeneratingPdfPreview() {
-  return (
-    <div className="flex h-full items-center justify-center p-32 text-center">
-      <div className="max-w-xs space-y-6">
-        <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm animate-pulse">
-          <Icon name="file-text" size={20} className="text-ink-4" />
-        </div>
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-ink">Building PDF</h2>
-          <p className="text-xs leading-relaxed text-ink-3">
-            Preparing your multi-page layout.
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function PreviewError({ message }: { message: string }) {
-  return (
-    <div className="flex h-full items-center justify-center p-32 text-center">
-      <p className="max-w-xs text-xs leading-relaxed text-red-300 bg-red-500/10 border border-red-500/20 px-12 py-8 rounded-lg">
-        {message}
-      </p>
-    </div>
-  )
-}
-

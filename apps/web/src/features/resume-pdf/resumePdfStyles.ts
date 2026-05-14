@@ -1,12 +1,15 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { type Settings } from '@/types/cv'
 
+export const PAGE_PADDING = 42
+
 export function createResumePdfStyles(settings: Settings) {
   const fontFamily = resolvePdfFont(settings.fontFamily)
+  const contactSize = Math.max(settings.fontSize - 1, 8)
 
   return StyleSheet.create({
     page: {
-      padding: 42,
+      padding: PAGE_PADDING,
       fontFamily,
       fontSize: settings.fontSize,
       lineHeight: settings.lineHeight,
@@ -14,6 +17,14 @@ export function createResumePdfStyles(settings: Settings) {
     },
     name: { fontSize: settings.nameFontSize, fontWeight: 700, color: settings.themeColor },
     muted: { color: '#555' },
+    contact: { fontSize: contactSize, color: '#555', lineHeight: 1.4 },
+    contactNext: { fontSize: contactSize, color: '#555', lineHeight: 1.4, marginTop: 2 },
+    summary: {
+      fontSize: settings.fontSize,
+      color: '#333',
+      lineHeight: settings.lineHeight,
+      textAlign: 'justify',
+    },
     section: { marginTop: settings.sectionSpacing },
     sectionTitle: {
       fontSize: settings.sectionHeadingSize,
