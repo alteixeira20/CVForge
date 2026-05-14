@@ -1,28 +1,77 @@
-# CVForge Initial Ignore Rules
+# CVForge Ignore Rules
 
 # Dependencies
 node_modules/
+**/node_modules/
+.pnpm-store/
 .pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Next.js
+# Next.js / React build output
 .next/
 out/
 build/
+dist/
+apps/web/.next/
+apps/web/out/
+apps/web/build/
 **/*.tsbuildinfo
+next-env.d.ts
 
-# Reference Folders (DO NOT COMMIT)
+# Production / generated reports
+coverage/
+.playwright/
+test-results/
+reports/
+*.lcov
+
+# Runtime logs and local process state
+.logs/
+.pids/
+*.log
+*.pid
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local source asset packs
+forge_apps_logo_assets/
+forge_logo_web_assets/
+
+# Local agent scratch space
+.agent/
+.ai/
+.claude-scratch/
+.gemini-scratch/
+*.agent.log
+*.prompt.local.md
+
+# Reference / temporary folders
 tmp/
 .handoff/
+.scratch/
+.cache/
 
-# IDE/System
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE / editor
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# Environment
-.env*
-!.env.example
+# Docker / compose local overrides
+docker-compose.override.yml
+compose.override.yml
 
 # Local scripts
 *.sh
 !scripts/
+!scripts/**/*.sh
