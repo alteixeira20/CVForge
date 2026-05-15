@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react'
 import { useCV, type RepeatableSectionKey } from '@/context/CVContext'
+import { HoldDeleteButton } from './HoldDeleteButton'
 import { SectionItemHeader } from './SectionItemHeader'
 
 interface RepeatableSectionItemShellProps {
@@ -34,7 +35,6 @@ export function RepeatableSectionItemShell({
       <SectionItemHeader
         title={title}
         subtitle={subtitle}
-        onRemove={() => removeSectionItem(sectionKey, id)}
         onMoveUp={() => moveSectionItem(sectionKey, id, 'up')}
         onMoveDown={() => moveSectionItem(sectionKey, id, 'down')}
         isFirst={isFirst}
@@ -45,6 +45,9 @@ export function RepeatableSectionItemShell({
       {isExpanded && (
         <div className="px-4 pb-4 pt-3 space-y-3 border-t border-border-faint animate-in fade-in slide-in-from-top-2 duration-200">
           {children}
+          <div className="flex justify-end pt-1">
+            <HoldDeleteButton onDelete={() => removeSectionItem(sectionKey, id)} />
+          </div>
         </div>
       )}
     </div>

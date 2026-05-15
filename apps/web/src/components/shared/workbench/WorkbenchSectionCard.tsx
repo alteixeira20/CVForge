@@ -65,7 +65,7 @@ export function WorkbenchSectionCard({
           </div>
         </div>
 
-        {headerActions && (
+        {isExpanded && headerActions && (
           <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
         )}
 
