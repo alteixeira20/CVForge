@@ -5,21 +5,17 @@ import { RepeatableSectionEditor } from '@/components/shared/sections/Repeatable
 import { EducationItem } from './EducationItem'
 
 export function EducationEditor() {
-  const { state, addSectionItem } = useCV()
+  const { state } = useCV()
   const { education } = state.resume
-
-  const handleAdd = () => {
-    addSectionItem('education')
-  }
 
   return (
     <RepeatableSectionEditor
       title="Education"
-      icon="fold"
+      icon="file-text"
       addLabel="Add Education"
       emptyLabel="No education added yet"
       items={education}
-      onAdd={handleAdd}
+      hideTitle
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <EducationItem
           item={item}

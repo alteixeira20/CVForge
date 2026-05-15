@@ -49,7 +49,7 @@ export function SectionItemHeader({
         )}
       </div>
 
-      <div className="flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex items-center gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
         {onMoveUp && (
           <button
             onClick={onMoveUp}

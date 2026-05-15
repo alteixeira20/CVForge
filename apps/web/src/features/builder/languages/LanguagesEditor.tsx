@@ -5,21 +5,17 @@ import { RepeatableSectionEditor } from '@/components/shared/sections/Repeatable
 import { LanguageItem } from './LanguageItem'
 
 export function LanguagesEditor() {
-  const { state, addSectionItem } = useCV()
+  const { state } = useCV()
   const { languages } = state.resume
-
-  const handleAdd = () => {
-    addSectionItem('languages')
-  }
 
   return (
     <RepeatableSectionEditor
       title="Languages"
-      icon="users"
+      icon="flame"
       addLabel="Add Language"
       emptyLabel="No languages added yet"
       items={languages}
-      onAdd={handleAdd}
+      hideTitle
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <LanguageItem
           item={item}

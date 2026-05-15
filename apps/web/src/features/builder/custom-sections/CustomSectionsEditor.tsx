@@ -5,21 +5,17 @@ import { RepeatableSectionEditor } from '@/components/shared/sections/Repeatable
 import { CustomSectionItem } from './CustomSectionItem'
 
 export function CustomSectionsEditor() {
-  const { state, addSectionItem } = useCV()
+  const { state } = useCV()
   const { customSections } = state.resume
-
-  const handleAdd = () => {
-    addSectionItem('customSections')
-  }
 
   return (
     <RepeatableSectionEditor
       title="Custom Sections"
-      icon="fold"
+      icon="anvil"
       addLabel="Add Section"
       emptyLabel="No custom sections added yet"
       items={customSections}
-      onAdd={handleAdd}
+      hideTitle
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <CustomSectionItem
           item={item}

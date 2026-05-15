@@ -5,12 +5,8 @@ import { RepeatableSectionEditor } from '@/components/shared/sections/Repeatable
 import { ProjectItem } from './ProjectItem'
 
 export function ProjectsEditor() {
-  const { state, addSectionItem } = useCV()
+  const { state } = useCV()
   const { projects } = state.resume
-
-  const handleAdd = () => {
-    addSectionItem('projects')
-  }
 
   return (
     <RepeatableSectionEditor
@@ -19,7 +15,7 @@ export function ProjectsEditor() {
       addLabel="Add Project"
       emptyLabel="No projects added yet"
       items={projects}
-      onAdd={handleAdd}
+      hideTitle
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <ProjectItem
           item={item}
