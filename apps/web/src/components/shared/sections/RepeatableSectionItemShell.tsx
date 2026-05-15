@@ -31,7 +31,7 @@ export function RepeatableSectionItemShell({
   const { removeSectionItem, moveSectionItem } = useCV()
 
   return (
-    <div className="rounded-lg border border-border-faint bg-bg-2 overflow-hidden">
+    <div className="rounded-lg border border-border bg-bg-3 shadow-sm overflow-hidden">
       <SectionItemHeader
         title={title}
         subtitle={subtitle}

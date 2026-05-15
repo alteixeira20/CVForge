@@ -2,6 +2,7 @@
 
 import { type ReactNode } from 'react'
 import { Icon, type IconName } from '@/components/ui/Icon'
+import { ExpandCollapseButton } from './ExpandCollapseButton'
 
 interface WorkbenchSectionCardProps {
   title: ReactNode
@@ -51,7 +52,7 @@ export function WorkbenchSectionCard({
           </div>
           <div className="flex flex-col min-w-0">
             <div
-              className={`truncate text-[13px] font-medium tracking-tight transition-colors ${
+              className={`truncate text-[14px] font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
               }`}
             >
@@ -69,21 +70,12 @@ export function WorkbenchSectionCard({
           <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
         )}
 
-        <button
-          onClick={onToggle}
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-all ${
-            isExpanded
-              ? 'border-ember/30 bg-ember/10 text-ember'
-              : 'border-border bg-bg-3 text-ink-3 hover:border-border-strong hover:bg-bg-2 hover:text-ink'
-          }`}
+        <ExpandCollapseButton
+          isExpanded={isExpanded}
+          onToggle={onToggle}
           title={isExpanded ? 'Collapse section' : 'Expand section'}
-        >
-          <Icon
-            name="chevron-down"
-            size={13}
-            className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-          />
-        </button>
+          size="md"
+        />
       </div>
 
       {isExpanded && (

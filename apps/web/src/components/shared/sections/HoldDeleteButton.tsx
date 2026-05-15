@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 
-const HOLD_MS = 2000
+const HOLD_MS = 1200
 const TICK_MS = 50
 
 interface HoldDeleteButtonProps {

@@ -13,7 +13,7 @@ interface MultilineListFieldProps {
 export function MultilineListField({ label, placeholder, value, onChange, action }: MultilineListFieldProps) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
         <FieldLabel>{label}</FieldLabel>
         {action}
       </div>
