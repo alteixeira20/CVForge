@@ -102,6 +102,24 @@ export const BulletVisibilitySchema = z.object({
   customSections: z.boolean().default(true),
 });
 
+export const DescriptionModeSchema = z.enum(['bullets', 'paragraph']);
+
+export const SectionTitlesSchema = z.object({
+  workExperience: z.string().default('Work Experience'),
+  education: z.string().default('Education'),
+  projects: z.string().default('Projects'),
+  skills: z.string().default('Skills'),
+  languages: z.string().default('Languages'),
+  customSections: z.string().default('Custom Sections'),
+});
+
+export const DescriptionModesSchema = z.object({
+  workExperience: DescriptionModeSchema.default('bullets'),
+  education: DescriptionModeSchema.default('bullets'),
+  projects: DescriptionModeSchema.default('bullets'),
+  customSections: DescriptionModeSchema.default('bullets'),
+});
+
 export const SettingsSchema = z.object({
   documentSize: DocumentSizeSchema.default('A4'),
   localePreset: LocalePresetSchema.default('EU'),
@@ -124,6 +142,8 @@ export const SettingsSchema = z.object({
   ]),
   visibleSections: SectionVisibilitySchema,
   bulletVisibility: BulletVisibilitySchema,
+  sectionTitles: SectionTitlesSchema.default({}),
+  descriptionMode: DescriptionModesSchema.default({}),
 });
 
 /**
@@ -150,6 +170,8 @@ export type DocumentSize = z.infer<typeof DocumentSizeSchema>;
 export type LocalePreset = z.infer<typeof LocalePresetSchema>;
 export type Settings = z.infer<typeof SettingsSchema>;
 export type CVState = z.infer<typeof CVStateSchema>;
+export type DescriptionMode = z.infer<typeof DescriptionModeSchema>;
+export type SectionTitleKey = keyof z.infer<typeof SectionTitlesSchema>;
 
 /**
  * ─── Defaults ───────────────────────────────────────────────────────────────
@@ -212,6 +234,20 @@ export const defaultSettings: Settings = {
     education: true,
     projects: true,
     customSections: true,
+  },
+  sectionTitles: {
+    workExperience: 'Work Experience',
+    education: 'Education',
+    projects: 'Projects',
+    skills: 'Skills',
+    languages: 'Languages',
+    customSections: 'Custom Sections',
+  },
+  descriptionMode: {
+    workExperience: 'bullets' as const,
+    education: 'bullets' as const,
+    projects: 'bullets' as const,
+    customSections: 'bullets' as const,
   },
 };
 

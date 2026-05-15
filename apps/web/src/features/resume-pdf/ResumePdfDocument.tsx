@@ -1,12 +1,26 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer'
-import { type CVState } from '@/types/cv'
+import { type CVState, type DescriptionMode } from '@/types/cv'
 import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/features/resume-formatting'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEntry } from './ResumePdfEntry'
 import { ResumePdfHeader } from './ResumePdfHeader'
-import { ResumePdfBullets, ResumePdfSection } from './ResumePdfSection'
+import { ResumePdfBullets, ResumePdfParagraph, ResumePdfSection } from './ResumePdfSection'
 import { hasPdfSkills, ResumePdfSkills } from './ResumePdfSkills'
 import { createResumePdfStyles } from './resumePdfStyles'
+
+type Styles = ReturnType<typeof createResumePdfStyles>
+
+function renderDescription(
+  bullets: string[],
+  mode: DescriptionMode,
+  visible: boolean,
+  styles: Styles,
+) {
+  if (mode === 'paragraph') {
+    return <ResumePdfParagraph bullets={bullets} styles={styles} visible={visible} />
+  }
+  return <ResumePdfBullets bullets={bullets} styles={styles} visible={visible} />
+}
 
 export function ResumePdfDocument({ state }: { state: CVState }) {
   const { resume, settings } = state
@@ -23,7 +37,7 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
     >
       <Page size={settings.documentSize === 'Letter' ? 'LETTER' : 'A4'} style={styles.page}>
         <ResumePdfHeader profile={resume.profile} settings={settings} styles={styles} />
-        
+
         <View>
           {settings.sectionOrder.map((sectionId) => {
             const isVisible = settings.visibleSections[sectionId as keyof typeof settings.visibleSections]
@@ -35,7 +49,7 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
               case 'projects':
                 return <ProjectSection key={sectionId} state={state} styles={styles} />
               case 'skills':
-                return hasPdfSkills(resume.skills) ? <ResumePdfSkills key={sectionId} skills={resume.skills} styles={styles} /> : null
+                return hasPdfSkills(resume.skills) ? <ResumePdfSkills key={sectionId} skills={resume.skills} styles={styles} title={settings.sectionTitles.skills} /> : null
               case 'education':
                 return <EducationSection key={sectionId} state={state} styles={styles} />
               case 'languages':
@@ -52,11 +66,12 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
   )
 }
 
-function WorkSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  const items = state.resume.workExperience.filter((item) => hasWorkContent(item, state.settings.bulletVisibility.workExperience))
+function WorkSection({ state, styles }: { state: CVState; styles: Styles }) {
+  const { settings } = state
+  const items = state.resume.workExperience.filter((item) => hasWorkContent(item, settings.bulletVisibility.workExperience))
   if (items.length === 0) return null
   return (
-    <ResumePdfSection title="Experience" styles={styles}>
+    <ResumePdfSection title={settings.sectionTitles.workExperience} styles={styles}>
       {items.map((item) => (
         <View key={item.id}>
           <ResumePdfEntry
@@ -65,22 +80,19 @@ function WorkSection({ state, styles }: { state: CVState; styles: ReturnType<typ
             dates={formatDateRange(item.startDate, item.endDate, item.isCurrent)}
             styles={styles}
           />
-          <ResumePdfBullets
-            bullets={item.bullets}
-            styles={styles}
-            visible={state.settings.bulletVisibility.workExperience}
-          />
+          {renderDescription(item.bullets, settings.descriptionMode.workExperience, settings.bulletVisibility.workExperience, styles)}
         </View>
       ))}
     </ResumePdfSection>
   )
 }
 
-function ProjectSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  const items = state.resume.projects.filter((item) => hasProjectContent(item, state.settings.bulletVisibility.projects))
+function ProjectSection({ state, styles }: { state: CVState; styles: Styles }) {
+  const { settings } = state
+  const items = state.resume.projects.filter((item) => hasProjectContent(item, settings.bulletVisibility.projects))
   if (items.length === 0) return null
   return (
-    <ResumePdfSection title="Projects" styles={styles}>
+    <ResumePdfSection title={settings.sectionTitles.projects} styles={styles}>
       {items.map((item) => (
         <View key={item.id}>
           <ResumePdfEntry
@@ -89,22 +101,19 @@ function ProjectSection({ state, styles }: { state: CVState; styles: ReturnType<
             dates={formatDateRange(item.startDate, item.endDate)}
             styles={styles}
           />
-          <ResumePdfBullets
-            bullets={item.bullets}
-            styles={styles}
-            visible={state.settings.bulletVisibility.projects}
-          />
+          {renderDescription(item.bullets, settings.descriptionMode.projects, settings.bulletVisibility.projects, styles)}
         </View>
       ))}
     </ResumePdfSection>
   )
 }
 
-function EducationSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
-  const items = state.resume.education.filter((item) => hasEducationContent(item, state.settings.bulletVisibility.education))
+function EducationSection({ state, styles }: { state: CVState; styles: Styles }) {
+  const { settings } = state
+  const items = state.resume.education.filter((item) => hasEducationContent(item, settings.bulletVisibility.education))
   if (items.length === 0) return null
   return (
-    <ResumePdfSection title="Education" styles={styles}>
+    <ResumePdfSection title={settings.sectionTitles.education} styles={styles}>
       {items.map((item) => (
         <View key={item.id}>
           <ResumePdfEntry
@@ -113,24 +122,21 @@ function EducationSection({ state, styles }: { state: CVState; styles: ReturnTyp
             dates={formatDateRange(item.startDate, item.endDate)}
             styles={styles}
           />
-          <ResumePdfBullets
-            bullets={item.details}
-            styles={styles}
-            visible={state.settings.bulletVisibility.education}
-          />
+          {renderDescription(item.details, settings.descriptionMode.education, settings.bulletVisibility.education, styles)}
         </View>
       ))}
     </ResumePdfSection>
   )
 }
 
-function LanguageSection({ state, styles }: { state: CVState; styles: ReturnType<typeof createResumePdfStyles> }) {
+function LanguageSection({ state, styles }: { state: CVState; styles: Styles }) {
+  const { settings } = state
   const languages = state.resume.languages
     .map((item) => joinNonEmpty([item.name, item.proficiency ? `(${cleanText(item.proficiency)})` : ''], ' '))
     .filter(Boolean)
   if (languages.length === 0) return null
   return (
-    <ResumePdfSection title="Languages" styles={styles}>
+    <ResumePdfSection title={settings.sectionTitles.languages} styles={styles}>
       <Text>{languages.join(', ')}</Text>
     </ResumePdfSection>
   )

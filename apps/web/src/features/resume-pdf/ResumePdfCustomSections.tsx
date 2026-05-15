@@ -1,18 +1,20 @@
 import { type CustomSection, type Settings } from '@/types/cv'
 import { cleanList, cleanText } from '@/features/resume-formatting'
-import { ResumePdfBullets, ResumePdfSection } from './ResumePdfSection'
+import { ResumePdfBullets, ResumePdfParagraph, ResumePdfSection } from './ResumePdfSection'
 import { type PdfStyles } from './types'
 
 export function ResumePdfCustomSections({ items, styles, settings }: { items: CustomSection[]; styles: PdfStyles; settings: Settings }) {
+  const mode = settings.descriptionMode.customSections
+  const visible = settings.bulletVisibility.customSections
+
   return (
     <>
-      {items.filter((item) => hasCustomSectionContent(item, settings.bulletVisibility.customSections)).map((item) => (
+      {items.filter((item) => hasCustomSectionContent(item, visible)).map((item) => (
         <ResumePdfSection key={item.id} title={cleanText(item.title)} styles={styles}>
-          <ResumePdfBullets
-            bullets={item.bullets}
-            styles={styles}
-            visible={settings.bulletVisibility.customSections}
-          />
+          {mode === 'paragraph'
+            ? <ResumePdfParagraph bullets={item.bullets} styles={styles} visible={visible} />
+            : <ResumePdfBullets bullets={item.bullets} styles={styles} visible={visible} />
+          }
         </ResumePdfSection>
       ))}
     </>

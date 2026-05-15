@@ -11,7 +11,7 @@ export function hasPdfSkills(skills: Skills) {
     || cleanList(skills.soft).length > 0
 }
 
-export function ResumePdfSkills({ skills, styles }: { skills: Skills; styles: PdfStyles }) {
+export function ResumePdfSkills({ skills, styles, title = 'Skills' }: { skills: Skills; styles: PdfStyles; title?: string }) {
   const featured = [
     ...cleanList(skills.featured),
     ...skills.featuredWithRating
@@ -22,7 +22,7 @@ export function ResumePdfSkills({ skills, styles }: { skills: Skills; styles: Pd
   const soft = cleanList(skills.soft)
 
   return (
-    <ResumePdfSection title="Skills" styles={styles}>
+    <ResumePdfSection title={title} styles={styles}>
       <View>
         {featured.length > 0 && <Text>{featured.join(', ')}</Text>}
         {technical.length > 0 && <Text>Technical: {technical.join(', ')}</Text>}

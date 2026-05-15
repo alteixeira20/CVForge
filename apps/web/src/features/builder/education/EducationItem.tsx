@@ -5,6 +5,7 @@ import { FormField } from '@/components/shared/form/FormField'
 import { TextInput } from '@/components/shared/form/TextInput'
 import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
+import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Education } from '@/types/cv'
 
@@ -16,17 +17,19 @@ interface EducationItemProps {
   isLast: boolean
 }
 
-export function EducationItem({
-  item,
-  isExpanded,
-  onToggle,
-  isFirst,
-  isLast,
-}: EducationItemProps) {
-  const { updateSectionItem } = useCV()
+export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: EducationItemProps) {
+  const { state, updateSectionItem, updateSettingsField } = useCV()
+  const mode = state.settings.descriptionMode.education
 
   const handleChange = (field: keyof Education, value: unknown) => {
     updateSectionItem('education', item.id, field, value)
+  }
+
+  const toggleMode = () => {
+    updateSettingsField('descriptionMode', {
+      ...state.settings.descriptionMode,
+      education: mode === 'bullets' ? 'paragraph' : 'bullets',
+    })
   }
 
   return (
@@ -58,16 +61,6 @@ export function EducationItem({
       </FieldGroup>
 
       <FieldGroup columns={2}>
-        <FormField label="Location">
-          <TextInput
-            placeholder="e.g. Stanford, CA"
-            value={item.location}
-            onChange={(e) => handleChange('location', e.target.value)}
-          />
-        </FormField>
-      </FieldGroup>
-
-      <FieldGroup columns={2}>
         <FormField label="Start Date">
           <TextInput
             placeholder="e.g. Sep 2016"
@@ -85,10 +78,11 @@ export function EducationItem({
       </FieldGroup>
 
       <MultilineListField
-        label="Additional Details (One per line)"
+        label="Description"
         placeholder="Minors, awards, or relevant coursework..."
         value={item.details}
         onChange={(value) => handleChange('details', value)}
+        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
       />
     </RepeatableSectionItemShell>
   )

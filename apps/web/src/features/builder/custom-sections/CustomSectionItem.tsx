@@ -2,8 +2,9 @@
 
 import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
-import { TextArea } from '@/components/shared/form/TextArea'
 import { TextInput } from '@/components/shared/form/TextInput'
+import { MultilineListField } from '@/components/shared/form/MultilineListField'
+import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type CustomSection } from '@/types/cv'
 import { linesToBullets } from './customSectionText'
@@ -16,12 +17,19 @@ interface CustomSectionItemProps {
   isLast: boolean
 }
 
-export function CustomSectionItem(props: CustomSectionItemProps) {
-  const { item, isExpanded, onToggle, isFirst, isLast } = props
-  const { updateSectionItem } = useCV()
+export function CustomSectionItem({ item, isExpanded, onToggle, isFirst, isLast }: CustomSectionItemProps) {
+  const { state, updateSectionItem, updateSettingsField } = useCV()
+  const mode = state.settings.descriptionMode.customSections
 
   const handleChange = (field: keyof CustomSection, value: unknown) => {
     updateSectionItem('customSections', item.id, field, value)
+  }
+
+  const toggleMode = () => {
+    updateSettingsField('descriptionMode', {
+      ...state.settings.descriptionMode,
+      customSections: mode === 'bullets' ? 'paragraph' : 'bullets',
+    })
   }
 
   return (
@@ -34,34 +42,20 @@ export function CustomSectionItem(props: CustomSectionItemProps) {
       isExpanded={isExpanded}
       onToggle={onToggle}
     >
-      <CustomSectionFields item={item} onChange={handleChange} />
-    </RepeatableSectionItemShell>
-  )
-}
-
-function CustomSectionFields({
-  item,
-  onChange,
-}: {
-  item: CustomSection
-  onChange: (field: keyof CustomSection, value: unknown) => void
-}) {
-  return (
-    <>
       <FormField label="Section Title">
         <TextInput
           placeholder="e.g. Publications"
           value={item.title}
-          onChange={(event) => onChange('title', event.target.value)}
+          onChange={(e) => handleChange('title', e.target.value)}
         />
       </FormField>
-      <FormField label="Bullets (One per line)">
-        <TextArea
-          placeholder="Add one custom section detail per line..."
-          value={item.bullets.join('\n')}
-          onChange={(event) => onChange('bullets', linesToBullets(event.target.value))}
-        />
-      </FormField>
-    </>
+      <MultilineListField
+        label="Description"
+        placeholder="Add one detail per line..."
+        value={item.bullets}
+        onChange={(v) => handleChange('bullets', linesToBullets(v.join('\n')))}
+        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
+      />
+    </RepeatableSectionItemShell>
   )
 }

@@ -6,6 +6,7 @@ import { FieldLabel } from '@/components/shared/form/FieldLabel'
 import { TextInput } from '@/components/shared/form/TextInput'
 import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
+import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type WorkExperience } from '@/types/cv'
 
@@ -17,14 +18,9 @@ interface WorkExperienceItemProps {
   isLast: boolean
 }
 
-export function WorkExperienceItem({
-  item,
-  isExpanded,
-  onToggle,
-  isFirst,
-  isLast,
-}: WorkExperienceItemProps) {
-  const { updateSectionItem } = useCV()
+export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast }: WorkExperienceItemProps) {
+  const { state, updateSectionItem, updateSettingsField } = useCV()
+  const mode = state.settings.descriptionMode.workExperience
 
   const handleChange = (field: keyof WorkExperience, value: unknown) => {
     updateSectionItem('workExperience', item.id, field, value)
@@ -37,6 +33,13 @@ export function WorkExperienceItem({
     } else if (item.endDate === 'Present') {
       handleChange('endDate', '')
     }
+  }
+
+  const toggleMode = () => {
+    updateSettingsField('descriptionMode', {
+      ...state.settings.descriptionMode,
+      workExperience: mode === 'bullets' ? 'paragraph' : 'bullets',
+    })
   }
 
   return (
@@ -99,10 +102,11 @@ export function WorkExperienceItem({
       </FieldGroup>
 
       <MultilineListField
-        label="Description / Bullets (One per line)"
-        placeholder="Described your impact..."
+        label="Description"
+        placeholder="Describe your impact..."
         value={item.bullets}
         onChange={(value) => handleChange('bullets', value)}
+        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
       />
     </RepeatableSectionItemShell>
   )

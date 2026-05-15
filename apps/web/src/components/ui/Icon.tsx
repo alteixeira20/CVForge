@@ -34,6 +34,8 @@ import {
   Settings,
   Trash2,
   GripVertical,
+  List,
+  AlignLeft,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -72,6 +74,8 @@ export type IconName =
   | 'settings'
   | 'trash'
   | 'grip'
+  | 'list'
+  | 'align-left'
 
 const iconMap: Record<string, LucideIcon> = {
   anvil: Anvil,
@@ -107,6 +111,8 @@ const iconMap: Record<string, LucideIcon> = {
   settings: Settings,
   trash: Trash2,
   grip: GripVertical,
+  list: List,
+  'align-left': AlignLeft,
 }
 
 export interface IconProps {

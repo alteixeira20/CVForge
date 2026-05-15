@@ -1,4 +1,5 @@
-import { FormField } from './FormField'
+import { type ReactNode } from 'react'
+import { FieldLabel } from './FieldLabel'
 import { TextArea } from './TextArea'
 
 interface MultilineListFieldProps {
@@ -6,16 +7,21 @@ interface MultilineListFieldProps {
   placeholder: string
   value: string[]
   onChange: (value: string[]) => void
+  action?: ReactNode
 }
 
-export function MultilineListField({ label, placeholder, value, onChange }: MultilineListFieldProps) {
+export function MultilineListField({ label, placeholder, value, onChange, action }: MultilineListFieldProps) {
   return (
-    <FormField label={label}>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <FieldLabel>{label}</FieldLabel>
+        {action}
+      </div>
       <TextArea
         placeholder={placeholder}
         value={value.join('\n')}
         onChange={(e) => onChange(e.target.value.split('\n'))}
       />
-    </FormField>
+    </div>
   )
 }

@@ -39,6 +39,7 @@ export function createResumePdfStyles(settings: Settings) {
     row: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
     title: { fontWeight: 700, flexGrow: 1, flexShrink: 1 },
     bullet: { marginTop: 3 },
+    paragraph: { marginTop: 3 },
   })
 }
 

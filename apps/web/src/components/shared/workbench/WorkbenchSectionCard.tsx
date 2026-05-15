@@ -4,7 +4,7 @@ import { type ReactNode } from 'react'
 import { Icon, type IconName } from '@/components/ui/Icon'
 
 interface WorkbenchSectionCardProps {
-  title: string
+  title: ReactNode
   icon: IconName
   status?: string
   isExpanded: boolean
@@ -50,13 +50,13 @@ export function WorkbenchSectionCard({
             <Icon name={icon} size={13} />
           </div>
           <div className="flex flex-col min-w-0">
-            <span
+            <div
               className={`truncate text-[13px] font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
               }`}
             >
               {title}
-            </span>
+            </div>
             {status && (
               <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.06em] truncate">
                 {status}

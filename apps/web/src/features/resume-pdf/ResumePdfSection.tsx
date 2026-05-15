@@ -32,3 +32,17 @@ export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets:
     </View>
   )
 }
+
+export function ResumePdfParagraph({ bullets, styles, visible = true }: { bullets: string[]; styles: PdfStyles; visible?: boolean }) {
+  if (!visible) return null
+  const lines = cleanList(bullets)
+  if (lines.length === 0) return null
+
+  const text = lines
+    .map((line) => line.replace(/^[-•]\s*/, '').trim())
+    .filter(Boolean)
+    .join(' ')
+
+  if (!text) return null
+  return <Text style={styles.paragraph} wrap>{text}</Text>
+}
