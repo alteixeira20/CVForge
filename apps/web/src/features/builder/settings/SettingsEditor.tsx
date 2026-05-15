@@ -3,30 +3,22 @@
 import { DocumentSettings } from './DocumentSettings'
 import { TypographySettings } from './TypographySettings'
 import { SpacingSettings } from './SpacingSettings'
-import { SectionManager } from './SectionManager'
+import { SettingsPanel } from './SettingsPanel'
 
 export function SettingsEditor() {
   return (
-    <div className="space-y-10">
-      <section>
-        <h4 className="text-[10px] uppercase tracking-[0.2em] text-ink-4 mb-4 font-bold">Section Order & Visibility</h4>
-        <SectionManager />
-      </section>
-
-      <section>
-        <h4 className="text-[10px] uppercase tracking-[0.2em] text-ink-4 mb-4 font-bold">Document & Color</h4>
+    <div className="space-y-4">
+      <SettingsPanel title="Appearance">
         <DocumentSettings />
-      </section>
+      </SettingsPanel>
 
-      <section>
-        <h4 className="text-[10px] uppercase tracking-[0.2em] text-ink-4 mb-4 font-bold">Typography</h4>
+      <SettingsPanel title="Typography">
         <TypographySettings />
-      </section>
+      </SettingsPanel>
 
-      <section>
-        <h4 className="text-[10px] uppercase tracking-[0.2em] text-ink-4 mb-4 font-bold">Spacing (px)</h4>
+      <SettingsPanel title="Spacing">
         <SpacingSettings />
-      </section>
+      </SettingsPanel>
     </div>
   )
 }

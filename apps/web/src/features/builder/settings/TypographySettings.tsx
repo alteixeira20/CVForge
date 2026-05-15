@@ -1,24 +1,26 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
-import { TextInput } from '@/components/shared/form/TextInput'
+import { SelectInput } from '@/components/shared/form/SelectInput'
 import { NumberInput } from '@/components/shared/form/NumberInput'
 import { SettingRow } from '@/components/shared/form/SettingRow'
+import { FONT_FAMILY_OPTIONS } from './settingsConstants'
 
 export function TypographySettings() {
   const { state, updateSettingsField } = useCV()
   const { fontFamily, fontSize, nameFontSize, sectionHeadingSize, lineHeight } = state.settings
 
   return (
-    <div className="space-y-4">
+    <div className="divide-y divide-border-faint/50">
       <SettingRow label="Font Family">
-        <TextInput
+        <SelectInput
           value={fontFamily}
+          options={FONT_FAMILY_OPTIONS}
           onChange={(e) => updateSettingsField('fontFamily', e.target.value)}
         />
       </SettingRow>
 
-      <SettingRow label="Base Size">
+      <SettingRow label="Base Size" description="pt">
         <NumberInput
           value={fontSize}
           onChange={(val) => updateSettingsField('fontSize', val)}
@@ -27,7 +29,7 @@ export function TypographySettings() {
         />
       </SettingRow>
 
-      <SettingRow label="Name Size">
+      <SettingRow label="Name Size" description="pt">
         <NumberInput
           value={nameFontSize}
           onChange={(val) => updateSettingsField('nameFontSize', val)}
@@ -36,7 +38,7 @@ export function TypographySettings() {
         />
       </SettingRow>
 
-      <SettingRow label="Heading Size">
+      <SettingRow label="Heading Size" description="pt">
         <NumberInput
           value={sectionHeadingSize}
           onChange={(val) => updateSettingsField('sectionHeadingSize', val)}

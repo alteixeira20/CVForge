@@ -9,8 +9,8 @@ export function SpacingSettings() {
   const { sectionSpacing, profileSpacing, entrySpacing } = state.settings
 
   return (
-    <div className="space-y-4">
-      <SettingRow label="Section Gap">
+    <div className="divide-y divide-border-faint/50">
+      <SettingRow label="Section Gap" description="px">
         <NumberInput
           value={sectionSpacing}
           onChange={(val) => updateSettingsField('sectionSpacing', val)}
@@ -19,7 +19,7 @@ export function SpacingSettings() {
         />
       </SettingRow>
 
-      <SettingRow label="Profile Gap">
+      <SettingRow label="Profile Gap" description="px">
         <NumberInput
           value={profileSpacing}
           onChange={(val) => updateSettingsField('profileSpacing', val)}
@@ -28,7 +28,7 @@ export function SpacingSettings() {
         />
       </SettingRow>
 
-      <SettingRow label="Entry Gap">
+      <SettingRow label="Entry Gap" description="px">
         <NumberInput
           value={entrySpacing}
           onChange={(val) => updateSettingsField('entrySpacing', val)}
