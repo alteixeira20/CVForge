@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useRef, useEffect, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Icon, type IconName } from '@/components/ui/Icon'
 import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { EditableSectionTitle } from '@/components/shared/workbench/EditableSectionTitle'
 import { useCV, type RepeatableSectionKey } from '@/context/CVContext'
+import { BuilderAddFocusProvider } from '@/context/BuilderAddFocusContext'
 import { type SectionTitleKey } from '@/types/cv'
 import { ProfileEditor } from '@/features/builder/profile/ProfileEditor'
 import { SettingsEditor } from '@/features/builder/settings/SettingsEditor'
@@ -43,29 +44,37 @@ const STATIC_TITLES: Record<string, string> = {
 }
 
 export function BuilderSectionList() {
-  const [expandedId, setExpandedId] = useState<string | null>('profile')
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set(['profile']))
+  const [focusVersions, setFocusVersions] = useState<Partial<Record<RepeatableSectionKey, number>>>({})
   const { addSectionItem, state, updateSettingsField } = useCV()
 
+  const isSectionExpanded = (id: string) => expandedIds.has(id)
+
   const toggleSection = (id: string) => {
-    setExpandedId(expandedId === id ? null : id)
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
+    })
+  }
+
+  const openSection = (id: string) => {
+    setExpandedIds((prev) => new Set([...prev, id]))
+  }
+
+  const bumpFocus = (key: RepeatableSectionKey) => {
+    setFocusVersions((prev) => ({ ...prev, [key]: (prev[key] ?? 0) + 1 }))
   }
 
   const handleAdd = (sectionKey: RepeatableSectionKey, sectionId: string) => {
     addSectionItem(sectionKey)
-    setExpandedId(sectionId)
+    openSection(sectionId)
+    bumpFocus(sectionKey)
   }
 
-  useEffect(() => {
-    if (!expandedId || !sectionRefs.current[expandedId]) return
-    const timer = setTimeout(() => {
-      sectionRefs.current[expandedId]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [expandedId])
-
   return (
-    <div className="space-y-3 pb-16">
+    <BuilderAddFocusProvider versions={focusVersions}>
+      <div className="space-y-3 pb-16">
       {BUILDER_SECTIONS.map((section) => {
         const config = SECTION_CONFIG[section.id]
         const rawTitle = config
@@ -93,23 +102,19 @@ export function BuilderSectionList() {
         ) : undefined
 
         return (
-          <div
+          <WorkbenchSectionCard
             key={section.id}
-            ref={(el) => { sectionRefs.current[section.id] = el }}
-            className="scroll-mt-16 lg:scroll-mt-32"
+            title={cardTitle}
+            icon={section.icon}
+            isExpanded={isSectionExpanded(section.id)}
+            onToggle={() => toggleSection(section.id)}
+            headerActions={addAction}
           >
-            <WorkbenchSectionCard
-              title={cardTitle}
-              icon={section.icon}
-              isExpanded={expandedId === section.id}
-              onToggle={() => toggleSection(section.id)}
-              headerActions={addAction}
-            >
-              {section.content}
-            </WorkbenchSectionCard>
-          </div>
+            {section.content}
+          </WorkbenchSectionCard>
         )
       })}
-    </div>
+      </div>
+    </BuilderAddFocusProvider>
   )
 }

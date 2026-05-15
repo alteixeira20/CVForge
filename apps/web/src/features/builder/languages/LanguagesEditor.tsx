@@ -1,12 +1,14 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
+import { useAddFocusVersion } from '@/context/BuilderAddFocusContext'
 import { RepeatableSectionEditor } from '@/components/shared/sections/RepeatableSectionEditor'
 import { LanguageItem } from './LanguageItem'
 
 export function LanguagesEditor() {
   const { state } = useCV()
   const { languages } = state.resume
+  const focusLatestVersion = useAddFocusVersion('languages')
 
   return (
     <RepeatableSectionEditor
@@ -16,6 +18,7 @@ export function LanguagesEditor() {
       emptyLabel="No languages added yet"
       items={languages}
       hideTitle
+      focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <LanguageItem
           item={item}

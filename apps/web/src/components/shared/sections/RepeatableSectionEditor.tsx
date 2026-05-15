@@ -1,8 +1,7 @@
 'use client'
 
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, type ReactNode, useState, useEffect, useRef } from 'react'
 import { type IconName } from '@/components/ui/Icon'
-import { useExpandedItem } from '@/hooks/useExpandedItem'
 import { EmptySectionState } from './EmptySectionState'
 import { SectionHeader } from './SectionHeader'
 
@@ -23,6 +22,7 @@ interface RepeatableSectionEditorProps<T extends { id: string }> {
   onAdd?: () => void
   renderItem: (props: RepeatableItemRenderProps<T>) => ReactNode
   hideTitle?: boolean
+  focusLatestVersion?: number
 }
 
 export function RepeatableSectionEditor<T extends { id: string }>({
@@ -34,8 +34,31 @@ export function RepeatableSectionEditor<T extends { id: string }>({
   onAdd,
   renderItem,
   hideTitle = false,
+  focusLatestVersion = 0,
 }: RepeatableSectionEditorProps<T>) {
-  const { isExpanded, toggleExpanded } = useExpandedItem(items)
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(
+    () => new Set(items.length > 0 ? [items[0].id] : [])
+  )
+
+  const itemsRef = useRef(items)
+  itemsRef.current = items
+
+  const isExpanded = (id: string) => expandedIds.has(id)
+
+  const toggleExpanded = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
+      return next
+    })
+  }
+
+  useEffect(() => {
+    if (focusLatestVersion === 0 || itemsRef.current.length === 0) return
+    const lastId = itemsRef.current[itemsRef.current.length - 1].id
+    setExpandedIds(new Set([lastId]))
+  }, [focusLatestVersion])
+
   const showHeader = !hideTitle || !!onAdd
 
   return (
