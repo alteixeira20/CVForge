@@ -3,13 +3,23 @@
 import { useState } from 'react'
 
 export function useExpandedItem<T extends { id: string }>(items: T[]) {
-  const [expandedId, setExpandedId] = useState<string | null>(
-    items.length > 0 ? items[0].id : null
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(
+    () => new Set(items.length > 0 ? [items[0].id] : [])
   )
 
   const toggleExpanded = (id: string) => {
-    setExpandedId(expandedId === id ? null : id)
+    setExpandedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
   }
 
-  return { expandedId, toggleExpanded }
+  const isExpanded = (id: string) => expandedIds.has(id)
+
+  return { expandedIds, toggleExpanded, isExpanded }
 }

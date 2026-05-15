@@ -3,7 +3,7 @@
 import { Icon, type IconName } from '@/components/ui/Icon'
 
 interface SectionHeaderProps {
-  title: string
+  title?: string
   icon?: IconName
   onAdd?: () => void
   addLabel?: string
@@ -11,11 +11,13 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, icon, onAdd, addLabel = 'Add' }: SectionHeaderProps) {
   return (
-    <div className="flex items-center justify-between gap-12 mb-2">
-      <div className="flex items-center gap-6">
-        {icon && <Icon name={icon} size={14} className="text-ember" />}
-        <h3 className="text-xs uppercase tracking-widest text-ink-4 font-semibold">{title}</h3>
-      </div>
+    <div className={`flex items-center ${title ? 'justify-between' : 'justify-end'} gap-12 mb-2`}>
+      {title && (
+        <div className="flex items-center gap-6">
+          {icon && <Icon name={icon} size={14} className="text-ember" />}
+          <h3 className="text-xs uppercase tracking-widest text-ink-4 font-semibold">{title}</h3>
+        </div>
+      )}
       {onAdd && (
         <button
           onClick={onAdd}

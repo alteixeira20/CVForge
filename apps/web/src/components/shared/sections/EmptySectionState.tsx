@@ -4,8 +4,8 @@ interface EmptySectionStateProps {
 
 export function EmptySectionState({ children }: EmptySectionStateProps) {
   return (
-    <div className="p-32 text-center border-2 border-dashed border-border-faint rounded-xl opacity-50 select-none">
-      <p className="text-xs text-ink-4 uppercase tracking-widest">{children}</p>
+    <div className="py-3 px-4 text-center border border-dashed border-border-faint rounded-lg select-none">
+      <p className="text-xs text-ink-4">{children}</p>
     </div>
   )
 }

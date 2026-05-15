@@ -30,7 +30,7 @@ export function RepeatableSectionItemShell({
   const { removeSectionItem, moveSectionItem } = useCV()
 
   return (
-    <div className="border-b border-border-faint last:border-none">
+    <div className="rounded-lg border border-border-faint bg-bg-2 overflow-hidden">
       <SectionItemHeader
         title={title}
         subtitle={subtitle}
@@ -43,7 +43,7 @@ export function RepeatableSectionItemShell({
         onToggle={onToggle}
       />
       {isExpanded && (
-        <div className="pb-24 pt-4 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="px-4 pb-4 pt-3 space-y-3 border-t border-border-faint animate-in fade-in slide-in-from-top-2 duration-200">
           {children}
         </div>
       )}
