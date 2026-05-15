@@ -2,6 +2,7 @@
 
 import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
+import { FieldLabel } from '@/components/shared/form/FieldLabel'
 import { TextInput } from '@/components/shared/form/TextInput'
 import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
@@ -27,6 +28,15 @@ export function WorkExperienceItem({
 
   const handleChange = (field: keyof WorkExperience, value: unknown) => {
     updateSectionItem('workExperience', item.id, field, value)
+  }
+
+  const handleCurrentChange = (checked: boolean) => {
+    handleChange('isCurrent', checked)
+    if (checked) {
+      handleChange('endDate', 'Present')
+    } else if (item.endDate === 'Present') {
+      handleChange('endDate', '')
+    }
   }
 
   return (
@@ -58,27 +68,6 @@ export function WorkExperienceItem({
       </FieldGroup>
 
       <FieldGroup columns={2}>
-        <FormField label="Location">
-          <TextInput
-            placeholder="e.g. Remote"
-            value={item.location}
-            onChange={(e) => handleChange('location', e.target.value)}
-          />
-        </FormField>
-        <div className="flex items-end h-full pb-2.5">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              className="w-4 h-4 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
-              checked={item.isCurrent}
-              onChange={(e) => handleChange('isCurrent', e.target.checked)}
-            />
-            <span className="text-[11px] text-ink-3 uppercase tracking-wider font-semibold">Currently Work Here</span>
-          </label>
-        </div>
-      </FieldGroup>
-
-      <FieldGroup columns={2}>
         <FormField label="Start Date">
           <TextInput
             placeholder="e.g. Jan 2020"
@@ -86,15 +75,27 @@ export function WorkExperienceItem({
             onChange={(e) => handleChange('startDate', e.target.value)}
           />
         </FormField>
-        {!item.isCurrent && (
-          <FormField label="End Date">
-            <TextInput
-              placeholder="e.g. Present"
-              value={item.endDate}
-              onChange={(e) => handleChange('endDate', e.target.value)}
-            />
-          </FormField>
-        )}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <FieldLabel>End Date</FieldLabel>
+            <label className="flex items-center gap-1.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                className="w-3.5 h-3.5 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
+                checked={item.isCurrent}
+                onChange={(e) => handleCurrentChange(e.target.checked)}
+              />
+              <span className="text-[10px] text-ink-3 uppercase tracking-wider font-semibold">
+                Currently Work Here
+              </span>
+            </label>
+          </div>
+          <TextInput
+            placeholder="e.g. Dec 2023"
+            value={item.endDate}
+            onChange={(e) => handleChange('endDate', e.target.value)}
+          />
+        </div>
       </FieldGroup>
 
       <MultilineListField

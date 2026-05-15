@@ -10,12 +10,10 @@ interface WorkbenchSectionCardProps {
   isExpanded: boolean
   onToggle: () => void
   children: ReactNode
+  headerActions?: ReactNode
   className?: string
 }
 
-/**
- * A shared accordion-style card for workbench sections.
- */
 export function WorkbenchSectionCard({
   title,
   icon,
@@ -23,6 +21,7 @@ export function WorkbenchSectionCard({
   isExpanded,
   onToggle,
   children,
+  headerActions,
   className = '',
 }: WorkbenchSectionCardProps) {
   return (
@@ -33,18 +32,14 @@ export function WorkbenchSectionCard({
           : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
       } ${className}`}
     >
-      {/* Accent Line */}
       <div
         className={`absolute left-0 top-10 bottom-10 w-[3px] rounded-r-sm transition-opacity ${
           isExpanded ? 'bg-ember opacity-100' : 'bg-ink-4 opacity-0 group-hover:opacity-40'
         }`}
       />
 
-      <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-10 p-4 pl-16 text-left outline-none"
-      >
-        <div className="flex items-center gap-10 overflow-hidden">
+      <div className="flex w-full items-center gap-10 p-4 pl-16">
+        <div className="flex items-center gap-10 flex-1 overflow-hidden min-w-0">
           <div
             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
               isExpanded
@@ -69,20 +64,27 @@ export function WorkbenchSectionCard({
             )}
           </div>
         </div>
-        <div
-          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors ${
+
+        {headerActions && (
+          <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
+        )}
+
+        <button
+          onClick={onToggle}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-all ${
             isExpanded
-              ? 'bg-ember/10 text-ink-3'
-              : 'bg-bg-3 text-ink-4 group-hover:bg-bg-2 group-hover:text-ink-3'
+              ? 'border-ember/30 bg-ember/10 text-ember'
+              : 'border-border bg-bg-3 text-ink-3 hover:border-border-strong hover:bg-bg-2 hover:text-ink'
           }`}
+          title={isExpanded ? 'Collapse section' : 'Expand section'}
         >
           <Icon
             name="chevron-down"
             size={13}
             className={`transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
           />
-        </div>
-      </button>
+        </button>
+      </div>
 
       {isExpanded && (
         <div className="border-t border-border-faint p-5 lg:p-6 animate-in fade-in slide-in-from-top-1 duration-200">

@@ -20,8 +20,9 @@ interface RepeatableSectionEditorProps<T extends { id: string }> {
   addLabel: string
   emptyLabel: string
   items: T[]
-  onAdd: () => void
+  onAdd?: () => void
   renderItem: (props: RepeatableItemRenderProps<T>) => ReactNode
+  hideTitle?: boolean
 }
 
 export function RepeatableSectionEditor<T extends { id: string }>({
@@ -32,19 +33,28 @@ export function RepeatableSectionEditor<T extends { id: string }>({
   items,
   onAdd,
   renderItem,
+  hideTitle = false,
 }: RepeatableSectionEditorProps<T>) {
-  const { expandedId, toggleExpanded } = useExpandedItem(items)
+  const { isExpanded, toggleExpanded } = useExpandedItem(items)
+  const showHeader = !hideTitle || !!onAdd
 
   return (
-    <div className="space-y-4">
-      <SectionHeader title={title} icon={icon} onAdd={onAdd} addLabel={addLabel} />
+    <div className="space-y-2">
+      {showHeader && (
+        <SectionHeader
+          title={hideTitle ? undefined : title}
+          icon={hideTitle ? undefined : icon}
+          onAdd={onAdd}
+          addLabel={addLabel}
+        />
+      )}
       {items.length === 0 && <EmptySectionState>{emptyLabel}</EmptySectionState>}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {items.map((item, index) => (
           <Fragment key={item.id}>
             {renderItem({
               item,
-              isExpanded: expandedId === item.id,
+              isExpanded: isExpanded(item.id),
               onToggle: () => toggleExpanded(item.id),
               isFirst: index === 0,
               isLast: index === items.length - 1,
