@@ -19,17 +19,22 @@ Implemented:
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
 - Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
-- PDF-backed live preview for the current builder state.
+- PDF.js canvas preview pipeline for the current builder state, providing sharp, flicker-free rendering with zoom/fit controls.
+- Polished Workbench UI with repeatable item cards, hold-to-delete, inline editable section titles, and 10 professional color presets.
 - JSON backup export and validated JSON restore.
 - PDF download generated from current CV data with embedded session metadata.
-- Section reordering, section visibility, and bullet visibility controls.
+- Section visibility and bullet visibility controls.
 - Local PDF upload, source preview, text extraction, and parser diagnostics.
 - Direct Builder-to-Parser analysis for the current local Builder CV without exporting or uploading a file.
 - CVForge-generated PDF detection and embedded session restore.
 - Best-effort external PDF draft review and import that must be checked before use.
 - Local heuristic scoring with transparent issue rows.
 
-Planned:
+Planned (Pinned Future Slices):
+- Builder Settings advanced real PDF controls.
+- Builder section ordering / drag-and-drop.
+- PDF template polish.
+- Website/marketing polish.
 - Richer parser extraction and scoring checks.
 
 ## Development Workflow

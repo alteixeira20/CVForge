@@ -45,14 +45,13 @@ Implementation notes:
 - [x] Projects & Languages editors.
 - [x] Skills editor.
 - [x] Custom Section editor.
-- [x] Dynamic visual CV preview for the current builder state.
+- [x] Dynamic visual CV preview for the current builder state using a PDF.js canvas pipeline.
 - [x] JSON backup export and validated restore (Reliable).
 - [x] PDF download generated from current CV state with embedded session.
-- [x] Major section reordering and visibility.
+- [x] Section visibility.
 
 Current limitations:
 - The preview does not apply every setting in the schema.
-- The CSS preview is separate from PDF generation.
 - Session restoration from PDF works only for CVForge files with an embedded attachment.
 - External PDF-to-builder draft import is heuristic and requires review.
 

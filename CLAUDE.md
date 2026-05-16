@@ -22,7 +22,7 @@ For any coding task:
 ## 4. Architecture Summary
 - **Stack:** Next.js, React, TypeScript, Tailwind CSS, Zod.
 - **State:** `CVContext` manages a single reducer-based CV state synced to `localStorage`.
-- **Preview:** Client-side `@react-pdf/renderer` rendering an iframe preview.
+- **Preview:** Client-side `@react-pdf/renderer` outputting to a PDF.js canvas preview pipeline (flicker-free, supports zoom/fit).
 - **Export:** `@react-pdf/renderer` + `pdf-lib` for embedding session JSON.
 - **Parser:** `pdfjs-dist` for local text extraction and regex-based heuristics.
 

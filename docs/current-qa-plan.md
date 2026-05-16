@@ -10,9 +10,9 @@
 ## 2. Builder Desktop QA
 - **Route:** `/builder`
 - **Files Involved:** `BuilderWorkbench.tsx`, `BuilderEditorPanel.tsx`, `cvReducer.ts`
-- **Test:** Edit all sections, drag-and-drop to reorder, toggle section/bullet visibility.
-- **Expected:** State updates correctly, preview canvas reflects changes (after delay or refresh).
-- **Bugs to Record:** Drag-and-drop glitches, state failing to update.
+- **Test:** Edit all sections, test repeatable item cards, test description format toggles, toggle section/bullet visibility.
+- **Expected:** State updates correctly, preview canvas reflects changes sharply.
+- **Bugs to Record:** UI glitches in cards, state failing to update.
 
 ## 3. Builder Mobile QA
 - **Route:** `/builder` (Mobile viewport)
@@ -24,10 +24,10 @@
 ## 4. PDF Preview & Export QA
 - **Route:** `/builder`
 - **Files Involved:** `BuilderPreviewPanel.tsx`, `DownloadPdfButton.tsx`
-- **Test (Preview):** Type continuously. Verify the PDF does NOT refresh until you pause for ~1.6 seconds. Verify a "pending" indicator appears. Click "Refresh" to force an immediate update.
+- **Test (Preview):** Type continuously. Verify the PDF.js canvas handles updates gracefully without flickering native browser PDF viewers. Test zoom and fit controls.
 - **Test (Export):** Click "Download". Verify the generated PDF visually matches the preview.
-- **Expected:** Calm preview update works. Downloaded PDF contains the embedded `cvforge-session.json`.
-- **Bugs to Record:** Iframe flashing while typing, missing Refresh button, Export failing.
+- **Expected:** Sharp, flicker-free canvas preview works. Downloaded PDF contains the embedded `cvforge-session.json`.
+- **Bugs to Record:** Canvas failing to render, zoom controls broken, Export failing.
 
 ## 5. JSON Import/Export QA
 - **Route:** `/builder` (Settings Modal)
@@ -51,10 +51,10 @@
 - **Bugs to Record:** Failure to read attachment, falling back to heuristics incorrectly.
 
 ## 8. External PDF Heuristic Import QA
-- **Route:** `/resume-import`
+- **Route:** `/parser`
 - **Files Involved:** `ParserHeuristicAction.tsx`, `heuristicResumeParser.ts`
 - **Test:** Upload an external (non-CVForge) PDF.
-- **Expected:** App transitions to the import review screen showing heuristic mapping.
+- **Expected:** App displays the "Best-Effort Draft Review" card showing heuristic mapping. User can review and create an editable draft.
 - **Bugs to Record:** Immediate override of Builder state without review.
 
 ## 9. Theme & Brand QA

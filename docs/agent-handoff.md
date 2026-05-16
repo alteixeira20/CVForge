@@ -99,6 +99,5 @@
 - Major visual alignment for Builder, Parser, and Forge Apps branding.
 - Full implementation of Builder sections and shared workbench primitives.
 - Integration of parser scoring and diagnostic signals.
-
-## Known Current Issue
-The Builder PDF preview iframe visibly flashes/reloads when the underlying blob URL is updated during active typing. A calm preview update strategy (longer idle debounce + manual refresh) is required.
+- Implemented PDF.js canvas preview pipeline to replace the iframe, resolving previous flashing/reloading issues and adding zoom/fit controls.
+- Builder Workbench polish: repeatable item cards, shared expand/collapse, hold-to-delete, inline editable section titles, description format toggle, compact Settings panels, and 10 professional color presets.

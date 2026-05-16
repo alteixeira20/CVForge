@@ -29,8 +29,12 @@ The current app includes:
 
 ## 3. Planned Scope
 
-Planned but not implemented:
-- Richer parser and scoring checks.
+Planned but not implemented (Pinned Future Slices):
+- Builder Settings advanced real PDF controls.
+- Builder section ordering / drag-and-drop.
+- PDF template polish.
+- Website/marketing polish.
+- Richer parser extraction and scoring checks.
 
 ## 4. Current Limitations
 
