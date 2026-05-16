@@ -142,8 +142,20 @@ export const SettingsSchema = z.object({
   ]),
   visibleSections: SectionVisibilitySchema,
   bulletVisibility: BulletVisibilitySchema,
-  sectionTitles: SectionTitlesSchema.default({}),
-  descriptionMode: DescriptionModesSchema.default({}),
+  sectionTitles: SectionTitlesSchema.default({
+    workExperience: 'Work Experience',
+    education: 'Education',
+    projects: 'Projects',
+    skills: 'Skills',
+    languages: 'Languages',
+    customSections: 'Custom Sections',
+  }),
+  descriptionMode: DescriptionModesSchema.default({
+    workExperience: 'bullets',
+    education: 'bullets',
+    projects: 'bullets',
+    customSections: 'bullets',
+  }),
 });
 
 /**

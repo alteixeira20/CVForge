@@ -19,7 +19,7 @@ const SPIN_VISIBLE_MS = 600
 
 export function BuilderPreviewPanel({ state }: { state: CVState }) {
   const [renderScale, setRenderScale] = useState(0)
-  const { pages, isRendering, progress, error } = usePdfCanvasPreview(state, renderScale)
+  const { pages, progress, error } = usePdfCanvasPreview(state, renderScale)
   const isEmpty = isEmptyCV(state)
 
   // One-shot spin: each successful page swap increments spinKey (remounts the SVG,
