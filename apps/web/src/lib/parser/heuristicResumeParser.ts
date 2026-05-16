@@ -62,16 +62,16 @@ export interface HeuristicResult {
 }
 
 const SECTION_DEFINITIONS: Array<{ key: SectionKey; label: string; pattern: RegExp }> = [
-  { key: 'summary', label: 'Summary / Profile', pattern: /^(summary|profile|about)$/i },
-  { key: 'experience', label: 'Work / Experience', pattern: /^(work experience|professional experience|experience|employment|work history)$/i },
-  { key: 'education', label: 'Education', pattern: /^(education|academic background|academic)$/i },
-  { key: 'skills', label: 'Skills', pattern: /^(skills|technical skills|core skills|expertise)$/i },
-  { key: 'projects', label: 'Projects', pattern: /^(projects|selected projects|personal projects)$/i },
-  { key: 'languages', label: 'Languages', pattern: /^languages$/i },
-  { key: 'certifications', label: 'Certifications', pattern: /^(certifications|certificates)$/i },
-  { key: 'awards', label: 'Awards', pattern: /^awards$/i },
-  { key: 'publications', label: 'Publications', pattern: /^publications$/i },
-  { key: 'volunteering', label: 'Volunteering', pattern: /^(volunteering|volunteer experience)$/i },
+  { key: 'summary', label: 'Summary / Profile', pattern: /^(summary|profile|about|professional summary|executive summary)$/i },
+  { key: 'experience', label: 'Work / Experience', pattern: /^(work experience|professional experience|experience|employment|work history|professional history|employment history)$/i },
+  { key: 'education', label: 'Education', pattern: /^(education|academic background|academic|scholastic history)$/i },
+  { key: 'skills', label: 'Skills', pattern: /^(skills|technical skills|core skills|expertise|technical expertise|skills & expertise)$/i },
+  { key: 'projects', label: 'Projects', pattern: /^(projects|selected projects|personal projects|academic projects)$/i },
+  { key: 'languages', label: 'Languages', pattern: /^(languages|language skills|linguistic skills)$/i },
+  { key: 'certifications', label: 'Certifications', pattern: /^(certifications|certificates|licenses|accreditations)$/i },
+  { key: 'awards', label: 'Awards', pattern: /^(awards|honors|awards & honors|recognition)$/i },
+  { key: 'publications', label: 'Publications', pattern: /^(publications|papers|presentations)$/i },
+  { key: 'volunteering', label: 'Volunteering', pattern: /^(volunteering|volunteer experience|community service)$/i },
 ]
 
 export function parseHeuristicResume(text: string): HeuristicResult | null {
