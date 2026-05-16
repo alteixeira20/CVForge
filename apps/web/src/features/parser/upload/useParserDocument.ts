@@ -1,9 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { extractPdfText } from '@/lib/parser/pdfTextExtraction'
-import { extractCVForgeAttachment } from '@/lib/parser/extractCVForgeAttachment'
-import { parseHeuristicResume } from '@/lib/parser/heuristicResumeParser'
+import { analyzePdfImport } from '@/lib/parser/pdfImport'
 import { type ParserDocument } from './parserTypes'
 
 export function useParserDocument() {
@@ -17,23 +15,20 @@ export function useParserDocument() {
     if (!isPdfFile(file)) return setDocument({ fileName: file.name, objectUrl: '', error: 'Choose a PDF file.' })
 
     const objectUrl = URL.createObjectURL(file)
-    try {
-      const [extraction, embeddedState] = await Promise.all([
-        extractPdfText(file),
-        extractCVForgeAttachment(file)
-      ])
-      
-      const heuristic = !embeddedState ? parseHeuristicResume(extraction.text) : undefined
-      
-      setDocument({ 
-        fileName: file.name, 
-        objectUrl, 
-        extraction, 
-        embeddedState: embeddedState || undefined,
-        heuristic: heuristic || undefined
+    const result = await analyzePdfImport(file)
+
+    if (result.success) {
+      setDocument({
+        fileName: file.name,
+        objectUrl,
+        ...result.analysis
       })
-    } catch {
-      setDocument({ fileName: file.name, objectUrl, error: 'PDF text extraction failed for this file.' })
+    } else {
+      setDocument({
+        fileName: file.name,
+        objectUrl,
+        error: result.error
+      })
     }
   }
 
