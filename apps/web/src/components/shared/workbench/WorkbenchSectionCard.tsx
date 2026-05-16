@@ -13,6 +13,8 @@ interface WorkbenchSectionCardProps {
   children: ReactNode
   headerActions?: ReactNode
   className?: string
+  isVisible?: boolean
+  onToggleVisibility?: () => void
 }
 
 export function WorkbenchSectionCard({
@@ -24,6 +26,8 @@ export function WorkbenchSectionCard({
   children,
   headerActions,
   className = '',
+  isVisible = true,
+  onToggleVisibility,
 }: WorkbenchSectionCardProps) {
   return (
     <div
@@ -31,7 +35,7 @@ export function WorkbenchSectionCard({
         isExpanded
           ? 'border-border-strong bg-bg-2 shadow-sm'
           : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
-      } ${className}`}
+      } ${!isVisible ? 'opacity-75 hover:opacity-100' : ''} ${className}`}
     >
       <div
         className={`absolute left-0 top-10 bottom-10 w-[3px] rounded-r-sm transition-opacity ${
@@ -46,17 +50,22 @@ export function WorkbenchSectionCard({
               isExpanded
                 ? 'border-ember/30 bg-ember/10 text-ember'
                 : 'border-border bg-bg-3 text-ink-3 group-hover:text-ink-2'
-            }`}
+            } ${!isVisible ? 'grayscale opacity-50' : ''}`}
           >
             <Icon name={icon} size={13} />
           </div>
           <div className="flex flex-col min-w-0">
             <div
-              className={`truncate text-[14px] font-medium tracking-tight transition-colors ${
+              className={`flex items-center gap-8 truncate text-[14px] font-medium tracking-tight transition-colors ${
                 isExpanded ? 'text-ink' : 'text-ink-2 group-hover:text-ink'
-              }`}
+              } ${!isVisible ? 'text-ink-4' : ''}`}
             >
               {title}
+              {!isVisible && (
+                <span className="text-[10px] font-normal text-ink-4 italic shrink-0">
+                  Hidden from PDF
+                </span>
+              )}
             </div>
             {status && (
               <span className="text-[9px] font-mono text-ink-4 uppercase tracking-[0.06em] truncate">
@@ -66,16 +75,34 @@ export function WorkbenchSectionCard({
           </div>
         </div>
 
-        {isExpanded && headerActions && (
-          <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
-        )}
+        <div className="flex items-center gap-2 shrink-0">
+          {onToggleVisibility && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggleVisibility()
+              }}
+              className={`btn sm ghost px-6 h-8 hover:bg-bg-3 ${
+                !isVisible ? 'text-ember' : 'text-ink-4 hover:text-ink-2'
+              }`}
+              title={isVisible ? 'Hide section from PDF' : 'Show section in PDF'}
+              aria-label={isVisible ? 'Hide section from PDF' : 'Show section in PDF'}
+            >
+              <Icon name={isVisible ? 'eye' : 'eye-off'} size={13} />
+            </button>
+          )}
 
-        <ExpandCollapseButton
-          isExpanded={isExpanded}
-          onToggle={onToggle}
-          title={isExpanded ? 'Collapse section' : 'Expand section'}
-          size="md"
-        />
+          {isExpanded && headerActions && (
+            <div className="flex items-center gap-2 shrink-0">{headerActions}</div>
+          )}
+
+          <ExpandCollapseButton
+            isExpanded={isExpanded}
+            onToggle={onToggle}
+            title={isExpanded ? 'Collapse section' : 'Expand section'}
+            size="md"
+          />
+        </div>
       </div>
 
       {isExpanded && (

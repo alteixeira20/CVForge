@@ -70,6 +70,21 @@ export function BuilderSectionList() {
     addSectionItem(sectionKey)
     openSection(sectionId)
     bumpFocus(sectionKey)
+
+    // Ensure custom sections are visible when adding one
+    if (sectionKey === 'customSections' && !state.settings.visibleSections.customSections) {
+      updateSettingsField('visibleSections', {
+        ...state.settings.visibleSections,
+        customSections: true,
+      })
+    }
+  }
+
+  const toggleVisibility = (titleKey: SectionTitleKey) => {
+    updateSettingsField('visibleSections', {
+      ...state.settings.visibleSections,
+      [titleKey]: !state.settings.visibleSections[titleKey as keyof typeof state.settings.visibleSections],
+    })
   }
 
   return (
@@ -77,6 +92,8 @@ export function BuilderSectionList() {
       <div className="space-y-3 pb-16">
       {BUILDER_SECTIONS.map((section) => {
         const config = SECTION_CONFIG[section.id]
+        const isVisible = config ? state.settings.visibleSections[config.titleKey as keyof typeof state.settings.visibleSections] : true
+
         const rawTitle = config
           ? state.settings.sectionTitles[config.titleKey]
           : (STATIC_TITLES[section.id] ?? section.id)
@@ -93,7 +110,10 @@ export function BuilderSectionList() {
 
         const addAction = config?.addKey ? (
           <button
-            onClick={() => handleAdd(config.addKey!, section.id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              handleAdd(config.addKey!, section.id)
+            }}
             className="btn sm ghost px-8 py-4 h-auto text-[10px] uppercase tracking-wider font-bold hover:bg-bg-3 border border-border-faint hover:border-border-strong"
           >
             <Icon name="plus" size={10} />
@@ -109,7 +129,22 @@ export function BuilderSectionList() {
             isExpanded={isSectionExpanded(section.id)}
             onToggle={() => toggleSection(section.id)}
             headerActions={addAction}
+            isVisible={isVisible}
+            onToggleVisibility={config ? () => toggleVisibility(config.titleKey) : undefined}
           >
+            {section.id === 'custom' && isSectionExpanded(section.id) && (
+              <div className="mb-6 p-4 rounded-lg bg-bg-3 border border-border-faint">
+                <div className="flex gap-10 items-start">
+                  <Icon name="anvil" size={14} className="text-ember mt-1 shrink-0" />
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-ink">Custom Sections</p>
+                    <p className="text-[11px] text-ink-3 leading-relaxed">
+                      Use this for certifications, awards, publications, volunteering, or other CV sections.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
             {section.content}
           </WorkbenchSectionCard>
         )
