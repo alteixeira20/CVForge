@@ -27,7 +27,7 @@ export function ParserRestoreAction({ embeddedState }: { embeddedState: CVState 
     >
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-16">
         <p className="text-xs text-ink-3 leading-relaxed max-w-sm">
-          This PDF includes a session attachment. You can perfectly restore it to the builder with no data loss.
+          This PDF includes a saved CVForge session. The Builder can perform a high-fidelity restore of this structured state.
         </p>
         
         <button
