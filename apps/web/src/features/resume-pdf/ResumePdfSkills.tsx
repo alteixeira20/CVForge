@@ -5,29 +5,43 @@ import { ResumePdfSection } from './ResumePdfSection'
 import { type PdfStyles } from './types'
 
 export function hasPdfSkills(skills: Skills) {
-  return skills.featuredWithRating.some((item) => item.skill.trim())
-    || cleanList(skills.featured).length > 0
-    || cleanList(skills.technical).length > 0
+  return cleanList(buildTechnicalSkills(skills)).length > 0
     || cleanList(skills.soft).length > 0
 }
 
 export function ResumePdfSkills({ skills, styles, title = 'Skills' }: { skills: Skills; styles: PdfStyles; title?: string }) {
-  const featured = [
-    ...cleanList(skills.featured),
-    ...skills.featuredWithRating
-      .filter((item) => item.skill.trim())
-      .map((item) => `${item.skill.trim()}${typeof item.rating === 'number' ? ` (${item.rating}/5)` : ''}`),
-  ]
-  const technical = cleanList(skills.technical)
+  const technical = cleanList(buildTechnicalSkills(skills))
   const soft = cleanList(skills.soft)
+
+  if (technical.length === 0 && soft.length === 0) return null
 
   return (
     <ResumePdfSection title={title} styles={styles}>
       <View>
-        {featured.length > 0 && <Text>{featured.join(', ')}</Text>}
-        {technical.length > 0 && <Text>Technical: {technical.join(', ')}</Text>}
-        {soft.length > 0 && <Text>Soft: {soft.join(', ')}</Text>}
+        {technical.length > 0 && (
+          <SkillRow label="Technical Skills" values={technical} styles={styles} isLast={soft.length === 0} />
+        )}
+        {soft.length > 0 && (
+          <SkillRow label="Ways of Working" values={soft} styles={styles} isLast />
+        )}
       </View>
     </ResumePdfSection>
   )
+}
+
+function SkillRow({ label, values, styles, isLast }: { label: string; values: string[]; styles: PdfStyles; isLast: boolean }) {
+  return (
+    <View style={isLast ? styles.skillRowLast : styles.skillRow}>
+      <Text style={styles.skillLabel}>{label}</Text>
+      <Text style={styles.skillValues}>{values.join(', ')}</Text>
+    </View>
+  )
+}
+
+function buildTechnicalSkills(skills: Skills) {
+  return [
+    ...skills.featured,
+    ...skills.featuredWithRating.map((item) => item.skill),
+    ...skills.technical,
+  ]
 }

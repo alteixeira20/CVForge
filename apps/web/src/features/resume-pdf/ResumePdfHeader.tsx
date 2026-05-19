@@ -1,8 +1,8 @@
-import { Text, View } from '@react-pdf/renderer'
+import { Link, Text, View } from '@react-pdf/renderer'
 import { type Profile, type Settings } from '@/types/cv'
 import { cleanText } from '@/features/resume-formatting'
+import { ResumePdfIcon, type ResumePdfIconName } from './ResumePdfIcons'
 import { type PdfStyles } from './types'
-import { PAGE_PADDING } from './resumePdfStyles'
 
 interface HeaderProps {
   profile: Profile
@@ -10,50 +10,60 @@ interface HeaderProps {
   styles: PdfStyles
 }
 
-function buildContactValues(profile: Profile): string[] {
+interface ContactItem {
+  icon: ResumePdfIconName
+  value: string
+  href?: string
+}
+
+function buildContactItems(profile: Profile): ContactItem[] {
   return [
-    profile.email,
-    profile.phone,
-    profile.location,
-    profile.website,
-    profile.github,
-    profile.linkedin,
+    contactItem('email', profile.email, emailHref),
+    contactItem('phone', profile.phone),
+    contactItem('location', profile.location),
+    contactItem('website', profile.website, webHref, displayUrl),
+    contactItem('github', profile.github, webHref, displayUrl),
+    contactItem('linkedin', profile.linkedin, webHref, displayUrl),
   ]
-    .map(cleanText)
-    .filter(Boolean)
+    .filter((item) => item.value)
 }
 
-function splitRows(values: string[]): [string[], string[]] {
-  if (values.length <= 3) return [values, []]
-  const mid = Math.ceil(values.length / 2)
-  return [values.slice(0, mid), values.slice(mid)]
+function contactItem(
+  icon: ResumePdfIconName,
+  value: string,
+  hrefFactory?: (value: string) => string,
+  displayFactory?: (value: string) => string,
+): ContactItem {
+  const cleaned = cleanText(value)
+  const displayValue = cleaned && displayFactory ? displayFactory(cleaned) : cleaned
+  return { icon, value: displayValue, href: cleaned && hrefFactory ? hrefFactory(cleaned) : undefined }
 }
 
-function rowText(values: string[]): string {
-  return values.join('  ·  ')
+function emailHref(value: string) {
+  return `mailto:${value}`
 }
 
-function AccentBar({ color }: { color: string }) {
+function webHref(value: string) {
+  return /^https?:\/\//i.test(value) ? value : `https://${value}`
+}
+
+function displayUrl(value: string) {
+  return value.replace(/^https?:\/\//i, '').replace(/\/$/, '')
+}
+
+function ContactBlock({ items, styles, color }: { items: ContactItem[]; styles: PdfStyles; color: string }) {
   return (
-    <View
-      style={{
-        height: 4,
-        backgroundColor: color,
-        marginLeft: -PAGE_PADDING,
-        marginRight: -PAGE_PADDING,
-        marginTop: -PAGE_PADDING,
-        marginBottom: 14,
-      }}
-    />
-  )
-}
-
-function ContactBlock({ values, styles }: { values: string[]; styles: PdfStyles }) {
-  const [row1, row2] = splitRows(values)
-  return (
-    <View style={{ marginTop: 5 }}>
-      <Text style={styles.contact}>{rowText(row1)}</Text>
-      {row2.length > 0 && <Text style={styles.contactNext}>{rowText(row2)}</Text>}
+    <View style={styles.contactWrap}>
+      {items.map((item) => (
+        <View key={`${item.icon}-${item.value}`} style={styles.contactItem}>
+          <View style={styles.contactIcon}>
+            <ResumePdfIcon name={item.icon} color={color} />
+          </View>
+          {item.href
+            ? <Link src={item.href} style={styles.contactValue}>{item.value}</Link>
+            : <Text style={styles.contactValue}>{item.value}</Text>}
+        </View>
+      ))}
     </View>
   )
 }
@@ -61,20 +71,16 @@ function ContactBlock({ values, styles }: { values: string[]; styles: PdfStyles 
 export function ResumePdfHeader({ profile, settings, styles }: HeaderProps) {
   const name = cleanText(profile.name)
   const summary = cleanText(profile.summary)
-  const contactValues = buildContactValues(profile)
+  const contactItems = buildContactItems(profile)
 
-  if (!name && contactValues.length === 0 && !summary) return null
+  if (!name && contactItems.length === 0 && !summary) return null
 
   return (
-    <View>
-      <AccentBar color={settings.themeColor} />
+    <View style={styles.header}>
+      <View style={styles.accentRule} />
       {name && <Text style={styles.name}>{name}</Text>}
-      {contactValues.length > 0 && <ContactBlock values={contactValues} styles={styles} />}
-      {summary && (
-        <View style={{ marginTop: settings.profileSpacing }}>
-          <Text style={styles.summary}>{summary}</Text>
-        </View>
-      )}
+      {contactItems.length > 0 && <ContactBlock items={contactItems} styles={styles} color={settings.themeColor} />}
+      {summary && <Text style={styles.summary}>{summary}</Text>}
     </View>
   )
 }

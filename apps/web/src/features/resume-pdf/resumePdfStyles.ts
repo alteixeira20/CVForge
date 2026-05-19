@@ -1,46 +1,201 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { type Settings } from '@/types/cv'
 
-export const PAGE_PADDING = 42
+export const PAGE_PADDING_VERTICAL = 34
+export const PAGE_PADDING_HORIZONTAL = 50
 
 export function createResumePdfStyles(settings: Settings) {
   const fontFamily = resolvePdfFont(settings.fontFamily)
-  const contactSize = Math.max(settings.fontSize - 1, 8)
+  const bodySize = compact(settings.fontSize, -0.5, 9, 12)
+  const nameSize = compact(settings.nameFontSize, 2, 16, 26)
+  const contactSize = compact(bodySize, -1, 8, 10.5)
+  const dateSize = compact(bodySize, -1.5, 8, 10)
+  const headingSize = compact(settings.sectionHeadingSize, -1.5, 8.5, 11)
+  const lineHeight = compact(settings.lineHeight, -0.08, 1.28, 1.48)
+  const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 8, 16)
+  const profileSpacing = scaleSpacing(settings.profileSpacing, 0.8, 5, 10)
+  const entrySpacing = scaleSpacing(settings.entrySpacing, 0.8, 5, 10)
 
   return StyleSheet.create({
     page: {
-      padding: PAGE_PADDING,
+      paddingTop: PAGE_PADDING_VERTICAL,
+      paddingRight: PAGE_PADDING_HORIZONTAL,
+      paddingBottom: PAGE_PADDING_VERTICAL,
+      paddingLeft: PAGE_PADDING_HORIZONTAL,
       fontFamily,
-      fontSize: settings.fontSize,
-      lineHeight: settings.lineHeight,
-      color: '#1a1a1a',
+      fontSize: bodySize,
+      lineHeight,
+      color: '#111418',
     },
-    name: { fontSize: settings.nameFontSize, fontWeight: 700, color: settings.themeColor },
-    muted: { color: '#555' },
-    contact: { fontSize: contactSize, color: '#555', lineHeight: 1.4 },
-    contactNext: { fontSize: contactSize, color: '#555', lineHeight: 1.4, marginTop: 2 },
-    summary: {
-      fontSize: settings.fontSize,
-      color: '#333',
-      lineHeight: settings.lineHeight,
-      textAlign: 'justify',
+    accentRule: {
+      height: 3,
+      backgroundColor: settings.themeColor,
+      marginTop: -PAGE_PADDING_VERTICAL,
+      marginRight: -PAGE_PADDING_HORIZONTAL,
+      marginBottom: 13,
+      marginLeft: -PAGE_PADDING_HORIZONTAL,
     },
-    section: { marginTop: settings.sectionSpacing },
-    sectionTitle: {
-      fontSize: settings.sectionHeadingSize,
+    header: { marginBottom: profileSpacing },
+    name: {
+      fontSize: nameSize,
+      fontWeight: 600,
+      color: '#111418',
+      lineHeight: 1.1,
+      marginBottom: 8,
+    },
+    contactWrap: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      rowGap: 3,
+      columnGap: 14,
+    },
+    contactItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      fontSize: contactSize,
+      color: '#3D4250',
+      lineHeight: 1.2,
+    },
+    contactIcon: {
+      width: 8,
+      height: 8,
+      flexShrink: 0,
+    },
+    contactValue: {
+      color: '#3D4250',
+      textDecoration: 'none',
+      lineHeight: 1.2,
+    },
+    link: {
       color: settings.themeColor,
-      fontWeight: 700,
-      borderBottomWidth: 1,
-      borderBottomColor: settings.themeColor,
-      paddingBottom: 3,
-      marginBottom: 7,
+      textDecoration: 'none',
     },
-    entry: { marginTop: settings.entrySpacing },
-    row: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
-    title: { fontWeight: 700, flexGrow: 1, flexShrink: 1 },
-    bullet: { marginTop: 3 },
-    paragraph: { marginTop: 3 },
+    summary: {
+      fontSize: bodySize,
+      color: '#3D4250',
+      lineHeight: Math.min(lineHeight + 0.03, 1.5),
+      marginTop: profileSpacing,
+    },
+    section: { marginTop: sectionSpacing },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      marginBottom: 6,
+    },
+    sectionTick: {
+      width: 4,
+      height: 4,
+      backgroundColor: settings.themeColor,
+    },
+    sectionTitleText: {
+      fontSize: headingSize,
+      color: '#111418',
+      fontWeight: 600,
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+    },
+    sectionRule: {
+      height: 0.5,
+      flexGrow: 1,
+      backgroundColor: '#D6D9DE',
+      marginLeft: 4,
+    },
+    entryGroup: { marginBottom: entrySpacing },
+    entry: {},
+    entryRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'baseline',
+      gap: 12,
+    },
+    entryTitle: {
+      fontWeight: 600,
+      color: '#111418',
+      flexGrow: 1,
+      flexShrink: 1,
+      lineHeight: 1.3,
+    },
+    entryOrg: {
+      fontWeight: 400,
+      color: '#3D4250',
+    },
+    entryDates: {
+      fontFamily: resolveDateFont(fontFamily),
+      fontSize: dateSize,
+      color: '#6B7280',
+      flexShrink: 0,
+      lineHeight: 1.25,
+    },
+    entrySubtitle: {
+      fontSize: contactSize,
+      color: '#6B7280',
+      lineHeight: 1.35,
+      marginTop: 1,
+      marginBottom: 2,
+    },
+    bulletRow: {
+      flexDirection: 'row',
+      gap: 6,
+      marginTop: 1,
+    },
+    bulletMarker: {
+      width: 4,
+      color: '#6B7280',
+      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+    },
+    bulletText: {
+      flexGrow: 1,
+      flexShrink: 1,
+      color: '#111418',
+      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+    },
+    paragraph: {
+      marginTop: 2,
+      color: '#111418',
+      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+    },
+    skillRow: {
+      flexDirection: 'row',
+      gap: 10,
+      marginBottom: 4,
+    },
+    skillRowLast: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    skillLabel: {
+      width: 110,
+      flexShrink: 0,
+      fontSize: contactSize,
+      fontWeight: 500,
+      color: '#3D4250',
+      lineHeight,
+    },
+    skillValues: {
+      flexGrow: 1,
+      flexShrink: 1,
+      color: '#111418',
+      lineHeight,
+    },
+    languageText: {
+      color: '#111418',
+      lineHeight: Math.min(lineHeight + 0.03, 1.5),
+    },
   })
+}
+
+function compact(value: number, offset: number, min: number, max: number) {
+  return Math.min(Math.max(value + offset, min), max)
+}
+
+function scaleSpacing(value: number, factor: number, min: number, max: number) {
+  return Math.min(Math.max(value * factor, min), max)
+}
+
+function resolveDateFont(fontFamily: string) {
+  return fontFamily === 'Courier' ? 'Courier' : 'Helvetica'
 }
 
 function resolvePdfFont(fontFamily: string) {
@@ -51,7 +206,7 @@ function resolvePdfFont(fontFamily: string) {
   // bundled as local assets for PDF embedding. We fallback to standard PDF fonts.
   if (font.includes('mono')) return 'Courier'
   if (font.includes('serif') || font.includes('times') || font.includes('georgia')) return 'Times-Roman'
-  
+
   // Default to Helvetica for sans-serif (Lexend, Inter, Roboto, etc.)
   return 'Helvetica'
 }

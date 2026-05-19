@@ -72,10 +72,11 @@ function WorkSection({ state, styles }: { state: CVState; styles: Styles }) {
   if (items.length === 0) return null
   return (
     <ResumePdfSection title={settings.sectionTitles.workExperience} styles={styles}>
-      {items.map((item) => (
-        <View key={item.id}>
+      {items.map((item, index) => (
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
           <ResumePdfEntry
-            title={joinNonEmpty([item.role, item.company], ' at ')}
+            title={cleanText(item.role)}
+            organization={cleanText(item.company)}
             subtitle={joinNonEmpty([item.location])}
             dates={formatDateRange(item.startDate, item.endDate, item.isCurrent)}
             styles={styles}
@@ -93,8 +94,8 @@ function ProjectSection({ state, styles }: { state: CVState; styles: Styles }) {
   if (items.length === 0) return null
   return (
     <ResumePdfSection title={settings.sectionTitles.projects} styles={styles}>
-      {items.map((item) => (
-        <View key={item.id}>
+      {items.map((item, index) => (
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
           <ResumePdfEntry
             title={cleanText(item.name)}
             subtitle={cleanText(item.link)}
@@ -114,10 +115,11 @@ function EducationSection({ state, styles }: { state: CVState; styles: Styles })
   if (items.length === 0) return null
   return (
     <ResumePdfSection title={settings.sectionTitles.education} styles={styles}>
-      {items.map((item) => (
-        <View key={item.id}>
+      {items.map((item, index) => (
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
           <ResumePdfEntry
-            title={joinNonEmpty([item.degree, item.school], ', ')}
+            title={cleanText(item.degree)}
+            organization={cleanText(item.school)}
             subtitle={cleanText(item.location)}
             dates={formatDateRange(item.startDate, item.endDate)}
             styles={styles}
@@ -132,14 +134,22 @@ function EducationSection({ state, styles }: { state: CVState; styles: Styles })
 function LanguageSection({ state, styles }: { state: CVState; styles: Styles }) {
   const { settings } = state
   const languages = state.resume.languages
-    .map((item) => joinNonEmpty([item.name, item.proficiency ? `(${cleanText(item.proficiency)})` : ''], ' '))
+    .map((item) => formatLanguage(item.name, item.proficiency))
     .filter(Boolean)
   if (languages.length === 0) return null
   return (
     <ResumePdfSection title={settings.sectionTitles.languages} styles={styles}>
-      <Text>{languages.join(', ')}</Text>
+      <Text style={styles.languageText}>{languages.join(' · ')}</Text>
     </ResumePdfSection>
   )
+}
+
+function formatLanguage(name: string, proficiency: string) {
+  const cleanName = cleanText(name)
+  const cleanProficiency = cleanText(proficiency)
+
+  if (cleanName && cleanProficiency) return `${cleanName} (${cleanProficiency})`
+  return cleanName || cleanProficiency
 }
 
 function hasWorkContent(item: CVState['resume']['workExperience'][number], bulletsVisible: boolean) {
