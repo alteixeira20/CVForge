@@ -14,7 +14,6 @@ export function createResumePdfStyles(settings: Settings) {
   const lineHeight = compact(settings.lineHeight, -0.08, 1.28, 1.48)
   const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 8, 16)
   const profileSpacing = scaleSpacing(settings.profileSpacing, 0.8, 5, 10)
-  const entrySpacing = scaleSpacing(settings.entrySpacing, 0.8, 5, 10)
 
   const topBarHeight = settings.topBarHeight ?? 3
   const contactGap = settings.contactGap ?? 14
@@ -115,7 +114,6 @@ export function createResumePdfStyles(settings: Settings) {
       backgroundColor: '#D6D9DE',
       marginLeft: 4,
     },
-    entryGroup: { marginBottom: entrySpacing },
     workEntryGroup: { marginBottom: workEntryGap },
     educationEntryGroup: { marginBottom: educationEntryGap },
     projectEntryGroup: { marginBottom: projectEntryGap },

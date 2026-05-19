@@ -46,13 +46,3 @@ export const THEME_COLORS = [
 ] as const
 
 export type ThemeColor = typeof THEME_COLORS[number]
-
-export const FONT_FAMILY_OPTIONS: { label: string; value: string }[] = [
-  { label: 'Lexend', value: 'Lexend' },
-  { label: 'Inter', value: 'Inter' },
-  { label: 'Helvetica', value: 'Helvetica' },
-  { label: 'Times New Roman', value: 'Times New Roman' },
-  { label: 'Georgia', value: 'Georgia' },
-  { label: 'Courier New', value: 'Courier New' },
-  { label: 'JetBrains Mono', value: 'JetBrains Mono' },
-]
