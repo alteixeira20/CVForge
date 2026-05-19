@@ -32,8 +32,8 @@ function IconShell({ children }: { children: ReactNode }) {
 function EmailIcon({ color }: { color: string }) {
   return (
     <IconShell>
-      <Rect x={2} y={3.5} width={12} height={9} rx={1} fill="none" stroke={color} strokeWidth={1.4} />
-      <Path d="M2.5 4.5l5.5 4 5.5-4" fill="none" stroke={color} strokeWidth={1.4} />
+      <Rect x={2} y={3.5} width={12} height={9} rx={1} fill="none" stroke={color} strokeWidth={1.4} strokeLinejoin="round" />
+      <Path d="M2.5 4.5l5.5 4 5.5-4" fill="none" stroke={color} strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round" />
     </IconShell>
   )
 }
@@ -46,6 +46,8 @@ function PhoneIcon({ color }: { color: string }) {
         fill="none"
         stroke={color}
         strokeWidth={1.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </IconShell>
   )
@@ -59,6 +61,8 @@ function LocationIcon({ color }: { color: string }) {
         fill="none"
         stroke={color}
         strokeWidth={1.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <Circle cx={8} cy={6} r={1.8} fill="none" stroke={color} strokeWidth={1.4} />
     </IconShell>
@@ -74,6 +78,8 @@ function WebsiteIcon({ color }: { color: string }) {
         fill="none"
         stroke={color}
         strokeWidth={1.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </IconShell>
   )
@@ -93,12 +99,14 @@ function GitHubIcon({ color }: { color: string }) {
 function LinkedInIcon({ color }: { color: string }) {
   return (
     <IconShell>
-      <Rect x={2} y={2} width={12} height={12} rx={1.5} fill="none" stroke={color} strokeWidth={1.4} />
+      <Rect x={2} y={2} width={12} height={12} rx={1.5} fill="none" stroke={color} strokeWidth={1.4} strokeLinejoin="round" />
       <Path
         d="M5 6.5v4M5 4.6v.1M8 10.5V7m0 0c.6-1 3-1.4 3 1v2.5"
         fill="none"
         stroke={color}
         strokeWidth={1.4}
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </IconShell>
   )

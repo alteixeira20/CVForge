@@ -31,10 +31,10 @@ export function ResumePdfBullets({ bullets, styles, visible = true }: { bullets:
   if (visibleBullets.length === 0) return null
 
   return (
-    <View>
+    <View style={styles.bulletList}>
       {visibleBullets.map((bullet) => (
         <View key={bullet} style={styles.bulletRow}>
-          <Text style={styles.bulletMarker}>-</Text>
+          <View style={styles.bulletMarker} />
           <Text style={styles.bulletText} wrap>{bullet}</Text>
         </View>
       ))}

@@ -1,3 +1,4 @@
+import React from 'react'
 import { Document, Page, Text, View } from '@react-pdf/renderer'
 import { type CVState, type DescriptionMode } from '@/types/cv'
 import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/features/resume-formatting'
@@ -133,23 +134,23 @@ function EducationSection({ state, styles }: { state: CVState; styles: Styles })
 
 function LanguageSection({ state, styles }: { state: CVState; styles: Styles }) {
   const { settings } = state
-  const languages = state.resume.languages
-    .map((item) => formatLanguage(item.name, item.proficiency))
-    .filter(Boolean)
+  const languages = state.resume.languages.filter((item) => cleanText(item.name))
   if (languages.length === 0) return null
   return (
     <ResumePdfSection title={settings.sectionTitles.languages} styles={styles}>
-      <Text style={styles.languageText}>{languages.join(' · ')}</Text>
+      <Text style={styles.languageText}>
+        {languages.flatMap((lang, i) => {
+          const name = cleanText(lang.name)
+          const prof = cleanText(lang.proficiency)
+          const parts: React.ReactNode[] = []
+          if (i > 0) parts.push(' · ')
+          parts.push(name)
+          if (prof) parts.push(<Text key={`prof-${lang.id}`} style={styles.languageProf}> ({prof})</Text>)
+          return parts
+        })}
+      </Text>
     </ResumePdfSection>
   )
-}
-
-function formatLanguage(name: string, proficiency: string) {
-  const cleanName = cleanText(name)
-  const cleanProficiency = cleanText(proficiency)
-
-  if (cleanName && cleanProficiency) return `${cleanName} (${cleanProficiency})`
-  return cleanName || cleanProficiency
 }
 
 function hasWorkContent(item: CVState['resume']['workExperience'][number], bulletsVisible: boolean) {

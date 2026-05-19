@@ -9,7 +9,7 @@ export function createResumePdfStyles(settings: Settings) {
   const bodySize = compact(settings.fontSize, -0.5, 9, 12)
   const nameSize = compact(settings.nameFontSize, 2, 16, 26)
   const contactSize = compact(bodySize, -1, 8, 10.5)
-  const dateSize = compact(bodySize, -1.5, 8, 10)
+  const dateSize = compact(bodySize, -2, 8, 10)
   const headingSize = compact(settings.sectionHeadingSize, -1.5, 8.5, 11)
   const lineHeight = compact(settings.lineHeight, -0.08, 1.28, 1.48)
   const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 8, 16)
@@ -32,7 +32,7 @@ export function createResumePdfStyles(settings: Settings) {
       backgroundColor: settings.themeColor,
       marginTop: -PAGE_PADDING_VERTICAL,
       marginRight: -PAGE_PADDING_HORIZONTAL,
-      marginBottom: 13,
+      marginBottom: PAGE_PADDING_VERTICAL - 3,
       marginLeft: -PAGE_PADDING_HORIZONTAL,
     },
     header: { marginBottom: profileSpacing },
@@ -41,6 +41,7 @@ export function createResumePdfStyles(settings: Settings) {
       fontWeight: 600,
       color: '#111418',
       lineHeight: 1.1,
+      letterSpacing: -0.2,
       marginBottom: 8,
     },
     contactWrap: {
@@ -93,7 +94,7 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: headingSize,
       color: '#111418',
       fontWeight: 600,
-      letterSpacing: 1.2,
+      letterSpacing: 1.3,
       textTransform: 'uppercase',
     },
     sectionRule: {
@@ -133,17 +134,22 @@ export function createResumePdfStyles(settings: Settings) {
       color: '#6B7280',
       lineHeight: 1.35,
       marginTop: 1,
-      marginBottom: 2,
+      marginBottom: 3,
+    },
+    bulletList: {
+      marginTop: 3,
     },
     bulletRow: {
       flexDirection: 'row',
       gap: 6,
-      marginTop: 1,
+      marginBottom: 1,
     },
     bulletMarker: {
       width: 4,
-      color: '#6B7280',
-      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+      height: 1,
+      backgroundColor: '#6B7280',
+      marginTop: 6,
+      flexShrink: 0,
     },
     bulletText: {
       flexGrow: 1,
@@ -172,6 +178,8 @@ export function createResumePdfStyles(settings: Settings) {
       fontWeight: 500,
       color: '#3D4250',
       lineHeight,
+      paddingTop: 1.5,
+      letterSpacing: 0.2,
     },
     skillValues: {
       flexGrow: 1,
@@ -181,7 +189,11 @@ export function createResumePdfStyles(settings: Settings) {
     },
     languageText: {
       color: '#111418',
-      lineHeight: Math.min(lineHeight + 0.03, 1.5),
+      lineHeight: Math.min(lineHeight + 0.13, 1.6),
+    },
+    languageProf: {
+      color: '#6B7280',
+      fontSize: contactSize,
     },
   })
 }
@@ -194,8 +206,8 @@ function scaleSpacing(value: number, factor: number, min: number, max: number) {
   return Math.min(Math.max(value * factor, min), max)
 }
 
-function resolveDateFont(fontFamily: string) {
-  return fontFamily === 'Courier' ? 'Courier' : 'Helvetica'
+function resolveDateFont(_fontFamily: string) {
+  return 'Courier'
 }
 
 function resolvePdfFont(fontFamily: string) {
