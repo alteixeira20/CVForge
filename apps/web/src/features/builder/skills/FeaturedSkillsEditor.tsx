@@ -16,7 +16,7 @@ export function FeaturedSkillsEditor() {
       <div className="space-y-4">
         {featuredWithRating.map((item, index) => (
           <FeaturedSkillItem
-            key={index}
+            key={item.skill || index}
             index={index}
             item={item}
             isFirst={index === 0}

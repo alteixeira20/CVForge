@@ -9,6 +9,7 @@ import { FieldGroup } from '@/components/shared/form/FieldGroup'
 import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type WorkExperience } from '@/types/cv'
+import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
 
 interface WorkExperienceItemProps {
   item: WorkExperience
@@ -19,8 +20,8 @@ interface WorkExperienceItemProps {
 }
 
 export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast }: WorkExperienceItemProps) {
-  const { state, updateSectionItem, updateSettingsField } = useCV()
-  const mode = state.settings.descriptionMode.workExperience
+  const { updateSectionItem } = useCV()
+  const { mode, toggleMode } = useDescriptionModeToggle('workExperience')
 
   const handleChange = (field: keyof WorkExperience, value: unknown) => {
     updateSectionItem('workExperience', item.id, field, value)
@@ -33,13 +34,6 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
     } else if (item.endDate === 'Present') {
       handleChange('endDate', '')
     }
-  }
-
-  const toggleMode = () => {
-    updateSettingsField('descriptionMode', {
-      ...state.settings.descriptionMode,
-      workExperience: mode === 'bullets' ? 'paragraph' : 'bullets',
-    })
   }
 
   return (

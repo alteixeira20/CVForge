@@ -8,6 +8,7 @@ import { FieldGroup } from '@/components/shared/form/FieldGroup'
 import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Project } from '@/types/cv'
+import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
 
 interface ProjectItemProps {
   item: Project
@@ -18,18 +19,11 @@ interface ProjectItemProps {
 }
 
 export function ProjectItem({ item, isExpanded, onToggle, isFirst, isLast }: ProjectItemProps) {
-  const { state, updateSectionItem, updateSettingsField } = useCV()
-  const mode = state.settings.descriptionMode.projects
+  const { updateSectionItem } = useCV()
+  const { mode, toggleMode } = useDescriptionModeToggle('projects')
 
   const handleChange = (field: keyof Project, value: unknown) => {
     updateSectionItem('projects', item.id, field, value)
-  }
-
-  const toggleMode = () => {
-    updateSettingsField('descriptionMode', {
-      ...state.settings.descriptionMode,
-      projects: mode === 'bullets' ? 'paragraph' : 'bullets',
-    })
   }
 
   return (

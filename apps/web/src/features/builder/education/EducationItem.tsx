@@ -8,6 +8,7 @@ import { FieldGroup } from '@/components/shared/form/FieldGroup'
 import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Education } from '@/types/cv'
+import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
 
 interface EducationItemProps {
   item: Education
@@ -18,18 +19,11 @@ interface EducationItemProps {
 }
 
 export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: EducationItemProps) {
-  const { state, updateSectionItem, updateSettingsField } = useCV()
-  const mode = state.settings.descriptionMode.education
+  const { updateSectionItem } = useCV()
+  const { mode, toggleMode } = useDescriptionModeToggle('education')
 
   const handleChange = (field: keyof Education, value: unknown) => {
     updateSectionItem('education', item.id, field, value)
-  }
-
-  const toggleMode = () => {
-    updateSettingsField('descriptionMode', {
-      ...state.settings.descriptionMode,
-      education: mode === 'bullets' ? 'paragraph' : 'bullets',
-    })
   }
 
   return (
@@ -60,7 +54,14 @@ export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: E
         </FormField>
       </FieldGroup>
 
-      <FieldGroup columns={2}>
+      <FieldGroup columns={3}>
+        <FormField label="Location">
+          <TextInput
+            placeholder="e.g. Boston, MA"
+            value={item.location}
+            onChange={(e) => handleChange('location', e.target.value)}
+          />
+        </FormField>
         <FormField label="Start Date">
           <TextInput
             placeholder="e.g. Sep 2016"

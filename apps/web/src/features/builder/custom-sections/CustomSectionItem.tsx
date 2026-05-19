@@ -8,6 +8,7 @@ import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFor
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type CustomSection } from '@/types/cv'
 import { linesToBullets } from './customSectionText'
+import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
 
 interface CustomSectionItemProps {
   item: CustomSection
@@ -18,18 +19,11 @@ interface CustomSectionItemProps {
 }
 
 export function CustomSectionItem({ item, isExpanded, onToggle, isFirst, isLast }: CustomSectionItemProps) {
-  const { state, updateSectionItem, updateSettingsField } = useCV()
-  const mode = state.settings.descriptionMode.customSections
+  const { updateSectionItem } = useCV()
+  const { mode, toggleMode } = useDescriptionModeToggle('customSections')
 
   const handleChange = (field: keyof CustomSection, value: unknown) => {
     updateSectionItem('customSections', item.id, field, value)
-  }
-
-  const toggleMode = () => {
-    updateSettingsField('descriptionMode', {
-      ...state.settings.descriptionMode,
-      customSections: mode === 'bullets' ? 'paragraph' : 'bullets',
-    })
   }
 
   return (
