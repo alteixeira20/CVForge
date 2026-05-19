@@ -12,12 +12,8 @@ export function EducationEditor() {
 
   return (
     <RepeatableSectionEditor
-      title="Education"
-      icon="file-text"
-      addLabel="Add Education"
       emptyLabel="No education added yet"
       items={education}
-      hideTitle
       focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <EducationItem

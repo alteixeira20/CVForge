@@ -12,12 +12,8 @@ export function LanguagesEditor() {
 
   return (
     <RepeatableSectionEditor
-      title="Languages"
-      icon="flame"
-      addLabel="Add Language"
       emptyLabel="No languages added yet"
       items={languages}
-      hideTitle
       focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <LanguageItem

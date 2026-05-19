@@ -12,12 +12,8 @@ export function ProjectsEditor() {
 
   return (
     <RepeatableSectionEditor
-      title="Projects"
-      icon="spark"
-      addLabel="Add Project"
       emptyLabel="No projects added yet"
       items={projects}
-      hideTitle
       focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <ProjectItem

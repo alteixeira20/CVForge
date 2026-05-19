@@ -12,12 +12,8 @@ export function WorkExperienceEditor() {
 
   return (
     <RepeatableSectionEditor
-      title="Work Experience"
-      icon="activity"
-      addLabel="Add Experience"
       emptyLabel="No experience added yet"
       items={workExperience}
-      hideTitle
       focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <WorkExperienceItem

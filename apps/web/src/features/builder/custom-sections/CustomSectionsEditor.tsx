@@ -12,12 +12,8 @@ export function CustomSectionsEditor() {
 
   return (
     <RepeatableSectionEditor
-      title="Custom Sections"
-      icon="anvil"
-      addLabel="Add Section"
       emptyLabel="No custom sections added yet"
       items={customSections}
-      hideTitle
       focusLatestVersion={focusLatestVersion}
       renderItem={({ item, isExpanded, onToggle, isFirst, isLast }) => (
         <CustomSectionItem
