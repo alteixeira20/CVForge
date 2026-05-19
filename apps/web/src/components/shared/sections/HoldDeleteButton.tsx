@@ -46,6 +46,7 @@ export function HoldDeleteButton({ onDelete }: HoldDeleteButtonProps) {
       onPointerCancel={cancel}
       className="relative overflow-hidden rounded px-3 py-1 text-xs font-medium text-ink border border-border hover:border-ember/60 select-none transition-colors"
       title="Hold to delete"
+      aria-label="Hold to delete"
       style={{
         background: progress > 0
           ? `linear-gradient(to right, rgba(217,116,66,0.25) ${progress * 100}%, transparent ${progress * 100}%)`

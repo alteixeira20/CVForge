@@ -32,6 +32,7 @@ export function SectionItemHeader({
           disabled={isFirst}
           className="inline-flex items-center justify-center w-6 h-6 rounded text-ink-3 hover:text-ember disabled:opacity-30 disabled:pointer-events-none transition-colors"
           title="Move Up"
+          aria-label="Move item up"
         >
           <Icon name="arrow-up" size={12} />
         </button>
@@ -40,6 +41,7 @@ export function SectionItemHeader({
           disabled={isLast}
           className="inline-flex items-center justify-center w-6 h-6 rounded text-ink-3 hover:text-ember disabled:opacity-30 disabled:pointer-events-none transition-colors"
           title="Move Down"
+          aria-label="Move item down"
         >
           <Icon name="arrow-down" size={12} />
         </button>

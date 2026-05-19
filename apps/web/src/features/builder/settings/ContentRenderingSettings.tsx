@@ -75,6 +75,7 @@ function ModeButton({ active, onClick, children }: { active: boolean; onClick: (
     <button
       type="button"
       onClick={onClick}
+      aria-pressed={active}
       className={`px-2 py-0.5 text-[10px] transition-colors cursor-pointer ${
         active ? 'bg-ember/15 text-ink' : 'bg-bg-2 text-ink-4 hover:text-ink-3'
       }`}

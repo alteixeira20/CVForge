@@ -43,13 +43,13 @@ function FeaturedSkillActions({
 }: Pick<FeaturedSkillItemProps, 'index' | 'isFirst' | 'isLast' | 'onMove' | 'onRemove'>) {
   return (
     <div className="flex items-center gap-4">
-      <button onClick={() => onMove(index, 'up')} disabled={isFirst} className="iconbtn sm disabled:opacity-20" title="Move Up">
+      <button onClick={() => onMove(index, 'up')} disabled={isFirst} className="iconbtn sm disabled:opacity-20" title="Move Up" aria-label="Move skill up">
         <Icon name="chevron-down" size={12} className="rotate-180" />
       </button>
-      <button onClick={() => onMove(index, 'down')} disabled={isLast} className="iconbtn sm disabled:opacity-20" title="Move Down">
+      <button onClick={() => onMove(index, 'down')} disabled={isLast} className="iconbtn sm disabled:opacity-20" title="Move Down" aria-label="Move skill down">
         <Icon name="chevron-down" size={12} />
       </button>
-      <button onClick={() => onRemove(index)} className="iconbtn sm hover:text-ember" title="Remove">
+      <button onClick={() => onRemove(index)} className="iconbtn sm hover:text-ember" title="Remove" aria-label="Remove skill">
         <Icon name="x" size={12} />
       </button>
     </div>

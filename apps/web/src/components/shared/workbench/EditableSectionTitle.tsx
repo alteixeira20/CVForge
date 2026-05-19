@@ -71,11 +71,25 @@ export function EditableSectionTitle({ value, onSave }: EditableSectionTitleProp
     )
   }
 
+  const startEditing = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation()
+    setDraft(value)
+    setEditing(true)
+  }
+
   return (
     <span
-      onClick={(e) => { e.stopPropagation(); setDraft(value); setEditing(true) }}
+      onClick={startEditing}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          startEditing(e)
+        }
+      }}
+      tabIndex={0}
+      role="button"
       title="Click to rename"
-      className="cursor-text truncate hover:opacity-75 transition-opacity text-[14px]"
+      className="cursor-text truncate hover:opacity-75 transition-opacity text-[14px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/60 rounded"
     >
       {value}
     </span>

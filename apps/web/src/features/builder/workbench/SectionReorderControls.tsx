@@ -18,6 +18,7 @@ export function SectionReorderControls({ index, total, onMoveUp, onMoveDown }: P
         disabled={!canMoveUp}
         className={`p-1 rounded transition-colors ${canMoveUp ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section up"
+        aria-label="Move section up"
       >
         <Icon name="arrow-up" size={10} />
       </button>
@@ -26,6 +27,7 @@ export function SectionReorderControls({ index, total, onMoveUp, onMoveDown }: P
         disabled={!canMoveDown}
         className={`p-1 rounded transition-colors ${canMoveDown ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section down"
+        aria-label="Move section down"
       >
         <Icon name="arrow-down" size={10} />
       </button>

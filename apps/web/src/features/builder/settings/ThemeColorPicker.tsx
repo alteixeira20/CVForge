@@ -35,6 +35,12 @@ export function ThemeColorPicker({ value, onChange }: ThemeColorPickerProps) {
         className="ml-1.5 min-w-[52px] flex-1 bg-bg-2 border border-border rounded-md px-1.5 py-0.5 text-[10px] text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all focus-visible:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+            e.preventDefault()
+            e.currentTarget.blur()
+          }
+        }}
         placeholder="#000000"
         maxLength={7}
         spellCheck={false}
