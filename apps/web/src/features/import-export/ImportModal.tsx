@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useState, type ChangeEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type CSSProperties } from 'react'
+import { createPortal } from 'react-dom'
 import { useCV } from '@/context/CVContext'
 import { Icon } from '@/components/ui/Icon'
 import { importCVState } from './importCVState'
@@ -83,14 +84,16 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
     setImportType(null)
   }
 
-  if (!isOpen) return null
+  if (!isOpen || typeof document === 'undefined') return null
 
-  return (
+  const modalWidth = importType === 'pdf-heuristic' ? '540px' : '460px'
+
+  return createPortal((
     <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{ width: importType === 'pdf-heuristic' ? '540px' : '460px' }}>
+      <div className="modal" style={{ '--modal-width': modalWidth } as CSSProperties}>
         <div className="modal-head">
           <div className="ic plain">
-            <Icon name={isAnalyzing ? 'loader' : 'import'} size={20} className={isAnalyzing ? 'animate-spin' : ''} />
+            <Icon name={isAnalyzing ? 'circle' : 'import'} size={20} className={isAnalyzing ? 'animate-spin' : ''} />
           </div>
           <div className="text">
             <h2>Import CV Data</h2>
@@ -174,7 +177,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
             <div className="space-y-6 py-2">
               <div className="p-4 rounded-lg bg-ember/5 border border-ember/20 space-y-3">
                 <div className="flex items-center gap-10">
-                  <Icon name="shield-check" size={16} className="text-ember" />
+                  <Icon name="circle-check" size={16} className="text-ember" />
                   <h3 className="text-sm font-semibold text-ink">CVForge Session Detected</h3>
                 </div>
                 <p className="text-xs text-ink-3 leading-relaxed">
@@ -255,5 +258,5 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
         onChange={handleFileChange}
       />
     </div>
-  )
+  ), document.body)
 }
