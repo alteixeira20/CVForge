@@ -4,20 +4,29 @@ import { useCV } from '@/context/CVContext'
 import { SelectInput } from '@/components/shared/form/SelectInput'
 import { FieldLabel } from '@/components/shared/form/FieldLabel'
 import { ThemeColorPicker } from './ThemeColorPicker'
+import { FontFamilyPicker } from './FontFamilyPicker'
 import { SettingControl } from './SettingControl'
 import { type DocumentSize, type LocalePreset } from '@/types/cv'
 
 export function DocumentSettings() {
   const { state, updateSettingsField } = useCV()
-  const { documentSize, localePreset, themeColor } = state.settings
+  const { documentSize, localePreset, themeColor, fontFamily } = state.settings
 
   return (
-    <div className="py-2 space-y-2">
+    <div className="py-2 space-y-3">
       <div>
         <FieldLabel className="mb-1 text-[11px]">Theme Color</FieldLabel>
         <ThemeColorPicker
           value={themeColor}
           onChange={(val) => updateSettingsField('themeColor', val)}
+        />
+      </div>
+
+      <div>
+        <FieldLabel className="mb-1.5 text-[11px]">Font Family</FieldLabel>
+        <FontFamilyPicker
+          value={fontFamily}
+          onChange={(val) => updateSettingsField('fontFamily', val)}
         />
       </div>
 

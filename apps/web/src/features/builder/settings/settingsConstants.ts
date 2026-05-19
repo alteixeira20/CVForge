@@ -1,3 +1,37 @@
+export const SECTION_LABELS: Record<string, string> = {
+  workExperience: 'Work Experience',
+  education: 'Education',
+  projects: 'Projects',
+  skills: 'Skills',
+  languages: 'Languages',
+  customSections: 'Custom Sections',
+}
+
+export const FONT_FAMILY_GROUPS = [
+  {
+    category: 'Sans',
+    fonts: [
+      { value: 'Lexend', display: 'Lexend' },
+      { value: 'Inter', display: 'Inter' },
+      { value: 'Helvetica', display: 'Helvetica' },
+    ],
+  },
+  {
+    category: 'Serif',
+    fonts: [
+      { value: 'Times New Roman', display: 'Times' },
+      { value: 'Georgia', display: 'Georgia' },
+    ],
+  },
+  {
+    category: 'Mono',
+    fonts: [
+      { value: 'Courier New', display: 'Courier' },
+      { value: 'JetBrains Mono', display: 'JetBrains' },
+    ],
+  },
+] as const
+
 export const THEME_COLORS = [
   '#2c1f19',
   '#111827',

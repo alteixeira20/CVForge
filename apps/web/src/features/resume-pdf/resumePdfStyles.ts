@@ -16,6 +16,16 @@ export function createResumePdfStyles(settings: Settings) {
   const profileSpacing = scaleSpacing(settings.profileSpacing, 0.8, 5, 10)
   const entrySpacing = scaleSpacing(settings.entrySpacing, 0.8, 5, 10)
 
+  const topBarHeight = settings.topBarHeight ?? 3
+  const contactGap = settings.contactGap ?? 14
+  const summaryGap = settings.summaryGap ?? 8
+  const titleMetaGap = settings.titleMetaGap ?? 1
+  const descriptionGap = settings.descriptionGap ?? 3
+  const workEntryGap = settings.workEntryGap ?? 8
+  const educationEntryGap = settings.educationEntryGap ?? 8
+  const projectEntryGap = settings.projectEntryGap ?? 8
+  const languageLineHeight = settings.languageLineHeight ?? Math.min(lineHeight + 0.13, 1.6)
+
   return StyleSheet.create({
     page: {
       paddingTop: PAGE_PADDING_VERTICAL,
@@ -28,11 +38,11 @@ export function createResumePdfStyles(settings: Settings) {
       color: '#111418',
     },
     accentRule: {
-      height: 3,
+      height: topBarHeight,
       backgroundColor: settings.themeColor,
       marginTop: -PAGE_PADDING_VERTICAL,
       marginRight: -PAGE_PADDING_HORIZONTAL,
-      marginBottom: PAGE_PADDING_VERTICAL - 3,
+      marginBottom: PAGE_PADDING_VERTICAL - topBarHeight,
       marginLeft: -PAGE_PADDING_HORIZONTAL,
     },
     header: { marginBottom: profileSpacing },
@@ -48,7 +58,7 @@ export function createResumePdfStyles(settings: Settings) {
       flexDirection: 'row',
       flexWrap: 'wrap',
       rowGap: 3,
-      columnGap: 14,
+      columnGap: contactGap,
     },
     contactItem: {
       flexDirection: 'row',
@@ -77,7 +87,7 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: bodySize,
       color: '#3D4250',
       lineHeight: Math.min(lineHeight + 0.03, 1.5),
-      marginTop: profileSpacing,
+      marginTop: summaryGap,
     },
     section: { marginTop: sectionSpacing },
     sectionHeader: {
@@ -106,6 +116,9 @@ export function createResumePdfStyles(settings: Settings) {
       marginLeft: 4,
     },
     entryGroup: { marginBottom: entrySpacing },
+    workEntryGroup: { marginBottom: workEntryGap },
+    educationEntryGroup: { marginBottom: educationEntryGap },
+    projectEntryGroup: { marginBottom: projectEntryGap },
     entry: {},
     entryRow: {
       flexDirection: 'row',
@@ -135,11 +148,11 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: contactSize,
       color: '#6B7280',
       lineHeight: 1.35,
-      marginTop: 1,
+      marginTop: titleMetaGap,
       marginBottom: 3,
     },
     bulletList: {
-      marginTop: 3,
+      marginTop: descriptionGap,
     },
     bulletRow: {
       flexDirection: 'row',
@@ -160,7 +173,7 @@ export function createResumePdfStyles(settings: Settings) {
       lineHeight: Math.max(lineHeight - 0.02, 1.35),
     },
     paragraph: {
-      marginTop: 2,
+      marginTop: descriptionGap,
       color: '#111418',
       lineHeight: Math.max(lineHeight - 0.02, 1.35),
     },
@@ -191,7 +204,7 @@ export function createResumePdfStyles(settings: Settings) {
     },
     languageText: {
       color: '#111418',
-      lineHeight: Math.min(lineHeight + 0.13, 1.6),
+      lineHeight: languageLineHeight,
     },
     languageProf: {
       color: '#6B7280',

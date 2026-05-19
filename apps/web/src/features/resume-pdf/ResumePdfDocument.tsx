@@ -74,7 +74,7 @@ function WorkSection({ state, styles }: { state: CVState; styles: Styles }) {
   return (
     <ResumePdfSection title={settings.sectionTitles.workExperience} styles={styles}>
       {items.map((item, index) => (
-        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.workEntryGroup}>
           <ResumePdfEntry
             title={cleanText(item.role)}
             organization={cleanText(item.company)}
@@ -96,7 +96,7 @@ function ProjectSection({ state, styles }: { state: CVState; styles: Styles }) {
   return (
     <ResumePdfSection title={settings.sectionTitles.projects} styles={styles}>
       {items.map((item, index) => (
-        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.projectEntryGroup}>
           <ResumePdfEntry
             title={cleanText(item.name)}
             subtitle={cleanText(item.link)}
@@ -117,7 +117,7 @@ function EducationSection({ state, styles }: { state: CVState; styles: Styles })
   return (
     <ResumePdfSection title={settings.sectionTitles.education} styles={styles}>
       {items.map((item, index) => (
-        <View key={item.id} style={index === items.length - 1 ? undefined : styles.entryGroup}>
+        <View key={item.id} style={index === items.length - 1 ? undefined : styles.educationEntryGroup}>
           <ResumePdfEntry
             title={cleanText(item.degree)}
             organization={cleanText(item.school)}

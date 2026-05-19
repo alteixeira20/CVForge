@@ -23,6 +23,7 @@ function createCVActions(dispatch: Dispatch<CVAction>): CVActions {
     removeFeaturedSkill: (index) => dispatch({ type: 'REMOVE_FEATURED_SKILL', index }),
     moveFeaturedSkill: (index, direction) => dispatch({ type: 'MOVE_FEATURED_SKILL', index, direction }),
     resetState: () => dispatch({ type: 'RESET_STATE' }),
+    resetSettings: () => dispatch({ type: 'RESET_SETTINGS' }),
     replaceState: (state) => dispatch({ type: 'REPLACE_STATE', state }),
   }
 }

@@ -17,4 +17,5 @@ export type CVAction =
   | { type: 'REMOVE_FEATURED_SKILL'; index: number }
   | { type: 'MOVE_FEATURED_SKILL'; index: number; direction: MoveDirection }
   | { type: 'RESET_STATE' }
+  | { type: 'RESET_SETTINGS' }
   | { type: 'REPLACE_STATE'; state: CVState }

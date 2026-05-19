@@ -156,6 +156,15 @@ export const SettingsSchema = z.object({
     projects: 'bullets',
     customSections: 'bullets',
   }),
+  topBarHeight: z.number().default(3),
+  contactGap: z.number().default(14),
+  summaryGap: z.number().default(8),
+  titleMetaGap: z.number().default(1),
+  descriptionGap: z.number().default(3),
+  workEntryGap: z.number().default(8),
+  educationEntryGap: z.number().default(8),
+  projectEntryGap: z.number().default(8),
+  languageLineHeight: z.number().default(1.55),
 });
 
 /**
@@ -261,6 +270,15 @@ export const defaultSettings: Settings = {
     projects: 'bullets' as const,
     customSections: 'bullets' as const,
   },
+  topBarHeight: 3,
+  contactGap: 14,
+  summaryGap: 8,
+  titleMetaGap: 1,
+  descriptionGap: 3,
+  workEntryGap: 8,
+  educationEntryGap: 8,
+  projectEntryGap: 8,
+  languageLineHeight: 1.55,
 };
 
 export const defaultCVState: CVState = {

@@ -3,7 +3,11 @@
 import { DocumentSettings } from './DocumentSettings'
 import { TypographySettings } from './TypographySettings'
 import { SpacingSettings } from './SpacingSettings'
+import { ContentRenderingSettings } from './ContentRenderingSettings'
+import { SectionManager } from './SectionManager'
+import { AdvancedPdfLayoutSettings } from './AdvancedPdfLayoutSettings'
 import { SettingsPanel } from './SettingsPanel'
+import { ResetSettingsControl } from './ResetSettingsControl'
 
 export function SettingsEditor() {
   return (
@@ -19,6 +23,20 @@ export function SettingsEditor() {
       <SettingsPanel title="Spacing">
         <SpacingSettings />
       </SettingsPanel>
+
+      <SettingsPanel title="Content">
+        <ContentRenderingSettings />
+      </SettingsPanel>
+
+      <SettingsPanel title="Sections">
+        <SectionManager />
+      </SettingsPanel>
+
+      <SettingsPanel title="Advanced PDF Layout">
+        <AdvancedPdfLayoutSettings />
+      </SettingsPanel>
+
+      <ResetSettingsControl />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { type CVState, defaultCVState } from '@/types/cv'
+import { type CVState, defaultCVState, defaultSettings } from '@/types/cv'
 import { type CVAction } from './cvActions'
 import {
   addFeaturedSkill,
@@ -55,5 +55,7 @@ function reduceCVState(state: CVState, action: Exclude<CVAction, { type: 'REPLAC
       return moveFeaturedSkill(state, action.index, action.direction)
     case 'RESET_STATE':
       return { ...defaultCVState }
+    case 'RESET_SETTINGS':
+      return { ...state, settings: { ...defaultSettings } }
   }
 }

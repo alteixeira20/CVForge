@@ -16,5 +16,6 @@ export interface CVContextValue {
   removeFeaturedSkill: (index: number) => void
   moveFeaturedSkill: (index: number, direction: MoveDirection) => void
   resetState: () => void
+  resetSettings: () => void
   replaceState: (state: CVState) => void
 }

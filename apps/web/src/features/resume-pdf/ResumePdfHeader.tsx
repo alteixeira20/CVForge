@@ -77,7 +77,7 @@ export function ResumePdfHeader({ profile, settings, styles }: HeaderProps) {
 
   return (
     <View style={styles.header}>
-      <View style={styles.accentRule} />
+      {(settings.topBarHeight ?? 3) > 0 && <View style={styles.accentRule} />}
       {name && <Text style={styles.name}>{name}</Text>}
       {contactItems.length > 0 && <ContactBlock items={contactItems} styles={styles} color={settings.themeColor} />}
       {summary && <Text style={styles.summary}>{summary}</Text>}

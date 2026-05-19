@@ -1,25 +1,15 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
-import { SelectInput } from '@/components/shared/form/SelectInput'
 import { NumberInput } from '@/components/shared/form/NumberInput'
 import { SettingControl } from './SettingControl'
-import { FONT_FAMILY_OPTIONS } from './settingsConstants'
 
 export function TypographySettings() {
   const { state, updateSettingsField } = useCV()
-  const { fontFamily, fontSize, nameFontSize, sectionHeadingSize, lineHeight } = state.settings
+  const { fontSize, nameFontSize, sectionHeadingSize, lineHeight } = state.settings
 
   return (
     <div className="py-2 space-y-2">
-      <SettingControl label="Font Family">
-        <SelectInput
-          value={fontFamily}
-          options={FONT_FAMILY_OPTIONS}
-          onChange={(e) => updateSettingsField('fontFamily', e.target.value)}
-        />
-      </SettingControl>
-
       <div className="grid grid-cols-2 gap-2">
         <SettingControl label="Base Size" unit="pt">
           <NumberInput
