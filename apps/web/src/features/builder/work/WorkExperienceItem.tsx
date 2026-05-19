@@ -71,6 +71,12 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
       </FieldGroup>
 
       <FieldGroup columns={2}>
+        <FormField label="Location">
+          <TextInput
+            value={item.location}
+            onChange={(e) => handleChange('location', e.target.value)}
+          />
+        </FormField>
         <FormField label="Start Date">
           <TextInput
             placeholder="e.g. Jan 2020"
@@ -78,28 +84,29 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
             onChange={(e) => handleChange('startDate', e.target.value)}
           />
         </FormField>
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <FieldLabel>End Date</FieldLabel>
-            <label className="flex items-center gap-1.5 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                className="w-3.5 h-3.5 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
-                checked={item.isCurrent}
-                onChange={(e) => handleCurrentChange(e.target.checked)}
-              />
-              <span className="text-[10px] text-ink-3 uppercase tracking-wider font-semibold">
-                Currently Work Here
-              </span>
-            </label>
-          </div>
-          <TextInput
-            placeholder="e.g. Dec 2023"
-            value={item.endDate}
-            onChange={(e) => handleChange('endDate', e.target.value)}
-          />
-        </div>
       </FieldGroup>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-2">
+          <FieldLabel>End Date</FieldLabel>
+          <label className="flex items-center gap-1.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              className="w-3.5 h-3.5 rounded border-border-strong text-ember focus:ring-ember bg-bg-2"
+              checked={item.isCurrent}
+              onChange={(e) => handleCurrentChange(e.target.checked)}
+            />
+            <span className="text-[10px] text-ink-3 uppercase tracking-wider font-semibold">
+              Currently Work Here
+            </span>
+          </label>
+        </div>
+        <TextInput
+          placeholder="e.g. Dec 2023"
+          value={item.endDate}
+          onChange={(e) => handleChange('endDate', e.target.value)}
+        />
+      </div>
 
       <MultilineListField
         label="Description"

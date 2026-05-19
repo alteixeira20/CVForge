@@ -15,6 +15,7 @@ interface WorkbenchSectionCardProps {
   className?: string
   isVisible?: boolean
   onToggleVisibility?: () => void
+  reorderActions?: ReactNode
 }
 
 export function WorkbenchSectionCard({
@@ -28,6 +29,7 @@ export function WorkbenchSectionCard({
   className = '',
   isVisible = true,
   onToggleVisibility,
+  reorderActions,
 }: WorkbenchSectionCardProps) {
   return (
     <div
@@ -43,8 +45,13 @@ export function WorkbenchSectionCard({
         }`}
       />
 
-      <div className="flex w-full items-center gap-10 p-4 pl-16">
+      <div className="flex w-full items-center gap-10 p-4 pl-12 lg:pl-16">
         <div className="flex items-center gap-10 flex-1 overflow-hidden min-w-0">
+          {reorderActions && (
+            <div className="flex flex-col shrink-0">
+              {reorderActions}
+            </div>
+          )}
           <div
             className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition-colors ${
               isExpanded
