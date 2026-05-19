@@ -17,6 +17,7 @@ The current app includes:
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - Major section reordering and visibility toggles.
 - A high-fidelity PDF-backed live preview for the current builder state.
+- Advanced PDF layout controls: theme color, font family/size, page size, section heading weight, top accent bar (toggle and height), per-section vertical gaps, and compact mode.
 - JSON backup export and validated restore (the simplest reliable session portability path).
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
@@ -30,9 +31,10 @@ The current app includes:
 ## 3. Planned Scope
 
 Planned but not implemented (Pinned Future Slices):
-- Builder Settings advanced real PDF controls.
-- Builder section ordering / drag-and-drop.
-- PDF template polish.
+- Drag-and-drop section reordering (arrow-based reordering is shipped; drag-and-drop is a UX enhancement).
+- PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
+- Photo support and photo-layout PDF template.
+- PDF Phase 2 visual refinements (letter-spacing, subtitle margin, date size).
 - Website/marketing polish.
 - Richer parser extraction and scoring checks.
 
@@ -65,6 +67,9 @@ Planned but not implemented (Pinned Future Slices):
 
 ### Planned
 - Richer parser extraction and scoring checks.
+- Drag-and-drop section reordering.
+- PDF font embedding (Geist Sans / Geist Mono).
+- Photo support and photo-layout PDF template.
 
 ## 6. Product Principles
 

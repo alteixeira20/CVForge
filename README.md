@@ -21,6 +21,8 @@ Implemented:
 - Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - PDF.js canvas preview pipeline for the current builder state, providing sharp, flicker-free rendering with zoom/fit controls.
 - Polished Workbench UI with repeatable item cards, hold-to-delete, inline editable section titles, and 10 professional color presets.
+- Section reordering (up/down arrow controls), per-section visibility toggles, and inline title editing.
+- Advanced PDF layout settings: theme color, font family/size, page size, section heading weight, top accent bar, per-section gaps, and compact mode.
 - JSON backup export and validated JSON restore.
 - PDF download generated from current CV data with embedded session metadata.
 - Section visibility and bullet visibility controls.
@@ -31,9 +33,9 @@ Implemented:
 - Local heuristic scoring with transparent issue rows.
 
 Planned (Pinned Future Slices):
-- Builder Settings advanced real PDF controls.
-- Builder section ordering / drag-and-drop.
-- PDF template polish.
+- Drag-and-drop section reordering (arrow-based reordering is shipped).
+- PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
+- Photo support and photo-layout PDF template.
 - Website/marketing polish.
 - Richer parser extraction and scoring checks.
 

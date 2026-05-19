@@ -14,6 +14,41 @@
 - **Expected:** State updates correctly, preview canvas reflects changes sharply.
 - **Bugs to Record:** UI glitches in cards, state failing to update.
 
+## 2a. Section Ordering and Visibility QA
+- **Route:** `/builder`
+- **Files Involved:** `BuilderSectionList.tsx`, `BuilderSectionCard.tsx`, `SectionReorderControls.tsx`, `useBuilderSectionActions.ts`
+- **Test:** Move Work Experience up and down. Toggle a section hidden. Verify the PDF preview reflects the new order and hides the toggled section. Rename a section title inline. Restore via keyboard (Enter/Space to start edit, Enter to save, Escape to cancel).
+- **Expected:** Section order and visibility update immediately in preview. Renamed titles appear in the PDF.
+- **Bugs to Record:** Reorder not reflected in PDF; hidden sections still appearing; title keyboard flow not working.
+
+## 2b. Advanced PDF Layout Settings QA
+- **Route:** `/builder` > Settings panel
+- **Files Involved:** `SettingsEditor.tsx`, `SpacingSettings.tsx`, `AdvancedPdfLayoutSettings.tsx`, `resumePdfStyles.ts`
+- **Test:** Change font size, toggle compact mode, adjust section gap, toggle the top accent bar off and back on, change the accent height. Verify each change appears in the live preview.
+- **Expected:** Every settings change reflects in the PDF preview canvas within a second. Accent bar hides/shows. Gaps visibly change.
+- **Bugs to Record:** Setting changes that do not update preview; accent bar persisting after toggle off.
+
+## 2c. Settings Reset QA
+- **Route:** `/builder` > Settings panel
+- **Files Involved:** `ResetSettingsControl.tsx`, `cvReducer.ts`
+- **Test:** Change several settings (font, spacing, accent height). Reset to defaults. Verify CV content (name, work entries, etc.) is not affected - only settings reset.
+- **Expected:** Settings revert to defaults. CV data unchanged. Preview updates to reflect default styles.
+- **Bugs to Record:** CV content lost on reset; settings not fully resetting to defaults.
+
+## 2d. Keyboard and Focus QA
+- **Route:** `/builder`
+- **Files Involved:** `TextInput.tsx`, `NumberInput.tsx`, `EditableSectionTitle.tsx`, `HoldDeleteButton.tsx`, `SectionItemHeader.tsx`
+- **Test:** Tab through form fields - verify no visible focus ring on mouse click, visible ring on keyboard focus. Press Enter in a text field - verify field blurs without submitting a form. Use keyboard to rename a section title (Tab to span, Enter to activate, type, Enter to save).
+- **Expected:** Mouse clicks produce no outline. Keyboard navigation shows `focus-visible` ring. Enter blurs single-line inputs. IME/composition input (CJK) is not interrupted by Enter-to-blur.
+- **Bugs to Record:** Spurious outlines on mouse click; Enter triggering form submission; title rename not keyboard-reachable.
+
+## 2e. Import Modal QA
+- **Route:** `/builder` > Settings panel > Import/Export
+- **Files Involved:** `SettingsEditor.tsx`, `storage.ts`
+- **Test:** Export a JSON backup. Make edits. Open the import modal. Cancel - verify state unchanged. Import the backup - verify full state restored.
+- **Expected:** Cancel does not replace state. Import restores complete CV and settings. Modal closes after import.
+- **Bugs to Record:** State replaced on cancel; partial restore; modal not closing.
+
 ## 3. Builder Mobile QA
 - **Route:** `/builder` (Mobile viewport)
 - **Files Involved:** `WorkbenchMobileNav.tsx`, `WorkbenchShell.tsx`

@@ -75,7 +75,17 @@ Dockerfile         Production Docker image
 
 ## Feature Module Conventions
 
-**`features/builder/`** — one subdirectory per section editor (profile, work, education, projects, skills, languages, custom-sections, settings). Workbench shell is in `workbench/`.
+**`features/builder/`** — one subdirectory per section editor (profile, work, education, projects, skills, languages, custom-sections, settings). Workbench shell is in `workbench/`. Shared Builder hooks live in `hooks/`.
+
+**`features/builder/workbench/`** — decomposed into:
+- `builderSectionConfig.tsx` — static section metadata (BUILDER_SECTIONS, SECTION_CONFIG, SECTION_ID_MAP, STATIC_TITLES)
+- `useBuilderSectionState.ts` — expandedIds + focusVersions state
+- `useBuilderSectionActions.ts` — handleAdd, toggleVisibility, handleMove
+- `BuilderSectionCard.tsx` — per-card render component (replaces `renderSectionCard` closure)
+- `SectionReorderControls.tsx` — up/down arrow button pair
+- `AddCustomSectionCard.tsx` — dashed CTA for adding the first custom section
+
+**`features/builder/hooks/`** — `useDescriptionModeToggle(section)` — shared hook used by Work, Education, Projects, and Custom Section item editors.
 
 **`features/resume-pdf/`** — one file per PDF region:
 - `ResumePdfDocument.tsx` — page shell, section order/visibility loop

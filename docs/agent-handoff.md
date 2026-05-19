@@ -22,6 +22,13 @@
 - `apps/web/src/features/builder/workbench/BuilderPreviewPanel.tsx`
 - `apps/web/src/features/builder/workbench/BuilderSectionList.tsx`
 - `apps/web/src/features/builder/workbench/BuilderEntryModal.tsx`
+- `apps/web/src/features/builder/workbench/builderSectionConfig.tsx` (static section metadata)
+- `apps/web/src/features/builder/workbench/BuilderSectionCard.tsx` (per-card render component)
+- `apps/web/src/features/builder/workbench/SectionReorderControls.tsx` (up/down button pair)
+- `apps/web/src/features/builder/workbench/AddCustomSectionCard.tsx` (CTA for adding first custom section)
+- `apps/web/src/features/builder/workbench/useBuilderSectionState.ts` (expandedIds + focusVersions)
+- `apps/web/src/features/builder/workbench/useBuilderSectionActions.ts` (handleAdd, toggleVisibility, handleMove)
+- `apps/web/src/features/builder/hooks/useDescriptionModeToggle.ts` (shared mode toggle for item editors)
 
 ### Builder Section Editors
 - `apps/web/src/features/builder/profile/ProfileEditor.tsx`
@@ -58,7 +65,9 @@
 - `apps/web/src/components/shared/workbench/PreviewCanvas.tsx`
 - `apps/web/src/components/shared/workbench/WorkbenchSectionCard.tsx`
 - `apps/web/src/components/shared/form/FormField.tsx`
-- `apps/web/src/components/shared/sections/SectionCard.tsx`
+- `apps/web/src/components/shared/sections/RepeatableSectionEditor.tsx`
+- `apps/web/src/components/shared/sections/SectionItemHeader.tsx`
+- `apps/web/src/components/shared/sections/HoldDeleteButton.tsx`
 
 ### Branding and Theme
 - `apps/web/src/components/ui/Brand.tsx`
@@ -99,5 +108,13 @@
 - Major visual alignment for Builder, Parser, and Forge Apps branding.
 - Full implementation of Builder sections and shared workbench primitives.
 - Integration of parser scoring and diagnostic signals.
-- Implemented PDF.js canvas preview pipeline to replace the iframe, resolving previous flashing/reloading issues and adding zoom/fit controls.
+- PDF.js canvas preview pipeline replacing the iframe: flicker-free, zoom/fit controls.
 - Builder Workbench polish: repeatable item cards, shared expand/collapse, hold-to-delete, inline editable section titles, description format toggle, compact Settings panels, and 10 professional color presets.
+- Advanced PDF layout settings: 9 controls (theme color, font family/size, page size, section heading weight, top accent bar toggle and height, per-section gaps, compact mode) all wired to `resumePdfStyles.ts`.
+- Builder section reordering (up/down arrows) and per-section visibility toggles driven by `settings.sectionOrder` and `settings.visibleSections`.
+- Builder Workbench modularity: decomposed `BuilderSectionList.tsx` into config, hook, and component files.
+- `RepeatableSectionEditor` API simplified: dead props removed, `focusLatestVersion` effect kept inline.
+- Education location field added; `useDescriptionModeToggle` hook extracted from Work/Edu/Projects/Custom editors.
+- Accessibility polish: Enter-to-blur on text/number inputs (with `isComposing` guard), `focus-visible:outline-none` on all form fields, `EditableSectionTitle` keyboard-navigable, `aria-label`/`aria-pressed` on action buttons throughout.
+- Dead code removed: `SectionCard.tsx`, `useExpandedItem.ts`, `FONT_FAMILY_OPTIONS`, `styles.entryGroup`, "Entry gap" UI control (schema key kept for backward compat).
+- PDF parity confirmed: accent stripe, always-mono dates, `<View>` bullet markers, nested language proficiency `<Text>`, all 9 advanced settings wired.

@@ -35,25 +35,32 @@ Implementation notes:
 - Storage helper location: `apps/web/src/lib/storage.ts`.
 - Current CV storage key: `cvforge:state`.
 
-## Phase 3: Builder Interface (In Progress)
+## Phase 3: Builder Interface (Completed)
 
 - [x] Core form primitives (`TextInput`, `TextArea`, `FormField`).
 - [x] Profile editor.
 - [x] Settings editor for A4/Letter, color, spacing, and typography.
 - [x] Generic Repeatable Section engine.
-- [x] Work Experience & Education editors.
+- [x] Work Experience & Education editors (Education includes location field).
 - [x] Projects & Languages editors.
 - [x] Skills editor.
 - [x] Custom Section editor.
 - [x] Dynamic visual CV preview for the current builder state using a PDF.js canvas pipeline.
 - [x] JSON backup export and validated restore (Reliable).
 - [x] PDF download generated from current CV state with embedded session.
-- [x] Section visibility.
+- [x] Section visibility and bullet visibility controls.
+- [x] Section reordering (up/down arrow controls) via `settings.sectionOrder`.
+- [x] Advanced PDF layout settings: 9 controls (theme color, font family/size, page size, heading weight, accent bar, per-section gaps, compact mode).
+- [x] Builder Workbench modularity: decomposed into config, hook, and card component files.
+- [x] `RepeatableSectionEditor` API simplified: dead props removed.
+- [x] `useDescriptionModeToggle` hook shared across Work, Education, Projects, and Custom Section editors.
+- [x] Accessibility: Enter-to-blur inputs, `focus-visible:outline-none`, keyboard-navigable section title editing, `aria-label`/`aria-pressed` on action buttons.
+- [x] Dead code removed: `SectionCard.tsx`, `useExpandedItem.ts`, `FONT_FAMILY_OPTIONS`, `styles.entryGroup`.
 
 Current limitations:
-- The preview does not apply every setting in the schema.
 - Session restoration from PDF works only for CVForge files with an embedded attachment.
 - External PDF-to-builder draft import is heuristic and requires review.
+- PDF font embedding (Geist Sans / Geist Mono) is deferred.
 
 ## Phase 4: Parser & Engine (In Progress)
 
