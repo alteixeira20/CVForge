@@ -9,7 +9,7 @@ export function createResumePdfStyles(settings: Settings) {
   const bodySize = compact(settings.fontSize, -0.5, 9, 12)
   const nameSize = compact(settings.nameFontSize, 2, 16, 26)
   const contactSize = compact(bodySize, -1, 8, 10.5)
-  const dateSize = compact(bodySize, -2, 8, 10)
+  const dateSize = compact(bodySize, -1.5, 8, 10)
   const headingSize = compact(settings.sectionHeadingSize, -1.5, 8.5, 11)
   const lineHeight = compact(settings.lineHeight, -0.08, 1.28, 1.48)
   const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 8, 16)
@@ -64,6 +64,7 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     contactValue: {
+      fontSize: contactSize,
       color: '#3D4250',
       textDecoration: 'none',
       lineHeight: 1.2,
@@ -89,6 +90,7 @@ export function createResumePdfStyles(settings: Settings) {
       width: 4,
       height: 4,
       backgroundColor: settings.themeColor,
+      flexShrink: 0,
     },
     sectionTitleText: {
       fontSize: headingSize,
