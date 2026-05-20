@@ -1,4 +1,5 @@
 import { type CVState, parseCVState } from '@/types/cv'
+import { migrateCVState } from '@/lib/cvMigrations'
 
 export async function extractCVForgeAttachment(file: File): Promise<CVState | null> {
   try {
@@ -15,7 +16,7 @@ export async function extractCVForgeAttachment(file: File): Promise<CVState | nu
     const jsonString = new TextDecoder().decode(attachment.content)
     const parsed = JSON.parse(jsonString)
     
-    return parseCVState(parsed)
+    return parseCVState(migrateCVState(parsed))
   } catch (error) {
     console.warn('Failed to extract CVForge attachment:', error)
     return null

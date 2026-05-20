@@ -171,10 +171,12 @@ export const SettingsSchema = z.object({
  * ─── Root CVState ───────────────────────────────────────────────────────────
  */
 
+export const CURRENT_CV_SCHEMA_VERSION = '1.0.0'
+
 export const CVStateSchema = z.object({
   resume: ResumeSchema,
   settings: SettingsSchema,
-  schemaVersion: z.string().default('1.0.0'),
+  schemaVersion: z.literal(CURRENT_CV_SCHEMA_VERSION).default(CURRENT_CV_SCHEMA_VERSION),
   updatedAt: z.string().default(() => new Date().toISOString()),
 });
 
@@ -284,7 +286,7 @@ export const defaultSettings: Settings = {
 export const defaultCVState: CVState = {
   resume: defaultResume,
   settings: defaultSettings,
-  schemaVersion: '1.0.0',
+  schemaVersion: CURRENT_CV_SCHEMA_VERSION,
   updatedAt: new Date().toISOString(),
 };
 

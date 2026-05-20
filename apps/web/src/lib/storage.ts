@@ -1,5 +1,6 @@
 import type { Theme } from '@/types/ui'
 import { type CVState, parseCVState } from '@/types/cv'
+import { migrateCVState } from '@/lib/cvMigrations'
 
 const KEYS = {
   theme: 'cv:theme',
@@ -65,7 +66,7 @@ export const storage = {
     if (!raw) return null
     try {
       const parsed = JSON.parse(raw)
-      return parseCVState(parsed)
+      return parseCVState(migrateCVState(parsed))
     } catch {
       return null
     }
