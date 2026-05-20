@@ -1,7 +1,7 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
-import { BuilderAddFocusProvider } from '@/context/BuilderAddFocusContext'
+import { BuilderAddFocusProvider } from '@/features/builder/context/BuilderAddFocusContext'
 import { type SectionTitleKey } from '@/types/cv'
 import { BUILDER_SECTIONS, SECTION_CONFIG, SECTION_ID_MAP, STATIC_TITLES } from './builderSectionConfig'
 import { AddCustomSectionCard } from './AddCustomSectionCard'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
-import { useAddFocusVersion } from '@/context/BuilderAddFocusContext'
+import { useAddFocusVersion } from '@/features/builder/context/BuilderAddFocusContext'
 import { RepeatableSectionEditor } from '@/components/shared/sections/RepeatableSectionEditor'
 import { WorkExperienceItem } from './WorkExperienceItem'
 
