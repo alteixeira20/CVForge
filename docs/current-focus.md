@@ -23,14 +23,13 @@ CVForge has completed a full pre-QA architecture refactoring sprint. The codebas
 
 **Immediate - Validation:**
 - Run `make check` (typecheck + lint + build) to surface any type or lint errors from all refactoring slices.
-- Manual QA against `pdf-mockup/CVForge PDF Template.html` - visual spot-check of the live preview and a downloaded PDF.
+- Manual QA: open the live Builder, fill in representative CV data, spot-check the PDF preview canvas, and compare against a downloaded PDF. The two paths are designed to stay visually aligned. `pdf-mockup/` has been removed as a root-level working artifact.
 
 **PDF Phase 2 Refinements (deferred):**
 - `sectionTitleText.letterSpacing`: 1.2 -> 1.3
 - `skillLabel`: add `paddingTop: 1.5`, `letterSpacing: 0.2`
 - `entrySubtitle.marginBottom`: 2 -> 3
 - `dateSize` offset: -1.5 -> -2 (gives 9pt at default font size 11pt)
-- Delete `pdf-mockup/` after visual approval
 
 ## 3. Genuinely Deferred (Do Not Implement Unless Instructed)
 

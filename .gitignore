@@ -41,10 +41,6 @@ codex_session.txt
 .env.*
 !.env.example
 
-# Local source asset packs
-forge_apps_logo_assets/
-forge_logo_web_assets/
-
 # Local agent scratch space
 .agent/
 .ai/
@@ -53,8 +49,13 @@ forge_logo_web_assets/
 *.agent.log
 *.prompt.local.md
 
+# Local source asset packs
+forge_apps_logo_assets/
+forge_logo_web_assets/
+
 # Reference / temporary folders
 tmp/
+pdf-mockup/
 .handoff/
 .scratch/
 .cache/
