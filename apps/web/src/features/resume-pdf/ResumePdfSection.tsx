@@ -1,6 +1,6 @@
 import { Text, View } from '@react-pdf/renderer'
 import { type ReactNode } from 'react'
-import { cleanList, cleanText } from '@/features/resume-formatting'
+import { cleanList, cleanText } from '@/lib/resume-formatting'
 import { type PdfStyles } from './types'
 
 interface ResumePdfSectionProps {

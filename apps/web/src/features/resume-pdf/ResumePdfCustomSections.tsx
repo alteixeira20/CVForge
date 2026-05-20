@@ -1,5 +1,5 @@
 import { type CustomSection, type Settings } from '@/types/cv'
-import { cleanList, cleanText } from '@/features/resume-formatting'
+import { cleanList, cleanText } from '@/lib/resume-formatting'
 import { ResumePdfBullets, ResumePdfParagraph, ResumePdfSection } from './ResumePdfSection'
 import { type PdfStyles } from './types'
 

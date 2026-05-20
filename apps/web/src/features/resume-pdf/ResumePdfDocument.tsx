@@ -1,7 +1,7 @@
 import React from 'react'
 import { Document, Page, Text, View } from '@react-pdf/renderer'
 import { type CVState, type DescriptionMode } from '@/types/cv'
-import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/features/resume-formatting'
+import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/lib/resume-formatting'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEntry } from './ResumePdfEntry'
 import { ResumePdfHeader } from './ResumePdfHeader'

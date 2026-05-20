@@ -1,6 +1,6 @@
 import { Text, View } from '@react-pdf/renderer'
 import { type Skills } from '@/types/cv'
-import { cleanList } from '@/features/resume-formatting'
+import { cleanList } from '@/lib/resume-formatting'
 import { ResumePdfSection } from './ResumePdfSection'
 import { type PdfStyles } from './types'
 

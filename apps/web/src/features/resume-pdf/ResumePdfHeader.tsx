@@ -1,6 +1,6 @@
 import { Link, Text, View } from '@react-pdf/renderer'
 import { type Profile, type Settings } from '@/types/cv'
-import { cleanText } from '@/features/resume-formatting'
+import { cleanText } from '@/lib/resume-formatting'
 import { ResumePdfIcon, type ResumePdfIconName } from './ResumePdfIcons'
 import { type PdfStyles } from './types'
 

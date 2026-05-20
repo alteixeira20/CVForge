@@ -1,5 +1,5 @@
 import { Link, Text, View } from '@react-pdf/renderer'
-import { cleanText } from '@/features/resume-formatting'
+import { cleanText } from '@/lib/resume-formatting'
 import { type PdfStyles } from './types'
 
 interface ResumePdfEntryProps {
