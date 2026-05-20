@@ -3,71 +3,14 @@
 import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Icon } from '@/components/ui/Icon'
 import { type RenderedPage, type RenderProgress } from './pdfPreviewTypes'
+import { useZoomControl, MIN_ZOOM, MAX_ZOOM, clamp } from './useZoomControl'
+import { useDevicePixelRatio } from './useDevicePixelRatio'
 
-const MIN_ZOOM = 0.5
-const MAX_ZOOM = 2.5
-const ZOOM_STEP = 0.15
 const MAX_RENDER_SCALE = 4
 const WIDE_SIDE_PADDING = 20
-// Standard A4 page width in PDF points at scale 1.
-// Used to estimate fit zoom before the first render completes.
-const PDF_BASE_WIDTH = 595
 // Max fraction a fit-mode page may exceed the container before switching to
 // the blocking loading screen on resize (avoids showing a stretched/wrong-position page).
 const OVERFLOW_TOLERANCE = 0.02
-
-function clamp(v: number, lo: number, hi: number) {
-  return Math.min(Math.max(v, lo), hi)
-}
-
-function getDevicePixelRatio() {
-  return typeof window !== 'undefined' ? (window.devicePixelRatio || 1) : 1
-}
-
-function useDevicePixelRatio() {
-  const [dpr, setDpr] = useState(() => getDevicePixelRatio())
-  useEffect(() => {
-    const mql = window.matchMedia(`(resolution: ${dpr}dppx)`)
-    const handler = () => setDpr(getDevicePixelRatio())
-    mql.addEventListener('change', handler)
-    return () => mql.removeEventListener('change', handler)
-  }, [dpr])
-  return dpr
-}
-
-function useZoomControl(pages: RenderedPage[]) {
-  const [zoom, setZoom] = useState(1.0)
-  const [fitMode, setFitMode] = useState(true)
-  const fitModeRef = useRef(true)
-  fitModeRef.current = fitMode
-  const pagesRef = useRef<RenderedPage[]>([])
-  pagesRef.current = pages
-  const containerWidthRef = useRef(0)
-
-  const applyFitZoom = useCallback(() => {
-    if (!fitModeRef.current || containerWidthRef.current === 0) return
-    const baseWidth = pagesRef.current.length > 0 ? pagesRef.current[0].baseWidth : PDF_BASE_WIDTH
-    setZoom(clamp(containerWidthRef.current / baseWidth, MIN_ZOOM, MAX_ZOOM))
-  }, [])
-
-  useEffect(() => { applyFitZoom() }, [pages, applyFitZoom])
-
-  const reportContainerWidth = useCallback((w: number) => {
-    containerWidthRef.current = w
-    applyFitZoom()
-  }, [applyFitZoom])
-
-  const zoomOut = () => { setFitMode(false); setZoom(z => clamp(z - ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)) }
-  const zoomIn = () => { setFitMode(false); setZoom(z => clamp(z + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)) }
-  const fit = () => {
-    setFitMode(true)
-    if (pagesRef.current.length > 0 && containerWidthRef.current > 0) {
-      setZoom(clamp(containerWidthRef.current / pagesRef.current[0].baseWidth, MIN_ZOOM, MAX_ZOOM))
-    }
-  }
-
-  return { zoom, fitMode, fitModeRef, zoomOut, zoomIn, fit, reportContainerWidth }
-}
 
 // --- Progress helpers (Mode A blocking screen only) ---
 
