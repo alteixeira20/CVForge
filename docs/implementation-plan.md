@@ -97,6 +97,21 @@ Current import status:
 - PDF restoration and heuristic import are accessible within the Parser.
 - Standalone `/resume-import` route is deprecated.
 
+## Phase 6: Pre-QA Architecture Refactoring (Completed)
+
+- [x] Split `heuristicResumeParser.ts` into orchestrator + `lib/parser/heuristic/` submodules (CVF-101).
+- [x] Split `ImportModal.tsx` into `ImportFileDropzone`, `ImportConfirmStep`, `PdfHeuristicReview` (CVF-102).
+- [x] Extract `useZoomControl.ts` and `useDevicePixelRatio.ts` from `PdfCanvasPreview.tsx` (CVF-103).
+- [x] Rename `features/builder/work/` to `features/builder/work-experience/` (CVF-104).
+- [x] Move `features/resume-formatting.ts` to `lib/resume-formatting.ts` (CVF-105).
+- [x] Move `context/BuilderAddFocusContext.tsx` to `features/builder/context/BuilderAddFocusContext.tsx` (CVF-106).
+- [x] Add schema migration system: `lib/cvMigrations.ts`, `CURRENT_CV_SCHEMA_VERSION`, `z.literal` version guard, migration wired before `parseCVState` on all external state sources (CVF-107).
+- [x] Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` for IDs, empty `Badge.tsx` deleted, Homepage ThemeToggle Tailwind conversion (CVF-201/204).
+
+Pending:
+- [ ] Run `make check` (typecheck + lint + build) — validation gate before manual QA.
+- [ ] Manual QA against `docs/current-qa-plan.md`.
+
 ## UI Implementation Checklist
 
 Use this checklist before closing any UI slice:

@@ -12,9 +12,10 @@
 ### State and Persistence
 - `apps/web/src/context/CVContext.tsx`
 - `apps/web/src/context/cvReducer.ts`
-- `apps/web/src/types/cv.ts`
+- `apps/web/src/types/cv.ts` (Zod schemas + `CURRENT_CV_SCHEMA_VERSION`)
 - `apps/web/src/lib/cvState.ts`
 - `apps/web/src/lib/storage.ts`
+- `apps/web/src/lib/cvMigrations.ts` (run `migrateCVState` before `parseCVState` on all external state)
 
 ### Builder Workbench
 - `apps/web/src/features/builder/workbench/BuilderWorkbench.tsx`
@@ -30,9 +31,12 @@
 - `apps/web/src/features/builder/workbench/useBuilderSectionActions.ts` (handleAdd, toggleVisibility, handleMove)
 - `apps/web/src/features/builder/hooks/useDescriptionModeToggle.ts` (shared mode toggle for item editors)
 
+### Builder Context
+- `apps/web/src/features/builder/context/BuilderAddFocusContext.tsx`
+
 ### Builder Section Editors
 - `apps/web/src/features/builder/profile/ProfileEditor.tsx`
-- `apps/web/src/features/builder/work/WorkExperienceEditor.tsx`
+- `apps/web/src/features/builder/work-experience/WorkExperienceEditor.tsx`
 - `apps/web/src/features/builder/education/EducationEditor.tsx`
 - `apps/web/src/features/builder/projects/ProjectsEditor.tsx`
 - `apps/web/src/features/builder/skills/SkillListEditor.tsx`
@@ -44,7 +48,10 @@
 - `apps/web/src/features/resume-pdf/ResumePdfDocument.tsx`
 - `apps/web/src/features/resume-pdf/DownloadPdfButton.tsx`
 - `apps/web/src/features/resume-pdf/embedCVStateAttachment.ts`
-- `apps/web/src/features/resume-formatting.ts`
+- `apps/web/src/lib/resume-formatting.ts` (cleanText, cleanList, formatDateRange, joinNonEmpty)
+- `apps/web/src/features/builder/workbench/PdfCanvasPreview.tsx` (canvas render + dock UI)
+- `apps/web/src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
+- `apps/web/src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
 
 ### Parser Workbench
 - `apps/web/src/features/parser/workbench/ParserWorkbench.tsx`
@@ -54,8 +61,22 @@
 - `apps/web/src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
 - `apps/web/src/features/parser/diagnostics/TextPreview.tsx`
 - `apps/web/src/features/parser/source/SourcePdfPreview.tsx`
-- `apps/web/src/lib/parser/heuristicResumeParser.ts`
+- `apps/web/src/lib/parser/heuristicResumeParser.ts` (public orchestrator)
+- `apps/web/src/lib/parser/heuristic/heuristicTypes.ts`
+- `apps/web/src/lib/parser/heuristic/dateParsing.ts`
+- `apps/web/src/lib/parser/heuristic/sectionDetection.ts`
+- `apps/web/src/lib/parser/heuristic/profileExtraction.ts`
+- `apps/web/src/lib/parser/heuristic/sectionExtraction.ts`
+- `apps/web/src/lib/parser/extractCVForgeAttachment.ts`
 - `apps/web/src/features/scoring/scoreCV.ts`
+
+### Import and Export
+- `apps/web/src/features/import-export/ImportModal.tsx` (orchestrator)
+- `apps/web/src/features/import-export/ImportFileDropzone.tsx`
+- `apps/web/src/features/import-export/ImportConfirmStep.tsx`
+- `apps/web/src/features/import-export/PdfHeuristicReview.tsx`
+- `apps/web/src/features/import-export/ImportReviewTable.tsx`
+- `apps/web/src/features/import-export/importCVState.ts`
 
 ### Shared UI Primitives
 - `apps/web/src/components/shared/workbench/WorkbenchShell.tsx`
@@ -105,6 +126,18 @@
 - `docker-compose.yml`
 
 ## Recent Completed Work
+
+### Architecture Refactoring (pre-QA)
+- `heuristicResumeParser.ts` split into orchestrator + `lib/parser/heuristic/` submodules (types, date parsing, section detection, profile extraction, section extraction).
+- `ImportModal.tsx` split: orchestrator retains state; `ImportFileDropzone`, `ImportConfirmStep`, and `PdfHeuristicReview` own presentational states.
+- `PdfCanvasPreview.tsx` zoom/DPR logic extracted: `useZoomControl.ts` and `useDevicePixelRatio.ts` live alongside the component in `features/builder/workbench/`.
+- `features/builder/work/` renamed to `features/builder/work-experience/` to match the data model key.
+- `features/resume-formatting.ts` moved to `lib/resume-formatting.ts` (no feature dependency).
+- `context/BuilderAddFocusContext.tsx` moved to `features/builder/context/BuilderAddFocusContext.tsx`.
+- `lib/cvMigrations.ts` added: `migrateCVState()` runs before `parseCVState` on localStorage restore, JSON import, and PDF attachment restore. `CURRENT_CV_SCHEMA_VERSION` exported from `types/cv.ts`. `CVStateSchema.schemaVersion` uses `z.literal(CURRENT_CV_SCHEMA_VERSION)` to reject states saved by a newer build.
+- Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` adopted for ID generation, empty `Badge.tsx` deleted, Homepage ThemeToggle inline style replaced with Tailwind class.
+
+### Prior Sprint
 - Major visual alignment for Builder, Parser, and Forge Apps branding.
 - Full implementation of Builder sections and shared workbench primitives.
 - Integration of parser scoring and diagnostic signals.

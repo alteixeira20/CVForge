@@ -29,7 +29,7 @@ CVForge is a clean-room rebuild. Comparable features can be rebuilt, but source 
 Current builder feature folders:
 - `src/features/builder/profile`
 - `src/features/builder/settings`
-- `src/features/builder/work`
+- `src/features/builder/work-experience`
 - `src/features/builder/education`
 - `src/features/builder/projects`
 - `src/features/builder/skills`
@@ -46,7 +46,7 @@ Current builder feature folders:
 2. `CVProvider` in `apps/web/src/context/CVContext.tsx` owns reducer state.
 3. Builder editors call context actions to update profile, settings, and repeatable sections.
 4. State changes are saved to browser `localStorage`.
-5. Stored state is parsed as JSON and validated with the CV schema before it is loaded.
+5. Stored state is parsed as JSON, migrated to the current schema version, and validated with the CV schema before it is loaded.
 
 The visible CV storage key is `cvforge:state`.
 
@@ -68,7 +68,7 @@ Implemented utility behavior:
 - ATS-style scoring is deterministic and transparent, but it is a diagnostic signal only.
 
 Current limitations:
-- Live preview remains a CSS preview separate from the generated PDF renderer.
+- Builder preview renders the generated PDF through the PDF.js canvas pipeline; download/export uses the same @react-pdf/renderer document with an embedded session attachment. The two paths are designed to stay visually aligned, not guaranteed identical.
 - Parser extraction depends on selectable text and does not import fields into the builder.
 - No CV data is uploaded to a server by the implemented app.
 

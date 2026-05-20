@@ -46,6 +46,7 @@ Planned but not implemented (Pinned Future Slices):
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
 - Parser reliability is separate from CV quality diagnostics.
 - Data is saved only in the current browser's `localStorage`.
+- Persisted state is migrated to the current schema version before validation; states saved by a newer build are rejected rather than silently loaded.
 - Current Builder CV analysis in Parser uses in-browser state only and does not upload CV data.
 - There is no server-side persistence, authentication, or database.
 
