@@ -54,7 +54,7 @@ export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: E
         </FormField>
       </FieldGroup>
 
-      <FieldGroup columns={3}>
+      <FieldGroup columns={2}>
         <FormField label="Location">
           <TextInput
             placeholder="e.g. Boston, MA"
@@ -69,6 +69,9 @@ export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: E
             onChange={(e) => handleChange('startDate', e.target.value)}
           />
         </FormField>
+      </FieldGroup>
+
+      <FieldGroup columns={2}>
         <FormField label="End Date">
           <TextInput
             placeholder="e.g. Jun 2020"
