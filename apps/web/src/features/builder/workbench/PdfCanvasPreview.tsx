@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Icon } from '@/components/ui/Icon'
 import { type RenderedPage, type RenderProgress } from './pdfPreviewTypes'
 import { useZoomControl, MIN_ZOOM, MAX_ZOOM, clamp } from './useZoomControl'

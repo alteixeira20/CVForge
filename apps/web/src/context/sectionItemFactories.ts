@@ -3,8 +3,15 @@ import { type RepeatableSectionKey } from './cvActions'
 
 export type RepeatableSectionItem = WorkExperience | Education | Project | Language | CustomSection
 
+function createId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+  return Math.random().toString(36).slice(2, 11)
+}
+
 export function createSectionItem(sectionKey: RepeatableSectionKey): RepeatableSectionItem {
-  const id = Math.random().toString(36).substring(2, 9)
+  const id = createId()
 
   switch (sectionKey) {
     case 'workExperience':

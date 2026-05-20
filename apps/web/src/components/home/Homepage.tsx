@@ -36,7 +36,7 @@ export function Homepage() {
         onComplete={handleComplete}
       />
 
-      <div style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 40 }}>
+      <div className="fixed bottom-5 right-5 z-40">
         <ThemeToggle />
       </div>
     </div>
