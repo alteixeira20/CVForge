@@ -1,5 +1,7 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { type Settings } from '@/types/cv'
+import { resolveDateFont, resolvePdfFont } from './resumePdfFontHelpers'
+import { compact, scaleSpacing } from './resumePdfLayoutHelpers'
 
 export const PAGE_PADDING_VERTICAL = 34
 export const PAGE_PADDING_HORIZONTAL = 50
@@ -209,29 +211,4 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: contactSize,
     },
   })
-}
-
-function compact(value: number, offset: number, min: number, max: number) {
-  return Math.min(Math.max(value + offset, min), max)
-}
-
-function scaleSpacing(value: number, factor: number, min: number, max: number) {
-  return Math.min(Math.max(value * factor, min), max)
-}
-
-function resolveDateFont(_fontFamily: string) {
-  return 'Courier'
-}
-
-function resolvePdfFont(fontFamily: string) {
-  const font = fontFamily.toLowerCase()
-
-  // Map common font types to core PDF fonts.
-  // Note: Lexend and JetBrains Mono are used in the web app but are not yet
-  // bundled as local assets for PDF embedding. We fallback to standard PDF fonts.
-  if (font.includes('mono')) return 'Courier'
-  if (font.includes('serif') || font.includes('times') || font.includes('georgia')) return 'Times-Roman'
-
-  // Default to Helvetica for sans-serif (Lexend, Inter, Roboto, etc.)
-  return 'Helvetica'
 }
