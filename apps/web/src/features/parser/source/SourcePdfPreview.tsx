@@ -27,12 +27,12 @@ export function SourcePdfPreview({ document }: { document: ParserDocument | null
 function EmptySourcePreview() {
   return (
     <PreviewCanvas>
-      <div className="flex h-full items-center justify-center p-32 text-center opacity-70">
-        <div className="max-w-xs space-y-6">
-          <div className="w-48 h-48 rounded-full bg-bg-2 border border-border flex items-center justify-center mx-auto shadow-sm">
+      <div className="flex h-full items-center justify-center p-6 text-center opacity-70 sm:p-10 lg:p-32">
+        <div className="max-w-xs space-y-4 sm:space-y-6">
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-border bg-bg-2 shadow-sm sm:h-36 sm:w-36 lg:h-48 lg:w-48">
             <Icon name="device" size={20} className="text-ink-4" />
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <h2 className="text-sm font-semibold text-ink">Source Viewer</h2>
             <p className="text-xs leading-relaxed text-ink-3">
               Upload a PDF to preview the source file locally.
