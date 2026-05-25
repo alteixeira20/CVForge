@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { CURRENT_CV_SCHEMA_VERSION } from './cv/version';
+
+export { CURRENT_CV_SCHEMA_VERSION } from './cv/version';
+export { parseCVState } from './cv/parse';
 
 /**
  * ─── Resume Models ──────────────────────────────────────────────────────────
@@ -171,8 +175,6 @@ export const SettingsSchema = z.object({
  * ─── Root CVState ───────────────────────────────────────────────────────────
  */
 
-export const CURRENT_CV_SCHEMA_VERSION = '1.0.0'
-
 export const CVStateSchema = z.object({
   resume: ResumeSchema,
   settings: SettingsSchema,
@@ -289,17 +291,3 @@ export const defaultCVState: CVState = {
   schemaVersion: CURRENT_CV_SCHEMA_VERSION,
   updatedAt: new Date().toISOString(),
 };
-
-/**
- * --- Helpers ----------------------------------------------------------------
- */
-
-export function parseCVState(value: unknown): CVState | null {
-  const result = CVStateSchema.safeParse(value);
-  if (result.success) {
-    return result.data;
-  }
-  return null;
-}
-
-
