@@ -12,7 +12,7 @@ import { usePdfCanvasPreview } from './usePdfCanvasPreview'
 
 const DownloadPdfButton = dynamic(
   () => import('@/features/resume-pdf/DownloadPdfButton').then((m) => m.DownloadPdfButton),
-  { ssr: false, loading: () => <span className="btn sm justify-center opacity-60">Preparing PDF</span> },
+  { ssr: false, loading: () => <span className="btn sm justify-center opacity-60" aria-live="polite">Preparing PDF</span> },
 )
 
 const SPIN_VISIBLE_MS = 600

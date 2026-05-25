@@ -43,13 +43,19 @@ export function BuilderEntryModal({
   return (
     <>
       <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
-        <div className="modal" style={{ width: '460px' }}>
+        <div
+          className="modal"
+          style={{ width: '460px' }}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="builder-entry-modal-title"
+        >
           <div className="modal-head">
             <div className="ic plain">
               <BrandMark variant="square" className="w-10 h-10" />
             </div>
             <div className="text">
-              <h2>Welcome to CVForge</h2>
+              <h2 id="builder-entry-modal-title">Welcome to CVForge</h2>
               <p className="sub">
                 Your data is stored locally in your browser. No account required.
               </p>

@@ -93,13 +93,19 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
 
   return createPortal((
     <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{ '--modal-width': modalWidth } as CSSProperties}>
+      <div
+        className="modal"
+        style={{ '--modal-width': modalWidth } as CSSProperties}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="import-modal-title"
+      >
         <div className="modal-head">
           <div className="ic plain">
             <Icon name={isAnalyzing ? 'circle' : 'import'} size={20} className={isAnalyzing ? 'animate-spin' : ''} />
           </div>
           <div className="text">
-            <h2>Import CV Data</h2>
+            <h2 id="import-modal-title">Import CV Data</h2>
             <p className="sub">Restore a JSON backup or import a PDF resume.</p>
           </div>
           <button type="button" className="close" onClick={onClose} aria-label="Close">
@@ -113,7 +119,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
           )}
 
           {isAnalyzing && (
-            <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center">
+            <div className="py-12 flex flex-col items-center justify-center space-y-4 text-center" role="status" aria-live="polite">
               <div className="w-10 h-10 border-2 border-ember border-t-transparent rounded-full animate-spin" />
               <p className="text-xs text-ink-3">Analyzing document structure...</p>
             </div>
@@ -165,6 +171,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
         type="file"
         accept="application/json,.json,application/pdf,.pdf"
         className="hidden"
+        aria-label="Choose a JSON backup or PDF resume to import"
         onChange={handleFileChange}
       />
     </div>
