@@ -79,3 +79,4 @@ compose.override.yml
 *.sh
 !scripts/
 !scripts/**/*.sh
+_codex_reports/
