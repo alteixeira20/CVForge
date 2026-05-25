@@ -1,14 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
-import { scoreCV } from '@/features/scoring/scoreCV'
-import { isCvForgeGenerated } from '@/lib/parser/cvForgeDetection'
-import { isEmptyCV } from '@/lib/cvState'
-import { type CVState } from '@/types/cv'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
 import { ScorePanel } from '../score/ScorePanel'
@@ -18,17 +13,19 @@ import { ParserRestoreAction } from '../upload/ParserRestoreAction'
 import { ParserHeuristicAction } from '../upload/ParserHeuristicAction'
 import { type ParserDocument } from '../upload/parserTypes'
 import { useParserDocument } from '../upload/useParserDocument'
+import { BuilderSourceNotice } from './BuilderSourceNotice'
+import { type ParserAnalysisTarget } from './parserAnalysisTypes'
+import { resolveParserAnalysisTarget } from './resolveParserAnalysisTarget'
 
 import { Icon } from '@/components/ui/Icon'
 import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
-import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 
 export function ParserWorkbench() {
   const { state } = useCV()
   const searchParams = useSearchParams()
   const fromBuilder = searchParams.get('source') === 'builder'
   const { document, handleFile, clearDocument } = useParserDocument()
-  const analysis = resolveAnalysisTarget(state, document, fromBuilder)
+  const analysis = resolveParserAnalysisTarget(state, document, fromBuilder)
 
   return (
     <div className="app-shell h-screen overflow-hidden">
@@ -97,92 +94,3 @@ function ParserAnalysisPanel(props: {
     </div>
   )
 }
-
-type ParserAnalysisTarget = {
-  score: ReturnType<typeof scoreCV> | null
-  isEmpty: boolean
-  target: {
-    label: string
-    description: string
-    caveat: string
-  }
-}
-
-function BuilderSourceNotice({ analysis }: { analysis: ParserAnalysisTarget }) {
-  const [isExpanded, setIsExpanded] = useState(true)
-
-  return (
-    <WorkbenchSectionCard
-      title={analysis.target.label}
-      icon="users"
-      isExpanded={isExpanded}
-      onToggle={() => setIsExpanded(!isExpanded)}
-      status="No upload"
-    >
-      <div className="space-y-3">
-        <p className="text-xs text-ink-3 leading-relaxed">
-          {analysis.target.description}
-        </p>
-        {analysis.isEmpty && (
-          <p className="text-xs text-amber-200 leading-relaxed font-medium">
-            The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful diagnostics.
-          </p>
-        )}
-      </div>
-    </WorkbenchSectionCard>
-  )
-}
-
-function resolveAnalysisTarget(state: CVState, document: ParserDocument | null, fromBuilder: boolean): ParserAnalysisTarget {
-  if (!document?.extraction) {
-    return {
-      score: scoreCV(state),
-      isEmpty: isEmptyCV(state),
-      target: {
-        label: 'Current Builder CV',
-        description: fromBuilder
-          ? 'These checks use the active CV from Builder. No PDF was uploaded and no server storage is used.'
-          : 'These checks use the CV currently stored in the Builder. Upload a PDF to analyze a file instead.',
-        caveat: 'Uploaded PDF results are not mixed into this score until CVForge has a restored session or best-effort draft to evaluate.',
-      },
-    }
-  }
-
-  const extractedText = document.extraction.text
-  const isForge = isCvForgeGenerated(document.extraction.metadata)
-
-  if (document.embeddedState) {
-    return {
-      score: scoreCV(document.embeddedState, extractedText),
-      isEmpty: false,
-      target: {
-        label: 'CVForge Embedded Session',
-        description: 'These checks use the structured session embedded inside the uploaded CVForge PDF.',
-        caveat: 'Parser reliability remains separate from these CV content checks.',
-      },
-    }
-  }
-
-  if (document.heuristic) {
-    return {
-      score: scoreCV(document.heuristic.draft, extractedText),
-      isEmpty: false,
-      target: {
-        label: 'Best-Effort External PDF Draft',
-        description: 'These checks use the conservative draft parsed from the uploaded external PDF.',
-        caveat: 'The draft may be incomplete or wrong. Review imported fields before using them.',
-      },
-    }
-  }
-
-  return {
-    score: null,
-    isEmpty: false,
-    target: {
-      label: isForge ? 'CVForge PDF Extraction Only' : 'Raw PDF Extraction Only',
-      description: 'CVForge extracted text from this PDF, but there is no structured CV draft to score.',
-      caveat: 'The current Builder CV is intentionally not scored as a proxy for this upload.',
-    },
-  }
-}
-
