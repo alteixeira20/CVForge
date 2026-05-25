@@ -16,7 +16,7 @@ export function WorkbenchMobileNav({
   rightLabel,
 }: WorkbenchMobileNavProps) {
   return (
-    <div className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-0.5 bg-bg-2/95 backdrop-blur-sm border border-border rounded-xl p-1 shadow-lg w-[260px]">
+    <div className="workbench-mobile-nav lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex items-center gap-0.5 bg-bg-2/95 backdrop-blur-sm border border-border rounded-xl p-1 shadow-lg w-[260px]">
       <button
         onClick={() => onPanelChange('left')}
         aria-pressed={activePanel === 'left'}

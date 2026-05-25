@@ -3,7 +3,9 @@
 /* --- App shell -------------------------------------------------------------- */
 .app-shell {
   min-height: 100vh;
+  min-height: 100svh;
   height: 100vh;
+  height: 100dvh;
   display: flex; flex-direction: column;
   overflow: hidden;
   background:
@@ -14,6 +16,25 @@
   min-height: 0;
   flex: 1;
   overflow: hidden;
+}
+.workbench-shell {
+  min-height: 0;
+}
+.workbench-grid {
+  height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
+}
+.workbench-mobile-nav {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (max-width: 1023px) {
+  .workbench-shell {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  .workbench-grid {
+    height: calc(100dvh - var(--header-h) - 76px - env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* --- App header ------------------------------------------------------------- */
