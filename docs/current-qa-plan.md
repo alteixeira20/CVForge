@@ -1,107 +1,32 @@
-# CVForge Current QA Plan
+# CVForge Final QA Plan
 
-## 1. Homepage & Modal QA
-- **Route:** `/`
-- **Files Involved:** `Homepage.tsx`, `HeroSection.tsx`
-- **Test:** Verify hero section, features, and "Start Building" navigation.
-- **Expected:** Smooth navigation to `/builder`. No console errors.
-- **Bugs to Record:** Broken layout, missing assets.
+Run this checklist before final UI polish sign-off and deployment. Record browser, viewport, source PDF type, and any console errors for each issue.
 
-## 2. Builder Desktop QA
-- **Route:** `/builder`
-- **Files Involved:** `BuilderWorkbench.tsx`, `BuilderEditorPanel.tsx`, `cvReducer.ts`
-- **Test:** Edit all sections, test repeatable item cards, test description format toggles, toggle section/bullet visibility.
-- **Expected:** State updates correctly, preview canvas reflects changes sharply.
-- **Bugs to Record:** UI glitches in cards, state failing to update.
+## Manual Validation Commands
 
-## 2a. Section Ordering and Visibility QA
-- **Route:** `/builder`
-- **Files Involved:** `BuilderSectionList.tsx`, `BuilderSectionCard.tsx`, `SectionReorderControls.tsx`, `useBuilderSectionActions.ts`
-- **Test:** Move Work Experience up and down. Toggle a section hidden. Verify the PDF preview reflects the new order and hides the toggled section. Rename a section title inline. Restore via keyboard (Enter/Space to start edit, Enter to save, Escape to cancel).
-- **Expected:** Section order and visibility update immediately in preview. Renamed titles appear in the PDF.
-- **Bugs to Record:** Reorder not reflected in PDF; hidden sections still appearing; title keyboard flow not working.
+```bash
+pnpm typecheck
+pnpm lint
+pnpm build
+```
 
-## 2b. Advanced PDF Layout Settings QA
-- **Route:** `/builder` > Settings panel
-- **Files Involved:** `SettingsEditor.tsx`, `SpacingSettings.tsx`, `AdvancedPdfLayoutSettings.tsx`, `resumePdfStyles.ts`
-- **Test:** Change font size, toggle compact mode, adjust section gap, toggle the top accent bar off and back on, change the accent height. Verify each change appears in the live preview.
-- **Expected:** Every settings change reflects in the PDF preview canvas within a second. Accent bar hides/shows. Gaps visibly change.
-- **Bugs to Record:** Setting changes that do not update preview; accent bar persisting after toggle off.
+## Pre-Deploy Browser Checklist
 
-## 2c. Settings Reset QA
-- **Route:** `/builder` > Settings panel
-- **Files Involved:** `ResetSettingsControl.tsx`, `cvReducer.ts`
-- **Test:** Change several settings (font, spacing, accent height). Reset to defaults. Verify CV content (name, work entries, etc.) is not affected - only settings reset.
-- **Expected:** Settings revert to defaults. CV data unchanged. Preview updates to reflect default styles.
-- **Bugs to Record:** CV content lost on reset; settings not fully resetting to defaults.
+- **Homepage (`/`):** Verify the page loads cleanly, primary navigation works, and "Start Building" reaches `/builder`.
+- **Builder (`/builder`):** Edit profile, work, education, projects, skills, languages, and custom sections. Confirm repeatable cards, visibility toggles, section ordering, inline section title edits, and settings reset behave correctly.
+- **PDF preview:** Confirm the live PDF canvas updates after content and settings edits, zoom/fit controls work, and preview remains sharp without layout overflow.
+- **PDF export/download:** Download a PDF from Builder and confirm it visually matches the preview and remains usable for CVForge session restore.
+- **JSON export/import:** Export a JSON backup, change the CV, cancel an import once, then import the backup and confirm full session restoration.
+- **Parser with no upload (`/parser`):** Confirm Builder CV analysis appears, including the empty-CV warning when Builder has no useful content.
+- **Parser with CVForge-generated PDF:** Upload a downloaded CVForge PDF. Confirm source preview, embedded session detection, restore action, and score target behave correctly.
+- **Parser with external PDF:** Upload a non-CVForge text PDF. Confirm extraction diagnostics, best-effort draft review/import, scoring target, and source preview behave correctly without silently replacing Builder state.
+- **Mobile/responsive:** Check `/`, `/builder`, and `/parser` at mobile and tablet widths. Confirm panels, bottom navigation, forms, modals, and buttons remain reachable without horizontal overflow.
+- **localStorage/session persistence:** Refresh after Builder edits and confirm state persists. Close and reopen the app in the same browser profile and confirm the session is restored.
+- **Deprecated redirect:** Visit `/resume-import` and confirm it redirects to the current Parser flow.
 
-## 2d. Keyboard and Focus QA
-- **Route:** `/builder`
-- **Files Involved:** `TextInput.tsx`, `NumberInput.tsx`, `EditableSectionTitle.tsx`, `HoldDeleteButton.tsx`, `SectionItemHeader.tsx`
-- **Test:** Tab through form fields - verify no visible focus ring on mouse click, visible ring on keyboard focus. Press Enter in a text field - verify field blurs without submitting a form. Use keyboard to rename a section title (Tab to span, Enter to activate, type, Enter to save).
-- **Expected:** Mouse clicks produce no outline. Keyboard navigation shows `focus-visible` ring. Enter blurs single-line inputs. IME/composition input (CJK) is not interrupted by Enter-to-blur.
-- **Bugs to Record:** Spurious outlines on mouse click; Enter triggering form submission; title rename not keyboard-reachable.
+## Expected Pass Signals
 
-## 2e. Import Modal QA
-- **Route:** `/builder` > Settings panel > Import/Export
-- **Files Involved:** `SettingsEditor.tsx`, `storage.ts`
-- **Test:** Export a JSON backup. Make edits. Open the import modal. Cancel - verify state unchanged. Import the backup - verify full state restored.
-- **Expected:** Cancel does not replace state. Import restores complete CV and settings. Modal closes after import.
-- **Bugs to Record:** State replaced on cancel; partial restore; modal not closing.
-
-## 3. Builder Mobile QA
-- **Route:** `/builder` (Mobile viewport)
-- **Files Involved:** `WorkbenchMobileNav.tsx`, `WorkbenchShell.tsx`
-- **Test:** Switch between editor panel and preview panel using bottom tabs. Test form inputs.
-- **Expected:** State persists between panel switches. No awkward zooming on inputs.
-- **Bugs to Record:** Layout overflow, hidden buttons.
-
-## 4. PDF Preview & Export QA
-- **Route:** `/builder`
-- **Files Involved:** `BuilderPreviewPanel.tsx`, `DownloadPdfButton.tsx`
-- **Test (Preview):** Type continuously. Verify the PDF.js canvas handles updates gracefully without flickering native browser PDF viewers. Test zoom and fit controls.
-- **Test (Export):** Click "Download". Verify the generated PDF visually matches the preview.
-- **Expected:** Sharp, flicker-free canvas preview works. Downloaded PDF contains the embedded `cvforge-session.json`.
-- **Bugs to Record:** Canvas failing to render, zoom controls broken, Export failing.
-
-## 5. JSON Import/Export QA
-- **Route:** `/builder` (Settings Modal)
-- **Files Involved:** `SettingsEditor.tsx`, `storage.ts`
-- **Test:** Export session to JSON. Modify CV. Import the saved JSON.
-- **Expected:** State completely restores to the backup.
-- **Bugs to Record:** Invalid JSON errors, partial state restoration.
-
-## 6. Parser Upload QA
-- **Route:** `/parser`
-- **Files Involved:** `ParserWorkbench.tsx`, `PdfUploadPanel.tsx`
-- **Test:** Upload a standard text-based PDF.
-- **Expected:** Source preview renders. Text extraction completes. Heuristic scores display.
-- **Bugs to Record:** Parsing crashes, source PDF failing to load in viewer.
-
-## 7. CVForge PDF Restore QA
-- **Route:** `/parser`
-- **Files Involved:** `ParserRestoreAction.tsx`, `extractCVForgeAttachment.ts`
-- **Test:** Upload a PDF previously generated by CVForge.
-- **Expected:** System detects it and successfully restores the exact builder state without heuristics.
-- **Bugs to Record:** Failure to read attachment, falling back to heuristics incorrectly.
-
-## 8. External PDF Heuristic Import QA
-- **Route:** `/parser`
-- **Files Involved:** `ParserHeuristicAction.tsx`, `heuristicResumeParser.ts`
-- **Test:** Upload an external (non-CVForge) PDF.
-- **Expected:** App displays the "Best-Effort Draft Review" card showing heuristic mapping. User can review and create an editable draft.
-- **Bugs to Record:** Immediate override of Builder state without review.
-
-## 9. Theme & Brand QA
-- **Route:** Global
-- **Files Involved:** `ThemeContext.tsx`, `AppHeader.tsx`, `BrandMark.tsx`
-- **Test:** Toggle Dark/Light mode.
-- **Expected:** Colors (Ink/Ember/Lava) update. Forge Apps brand mark updates correctly.
-- **Bugs to Record:** Hardcoded colors not respecting theme.
-
-## 10. Deployment Sanity Checks
-- **Command:** `make docker-check`
-- **Files Involved:** `Dockerfile`, `docker-compose.yml`
-- **Test:** Run the production container and check routes.
-- **Expected:** Container boots successfully and serves `/`, `/builder`, `/parser`.
-- **Bugs to Record:** Next.js build failures, port conflicts.
+- No uncaught console errors during core flows.
+- Local-only state persists without backend/API calls.
+- PDF preview, export, parser restore, JSON import/export, and heuristic parser flows remain distinct and predictable.
+- External PDF import always requires review before replacing Builder state.
