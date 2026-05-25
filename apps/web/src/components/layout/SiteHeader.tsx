@@ -47,7 +47,7 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
           href="https://github.com/alteixeira20/CVForge" 
           target="_blank" 
           rel="noreferrer"
-          className="btn sm bg-bg shadow-sm ml-4"
+          className="btn sm bg-bg shadow-sm ml-4 site-github-action"
         >
           <Icon name="github" size={14} />
           <span>Star</span>

@@ -21,7 +21,7 @@ export function AppHeader({
       <div className="crumbs">
         <span>CVForge</span>
         <span className="sep">/</span>
-        <span className="active">{title}</span>
+        <span className="active" title={title}>{title}</span>
       </div>
 
       <span className="badge">

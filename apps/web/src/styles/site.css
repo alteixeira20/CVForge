@@ -28,8 +28,12 @@
 
 @media (max-width: 720px) {
   :root { --header-h: 72px; }
-  .site-header { padding: 14px 20px; }
+  .site-header { gap: 12px; padding: 14px 20px; }
   .site-header nav { display: none; }
+  .site-header .spacer { min-width: 0; }
+  .site-header .actions { gap: 4px; flex-shrink: 0; }
+  .site-header .nav-link { padding: 8px 9px; }
+  .site-header .site-github-action { display: none; }
 }
 
 /* --- Homepage shell --------------------------------------------------------- */
