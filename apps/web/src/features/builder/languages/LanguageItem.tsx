@@ -1,11 +1,11 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
 import { TextInput } from '@/components/shared/form/TextInput'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Language } from '@/types/cv'
+import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface LanguageItemProps {
   item: Language
@@ -22,11 +22,7 @@ export function LanguageItem({
   isFirst,
   isLast,
 }: LanguageItemProps) {
-  const { updateSectionItem } = useCV()
-
-  const handleChange = (field: keyof Language, value: unknown) => {
-    updateSectionItem('languages', item.id, field, value)
-  }
+  const handleChange = useRepeatableItemUpdate<keyof Language>('languages', item.id)
 
   return (
     <RepeatableSectionItemShell

@@ -1,14 +1,13 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
 import { TextInput } from '@/components/shared/form/TextInput'
-import { MultilineListField } from '@/components/shared/form/MultilineListField'
-import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type CustomSection } from '@/types/cv'
 import { linesToBullets } from './customSectionText'
 import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
+import { DescriptionField } from '../shared/DescriptionField'
+import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface CustomSectionItemProps {
   item: CustomSection
@@ -19,12 +18,8 @@ interface CustomSectionItemProps {
 }
 
 export function CustomSectionItem({ item, isExpanded, onToggle, isFirst, isLast }: CustomSectionItemProps) {
-  const { updateSectionItem } = useCV()
   const { mode, toggleMode } = useDescriptionModeToggle('customSections')
-
-  const handleChange = (field: keyof CustomSection, value: unknown) => {
-    updateSectionItem('customSections', item.id, field, value)
-  }
+  const handleChange = useRepeatableItemUpdate<keyof CustomSection>('customSections', item.id)
 
   return (
     <RepeatableSectionItemShell
@@ -43,12 +38,13 @@ export function CustomSectionItem({ item, isExpanded, onToggle, isFirst, isLast 
           onChange={(e) => handleChange('title', e.target.value)}
         />
       </FormField>
-      <MultilineListField
+      <DescriptionField
         label="Description"
         placeholder="Add one detail per line..."
         value={item.bullets}
         onChange={(v) => handleChange('bullets', linesToBullets(v.join('\n')))}
-        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
+        mode={mode}
+        onToggleMode={toggleMode}
       />
     </RepeatableSectionItemShell>
   )

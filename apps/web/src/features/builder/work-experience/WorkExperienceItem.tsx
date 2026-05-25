@@ -1,15 +1,14 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
 import { FieldLabel } from '@/components/shared/form/FieldLabel'
 import { TextInput } from '@/components/shared/form/TextInput'
-import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
-import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type WorkExperience } from '@/types/cv'
 import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
+import { DescriptionField } from '../shared/DescriptionField'
+import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface WorkExperienceItemProps {
   item: WorkExperience
@@ -20,12 +19,8 @@ interface WorkExperienceItemProps {
 }
 
 export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast }: WorkExperienceItemProps) {
-  const { updateSectionItem } = useCV()
   const { mode, toggleMode } = useDescriptionModeToggle('workExperience')
-
-  const handleChange = (field: keyof WorkExperience, value: unknown) => {
-    updateSectionItem('workExperience', item.id, field, value)
-  }
+  const handleChange = useRepeatableItemUpdate<keyof WorkExperience>('workExperience', item.id)
 
   const handleCurrentChange = (checked: boolean) => {
     handleChange('isCurrent', checked)
@@ -102,12 +97,13 @@ export function WorkExperienceItem({ item, isExpanded, onToggle, isFirst, isLast
         />
       </div>
 
-      <MultilineListField
+      <DescriptionField
         label="Description"
         placeholder="Describe your impact..."
         value={item.bullets}
         onChange={(value) => handleChange('bullets', value)}
-        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
+        mode={mode}
+        onToggleMode={toggleMode}
       />
     </RepeatableSectionItemShell>
   )

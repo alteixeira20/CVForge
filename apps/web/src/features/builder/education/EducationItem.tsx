@@ -1,14 +1,13 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
 import { TextInput } from '@/components/shared/form/TextInput'
-import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
-import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Education } from '@/types/cv'
 import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
+import { DescriptionField } from '../shared/DescriptionField'
+import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface EducationItemProps {
   item: Education
@@ -19,12 +18,8 @@ interface EducationItemProps {
 }
 
 export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: EducationItemProps) {
-  const { updateSectionItem } = useCV()
   const { mode, toggleMode } = useDescriptionModeToggle('education')
-
-  const handleChange = (field: keyof Education, value: unknown) => {
-    updateSectionItem('education', item.id, field, value)
-  }
+  const handleChange = useRepeatableItemUpdate<keyof Education>('education', item.id)
 
   return (
     <RepeatableSectionItemShell
@@ -81,12 +76,13 @@ export function EducationItem({ item, isExpanded, onToggle, isFirst, isLast }: E
         </FormField>
       </FieldGroup>
 
-      <MultilineListField
+      <DescriptionField
         label="Description"
         placeholder="Minors, awards, or relevant coursework..."
         value={item.details}
         onChange={(value) => handleChange('details', value)}
-        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
+        mode={mode}
+        onToggleMode={toggleMode}
       />
     </RepeatableSectionItemShell>
   )

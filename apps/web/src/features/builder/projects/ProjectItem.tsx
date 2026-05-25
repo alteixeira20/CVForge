@@ -1,14 +1,13 @@
 'use client'
 
-import { useCV } from '@/context/CVContext'
 import { FormField } from '@/components/shared/form/FormField'
 import { TextInput } from '@/components/shared/form/TextInput'
-import { MultilineListField } from '@/components/shared/form/MultilineListField'
 import { FieldGroup } from '@/components/shared/form/FieldGroup'
-import { DescriptionFormatToggle } from '@/components/shared/form/DescriptionFormatToggle'
 import { RepeatableSectionItemShell } from '@/components/shared/sections/RepeatableSectionItemShell'
 import { type Project } from '@/types/cv'
 import { useDescriptionModeToggle } from '../hooks/useDescriptionModeToggle'
+import { DescriptionField } from '../shared/DescriptionField'
+import { useRepeatableItemUpdate } from '../shared/useRepeatableItemUpdate'
 
 interface ProjectItemProps {
   item: Project
@@ -19,12 +18,8 @@ interface ProjectItemProps {
 }
 
 export function ProjectItem({ item, isExpanded, onToggle, isFirst, isLast }: ProjectItemProps) {
-  const { updateSectionItem } = useCV()
   const { mode, toggleMode } = useDescriptionModeToggle('projects')
-
-  const handleChange = (field: keyof Project, value: unknown) => {
-    updateSectionItem('projects', item.id, field, value)
-  }
+  const handleChange = useRepeatableItemUpdate<keyof Project>('projects', item.id)
 
   return (
     <RepeatableSectionItemShell
@@ -71,12 +66,13 @@ export function ProjectItem({ item, isExpanded, onToggle, isFirst, isLast }: Pro
         </FormField>
       </FieldGroup>
 
-      <MultilineListField
+      <DescriptionField
         label="Description"
         placeholder="Describe what you built and achieved..."
         value={item.bullets}
         onChange={(value) => handleChange('bullets', value)}
-        action={<DescriptionFormatToggle mode={mode} onToggle={toggleMode} />}
+        mode={mode}
+        onToggleMode={toggleMode}
       />
     </RepeatableSectionItemShell>
   )
