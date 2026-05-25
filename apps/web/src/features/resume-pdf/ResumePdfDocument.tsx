@@ -1,27 +1,17 @@
 import React from 'react'
 import { Document, Page, Text, View } from '@react-pdf/renderer'
-import { type CVState, type DescriptionMode } from '@/types/cv'
-import { cleanList, cleanText, formatDateRange, joinNonEmpty } from '@/lib/resume-formatting'
+import { type CVState } from '@/types/cv'
+import { cleanText, formatDateRange, joinNonEmpty } from '@/lib/resume-formatting'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEntry } from './ResumePdfEntry'
 import { ResumePdfHeader } from './ResumePdfHeader'
-import { ResumePdfBullets, ResumePdfParagraph, ResumePdfSection } from './ResumePdfSection'
+import { ResumePdfSection } from './ResumePdfSection'
 import { hasPdfSkills, ResumePdfSkills } from './ResumePdfSkills'
 import { createResumePdfStyles } from './resumePdfStyles'
+import { renderDescription } from './renderDescription'
+import { hasEducationContent, hasProjectContent, hasWorkContent } from './resumePdfContentGuards'
 
 type Styles = ReturnType<typeof createResumePdfStyles>
-
-function renderDescription(
-  bullets: string[],
-  mode: DescriptionMode,
-  visible: boolean,
-  styles: Styles,
-) {
-  if (mode === 'paragraph') {
-    return <ResumePdfParagraph bullets={bullets} styles={styles} visible={visible} />
-  }
-  return <ResumePdfBullets bullets={bullets} styles={styles} visible={visible} />
-}
 
 export function ResumePdfDocument({ state }: { state: CVState }) {
   const { resume, settings } = state
@@ -150,34 +140,5 @@ function LanguageSection({ state, styles }: { state: CVState; styles: Styles }) 
         })}
       </Text>
     </ResumePdfSection>
-  )
-}
-
-function hasWorkContent(item: CVState['resume']['workExperience'][number], bulletsVisible: boolean) {
-  return Boolean(
-    cleanText(item.role)
-    || cleanText(item.company)
-    || cleanText(item.location)
-    || formatDateRange(item.startDate, item.endDate, item.isCurrent)
-    || (bulletsVisible && cleanList(item.bullets).length > 0),
-  )
-}
-
-function hasProjectContent(item: CVState['resume']['projects'][number], bulletsVisible: boolean) {
-  return Boolean(
-    cleanText(item.name)
-    || cleanText(item.link)
-    || formatDateRange(item.startDate, item.endDate)
-    || (bulletsVisible && cleanList(item.bullets).length > 0),
-  )
-}
-
-function hasEducationContent(item: CVState['resume']['education'][number], detailsVisible: boolean) {
-  return Boolean(
-    cleanText(item.school)
-    || cleanText(item.degree)
-    || cleanText(item.location)
-    || formatDateRange(item.startDate, item.endDate)
-    || (detailsVisible && cleanList(item.details).length > 0),
   )
 }
