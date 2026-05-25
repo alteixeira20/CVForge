@@ -109,7 +109,7 @@ export function BuilderEntryModal({
             </div>
             <div className="spacer" />
             <p className="text-[10px] uppercase tracking-widest text-ink-4">
-              Private & Secure
+              Private & Local
             </p>
           </div>
         </div>
