@@ -1,0 +1,11 @@
+/* --- Action Bar ------------------------------------------------------------- */
+.workbench-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding: 8px 16px;
+  background: color-mix(in oklab, var(--bg-2) 95%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+}
+

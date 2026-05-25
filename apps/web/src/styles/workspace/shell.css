@@ -1,0 +1,26 @@
+/* --- Workspace / app shell -------------------------------------------------- */
+
+/* --- App shell -------------------------------------------------------------- */
+.app-shell {
+  min-height: 100vh;
+  min-height: 100svh;
+  height: 100vh;
+  height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(1000px 500px at 100% -10%, var(--lava-glow), transparent 60%),
+    var(--bg);
+}
+.app-shell > :last-child {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.workbench-shell {
+  min-height: 0;
+}
+.workbench-grid {
+  height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
+}

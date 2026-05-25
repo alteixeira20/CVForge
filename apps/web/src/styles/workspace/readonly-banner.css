@@ -1,0 +1,21 @@
+/* --- Read-only banner ------------------------------------------------------- */
+.readonly-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 24px;
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  border-bottom: 1px solid var(--border-faint);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.readonly-banner .pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ember);
+  background: var(--lava-glow);
+  border: 1px solid rgba(217,116,66,0.30);
+  padding: 3px 8px; border-radius: 999px;
+}
+.readonly-banner .who b { color: var(--ink); font-weight: 600; }
+.readonly-banner .spacer { flex: 1; }
+
