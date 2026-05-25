@@ -23,6 +23,7 @@ export function ExpandCollapseButton({
     <button
       onClick={onToggle}
       aria-expanded={isExpanded}
+      aria-label={title ?? (isExpanded ? 'Collapse' : 'Expand')}
       title={title ?? (isExpanded ? 'Collapse' : 'Expand')}
       className={`inline-flex shrink-0 items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/40 ${sizeClasses} ${
         isExpanded
