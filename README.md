@@ -14,7 +14,7 @@ The current app focuses on structured CV editing, browser localStorage persisten
 
 Implemented:
 - Next.js app foundation under `apps/web`.
-- Zod CV data contract in `apps/web/src/types/cv.ts`.
+- Zod CV data contract exposed through `apps/web/src/types/cv.ts`, with schemas in `apps/web/src/types/cv/schemas.ts`.
 - Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
 - Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
 - Responsive shared workbench shell.
