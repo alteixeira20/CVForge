@@ -1,90 +1,27 @@
 'use client'
 
-import { useRef, useState, type ChangeEvent, type CSSProperties } from 'react'
+import { type CSSProperties } from 'react'
 import { createPortal } from 'react-dom'
-import { useCV } from '@/context/CVContext'
 import { Icon } from '@/components/ui/Icon'
-import { importCVState } from './importCVState'
-import { analyzePdfImport, type PdfImportAnalysis } from '@/lib/parser/pdfImport'
-import { type CVState } from '@/types/cv'
 import { ImportFileDropzone } from './ImportFileDropzone'
 import { ImportConfirmStep } from './ImportConfirmStep'
 import { PdfHeuristicReview } from './PdfHeuristicReview'
-
-interface ImportModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onComplete?: () => void
-}
-
-type ImportType = 'json' | 'pdf-embedded' | 'pdf-heuristic'
+import { type ImportModalProps } from './importModalTypes'
+import { useImportModalFlow } from './useImportModalFlow'
 
 export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
-  const { replaceState } = useCV()
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isAnalyzing, setIsAnalyzing] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [importType, setImportType] = useState<ImportType | null>(null)
-  const [pendingState, setPendingState] = useState<CVState | null>(null)
-  const [analysis, setAnalysis] = useState<PdfImportAnalysis | null>(null)
-
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-
-    setError(null)
-    setPendingState(null)
-    setAnalysis(null)
-    setImportType(null)
-    setIsAnalyzing(true)
-
-    try {
-      const fileName = file.name.toLowerCase()
-
-      if (fileName.endsWith('.json')) {
-        const nextState = await importCVState(file)
-        setPendingState(nextState)
-        setImportType('json')
-      } else if (fileName.endsWith('.pdf')) {
-        const result = await analyzePdfImport(file)
-        if (result.success) {
-          setAnalysis(result.analysis)
-          if (result.analysis.embeddedState) {
-            setPendingState(result.analysis.embeddedState)
-            setImportType('pdf-embedded')
-          } else if (result.analysis.heuristic) {
-            setPendingState(result.analysis.heuristic.draft)
-            setImportType('pdf-heuristic')
-          } else {
-            setError('Could not extract meaningful CV data from this PDF.')
-          }
-        } else {
-          setError(result.error)
-        }
-      } else {
-        setError('Only .json backup files and .pdf resumes are supported.')
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Import failed. Check the file and try again.')
-    } finally {
-      setIsAnalyzing(false)
-      if (event.target) event.target.value = ''
-    }
-  }
-
-  const handleConfirm = () => {
-    if (pendingState) {
-      replaceState(pendingState)
-      onClose()
-      onComplete?.()
-    }
-  }
-
-  const handleCancelPending = () => {
-    setPendingState(null)
-    setAnalysis(null)
-    setImportType(null)
-  }
+  const {
+    analysis,
+    error,
+    fileInputRef,
+    handleCancelPending,
+    handleConfirm,
+    handleFileChange,
+    importType,
+    isAnalyzing,
+    openFileDialog,
+    pendingState,
+  } = useImportModalFlow({ onClose, onComplete })
 
   if (!isOpen || typeof document === 'undefined') return null
 
@@ -115,7 +52,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
 
         <div className="modal-body">
           {!importType && !isAnalyzing && (
-            <ImportFileDropzone onFileSelect={() => fileInputRef.current?.click()} error={error} />
+            <ImportFileDropzone onFileSelect={openFileDialog} error={error} />
           )}
 
           {isAnalyzing && (
