@@ -17,12 +17,13 @@ function get(key: string): string | null {
   }
 }
 
-function set(key: string, value: string): void {
-  if (typeof window === 'undefined') return
+function set(key: string, value: string): boolean {
+  if (typeof window === 'undefined') return false
   try {
     window.localStorage.setItem(key, value)
+    return true
   } catch {
-    // storage full or blocked - silently ignore
+    return false
   }
 }
 
@@ -61,8 +62,8 @@ export const storage = {
       return null
     }
   },
-  setCVState(state: CVState): void {
-    set(KEYS.cvState, JSON.stringify(state))
+  setCVState(state: CVState): boolean {
+    return set(KEYS.cvState, JSON.stringify(state))
   },
 
   clearAll(): void {

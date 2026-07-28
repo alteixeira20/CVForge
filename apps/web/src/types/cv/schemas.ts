@@ -14,7 +14,7 @@ export const ProfileSchema = z.object({
   github: z.string().default(''),
   linkedin: z.string().default(''),
   summary: z.string().default(''),
-});
+}).passthrough();
 
 export const WorkExperienceSchema = z.object({
   id: z.string(),
@@ -25,7 +25,7 @@ export const WorkExperienceSchema = z.object({
   endDate: z.string().default(''),
   isCurrent: z.boolean().default(false),
   bullets: z.array(z.string()).default([]),
-});
+}).passthrough();
 
 export const EducationSchema = z.object({
   id: z.string(),
@@ -35,7 +35,7 @@ export const EducationSchema = z.object({
   startDate: z.string().default(''),
   endDate: z.string().default(''),
   details: z.array(z.string()).default([]),
-});
+}).passthrough();
 
 export const ProjectSchema = z.object({
   id: z.string(),
@@ -44,31 +44,31 @@ export const ProjectSchema = z.object({
   startDate: z.string().default(''),
   endDate: z.string().default(''),
   bullets: z.array(z.string()).default([]),
-});
+}).passthrough();
 
 export const LanguageSchema = z.object({
   id: z.string(),
   name: z.string().default(''),
   proficiency: z.string().default(''),
-});
+}).passthrough();
 
 export const FeaturedSkillSchema = z.object({
   skill: z.string().default(''),
   rating: z.number().min(0).max(5).optional(),
-});
+}).passthrough();
 
 export const SkillsSchema = z.object({
   featured: z.array(z.string()).default([]), // For simple list
   featuredWithRating: z.array(FeaturedSkillSchema).default([]),
   technical: z.array(z.string()).default([]),
   soft: z.array(z.string()).default([]),
-});
+}).passthrough();
 
 export const CustomSectionSchema = z.object({
   id: z.string(),
   title: z.string().default(''),
   bullets: z.array(z.string()).default([]),
-});
+}).passthrough();
 
 export const ResumeSchema = z.object({
   profile: ProfileSchema,
@@ -78,7 +78,7 @@ export const ResumeSchema = z.object({
   skills: SkillsSchema,
   languages: z.array(LanguageSchema).default([]),
   customSections: z.array(CustomSectionSchema).default([]),
-});
+}).passthrough();
 
 /**
  * ─── Settings Models ────────────────────────────────────────────────────────
@@ -166,7 +166,7 @@ export const SettingsSchema = z.object({
   educationEntryGap: z.number().default(8),
   projectEntryGap: z.number().default(8),
   languageLineHeight: z.number().default(1.55),
-});
+}).passthrough();
 
 /**
  * ─── Root CVState ───────────────────────────────────────────────────────────
@@ -177,4 +177,4 @@ export const CVStateSchema = z.object({
   settings: SettingsSchema,
   schemaVersion: z.literal(CURRENT_CV_SCHEMA_VERSION).default(CURRENT_CV_SCHEMA_VERSION),
   updatedAt: z.string().default(() => new Date().toISOString()),
-});
+}).passthrough();

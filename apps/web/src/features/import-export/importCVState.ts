@@ -1,7 +1,7 @@
 import { type CVState, parseCVState } from '@/types/cv'
 import { migrateCVState } from '@/lib/cvMigrations'
 
-export async function importCVState(file: File): Promise<CVState> {
+export async function importCVState(file: { text: () => Promise<string> }): Promise<CVState> {
   const parsed = parseCVState(migrateCVState(JSON.parse(await file.text())))
 
   if (!parsed) {

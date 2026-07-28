@@ -102,40 +102,40 @@ export function PdfCanvasPreview({
     <div ref={containerRef} className={isBlocking ? 'w-full h-full' : 'w-full'}>
       {isBlocking && (error ? <PreviewErrorState message={error} /> : <PreviewLoadingState progress={progress} />)}
       {!isBlocking && (
-        <>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              paddingBottom: '76px',
-              alignItems: isWider ? 'flex-start' : 'center',
-              paddingLeft: isWider ? WIDE_SIDE_PADDING : 0,
-              paddingRight: isWider ? WIDE_SIDE_PADDING : 0,
-            }}
-          >
-            {pages.map((page, i) => (
-              <div
-                key={i}
-                className="bg-white border border-border shadow-lg rounded-sm overflow-hidden flex-shrink-0"
-                style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom }}
-              >
-                <canvas
-                  ref={(el) => { canvasRefs.current[i] = el }}
-                  style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom, display: 'block' }}
-                />
-              </div>
-            ))}
-          </div>
-          <PreviewDock
-            actionSlot={actionSlot}
-            zoom={zoom}
-            fitMode={fitMode}
-            onZoomOut={zoomOut}
-            onZoomIn={zoomIn}
-            onFit={fit}
-          />
-        </>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+            paddingBottom: '76px',
+            alignItems: isWider ? 'flex-start' : 'center',
+            paddingLeft: isWider ? WIDE_SIDE_PADDING : 0,
+            paddingRight: isWider ? WIDE_SIDE_PADDING : 0,
+          }}
+        >
+          {pages.map((page, i) => (
+            <div
+              key={i}
+              className="bg-white border border-border shadow-lg rounded-sm overflow-hidden flex-shrink-0"
+              style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom }}
+            >
+              <canvas
+                ref={(el) => { canvasRefs.current[i] = el }}
+                style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom, display: 'block' }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+      {hasPages && (
+        <PreviewDock
+          actionSlot={actionSlot}
+          zoom={zoom}
+          fitMode={fitMode}
+          onZoomOut={zoomOut}
+          onZoomIn={zoomIn}
+          onFit={fit}
+        />
       )}
     </div>
   )

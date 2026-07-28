@@ -265,7 +265,10 @@ test('downloaded CVForge PDF retains an embedded restorable session', async ({ p
   await page.getByRole('button', { name: 'Choose File' }).click()
   await (await fileChooserPromise).setFiles(pdfFile)
   await expect(page.getByText('CVForge Session Detected')).toBeVisible({ timeout: 20_000 })
-  await expect(page.getByRole('button', { name: 'Restore Embedded Session' })).toBeVisible()
+  await page.getByRole('button', { name: 'Restore Embedded Session' }).click()
+  await expect(page.getByLabel('Full Name')).toHaveValue('Embedded Session Owner')
+  await page.reload()
+  await expect(page.getByLabel('Full Name')).toHaveValue('Embedded Session Owner')
 })
 
 test('external PDF import remains review-first and cancellation preserves Builder data', async ({ page }) => {
@@ -300,6 +303,18 @@ test('external PDF import remains review-first and cancellation preserves Builde
   await page.getByRole('button', { name: 'Cancel' }).click()
   await page.keyboard.press('Escape')
   await expect(name).toHaveValue('Existing Builder Owner')
+
+  await page.getByRole('button', { name: 'Import' }).click()
+  const confirmChooser = page.waitForEvent('filechooser')
+  await page.getByRole('button', { name: 'Choose File' }).click()
+  await (await confirmChooser).setFiles({
+    name: 'external-candidate.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from(externalPdfBytes),
+  })
+  await expect(page.getByText('Best-Effort Draft Review')).toBeVisible({ timeout: 20_000 })
+  await page.getByRole('button', { name: 'Create Editable Draft' }).click()
+  await expect(page.getByLabel('Full Name')).toHaveValue('External Candidate')
 })
 
 test('focus recovers in both directions and cannot escape the active dialog', async ({ page }) => {
