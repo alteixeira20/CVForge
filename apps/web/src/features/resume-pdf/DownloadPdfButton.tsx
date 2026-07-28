@@ -7,6 +7,7 @@ import { type CVState } from '@/types/cv'
 import { ResumePdfDocument } from './ResumePdfDocument'
 import { resumePdfFileName } from './resumePdfFileName'
 import { embedCVStateAttachment } from './embedCVStateAttachment'
+import { announce } from '@/lib/accessibility/announce'
 
 export function DownloadPdfButton({ state }: { state: CVState }) {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -27,8 +28,10 @@ export function DownloadPdfButton({ state }: { state: CVState }) {
       link.download = resumePdfFileName(state)
       link.click()
       URL.revokeObjectURL(url)
+      announce('PDF export completed.')
     } catch (error) {
       console.error('PDF generation failed:', error)
+      announce('PDF export failed. Review the current CV and try again.')
     } finally {
       setIsGenerating(false)
     }

@@ -5,6 +5,7 @@ import { useCV } from '@/context/CVContext'
 import { analyzePdfImport, type PdfImportAnalysis } from '@/lib/parser/pdfImport'
 import { type CVState } from '@/types/cv'
 import { importCVState } from './importCVState'
+import { announce } from '@/lib/accessibility/announce'
 import { type ImportModalProps, type ImportType } from './importModalTypes'
 
 type ImportModalFlowOptions = Pick<ImportModalProps, 'onClose' | 'onComplete'>
@@ -67,6 +68,7 @@ export function useImportModalFlow({ onClose, onComplete }: ImportModalFlowOptio
   const handleConfirm = () => {
     if (pendingState) {
       replaceState(pendingState)
+      announce('Import completed. The reviewed CV data is now active in Builder.')
       resetPendingImport()
       onClose()
       onComplete?.()

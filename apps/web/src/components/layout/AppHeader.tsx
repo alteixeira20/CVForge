@@ -15,7 +15,7 @@ export function AppHeader({
 
   return (
     <header className="app-header">
-      <Link href="/" className="brand-mini">
+      <Link href="/" className="brand-mini" aria-label="CVForge home">
         <span className="brand-logo" aria-hidden="true">
           <Image
             src="/brand/anvilary-logo-mark-tight-white.png"

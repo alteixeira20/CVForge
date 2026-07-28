@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Lexend, JetBrains_Mono } from 'next/font/google'
 import { CVProvider } from '@/context/CVContext'
+import { LiveAnnouncements } from '@/components/accessibility/LiveAnnouncements'
 import { siteConfig } from '@/lib/siteConfig'
 import './globals.css'
 
@@ -90,7 +91,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${lexend.variable} ${jetbrainsMono.variable}`}>
       <body>
-        <CVProvider>{children}</CVProvider>
+        <CVProvider>
+          {children}
+          <LiveAnnouncements />
+        </CVProvider>
       </body>
     </html>
   )

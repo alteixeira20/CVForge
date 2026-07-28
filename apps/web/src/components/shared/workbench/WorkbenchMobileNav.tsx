@@ -23,7 +23,7 @@ export function WorkbenchMobileNav({
         aria-pressed={activePanel === 'left'}
         className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/60 ${
           activePanel === 'left'
-            ? 'bg-ember text-white shadow-sm'
+            ? 'bg-ember text-bg shadow-sm'
             : 'text-ink-3 hover:text-ink hover:bg-bg-3/60'
         }`}
       >
@@ -35,7 +35,7 @@ export function WorkbenchMobileNav({
         aria-pressed={activePanel === 'right'}
         className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/60 ${
           activePanel === 'right'
-            ? 'bg-ember text-white shadow-sm'
+            ? 'bg-ember text-bg shadow-sm'
             : 'text-ink-3 hover:text-ink hover:bg-bg-3/60'
         }`}
       >

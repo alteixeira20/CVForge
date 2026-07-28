@@ -1,4 +1,5 @@
 import { type CVState } from '@/types/cv'
+import { announce } from '@/lib/accessibility/announce'
 
 export function exportCVState(state: CVState) {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' })
@@ -9,6 +10,7 @@ export function exportCVState(state: CVState) {
   anchor.download = createBackupFileName(state)
   anchor.click()
   URL.revokeObjectURL(url)
+  announce('JSON backup export completed.')
 }
 
 function createBackupFileName(state: CVState) {

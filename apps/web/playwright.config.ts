@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test'
 
 const port = Number(process.env.PLAYWRIGHT_PORT ?? 4317)
 const baseURL = `http://127.0.0.1:${port}`
@@ -23,16 +23,41 @@ export default defineConfig({
   use: {
     baseURL,
     viewport: { width: 1280, height: 800 },
-    launchOptions: executablePath ? {
-      executablePath,
-      args: ['--no-sandbox'],
-    } : undefined,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
+  projects: [
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1280, height: 800 },
+        launchOptions: executablePath ? {
+          executablePath,
+          args: ['--no-sandbox'],
+        } : undefined,
+      },
+    },
+    {
+      name: 'firefox-smoke',
+      testMatch: /cross-browser-smoke\.spec\.ts/,
+      use: {
+        ...devices['Desktop Firefox'],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+    {
+      name: 'webkit-smoke',
+      testMatch: /cross-browser-smoke\.spec\.ts/,
+      use: {
+        ...devices['Desktop Safari'],
+        viewport: { width: 1280, height: 800 },
+      },
+    },
+  ],
   webServer: {
     command: standaloneCommand,
-    url: baseURL,
+    url: `${baseURL}/health`,
     reuseExistingServer,
     timeout: 120_000,
   },
