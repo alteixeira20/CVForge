@@ -95,7 +95,6 @@
 - `apps/web/src/components/ui/BrandMark.tsx`
 - `apps/web/src/components/layout/SiteHeader.tsx`
 - `apps/web/src/components/layout/AppHeader.tsx`
-- `apps/web/src/context/ThemeContext.tsx`
 - `apps/web/public/brand/`
 - `apps/web/src/styles/workspace.css`
 

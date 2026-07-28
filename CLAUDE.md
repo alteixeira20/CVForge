@@ -29,7 +29,7 @@ CVForge is a local-first, browser-only CV builder, PDF exporter, and parser diag
 apps/web/          Next.js app (the only app)
   src/
     app/           Next.js App Router pages (builder, parser, resume-import)
-    context/       Global state (CVContext, ThemeContext)
+    context/       Global state (CVContext)
     features/      Feature modules (builder, parser, resume-pdf, import-export, scoring)
     types/cv.ts    Single Zod schema file — the data contract for the entire app
     lib/           Utilities (storage, cvState, exportCVState, importCVState, parser)
