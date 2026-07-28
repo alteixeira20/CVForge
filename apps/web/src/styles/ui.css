@@ -61,7 +61,7 @@
   background: transparent; border: 1px solid transparent;
   border-radius: 8px;
   color: var(--ink-2);
-  transition: all 160ms;
+  transition: background-color 160ms, border-color 160ms, color 160ms;
 }
 .iconbtn svg { display: block; flex: 0 0 auto; }
 .iconbtn:hover { background: var(--bg-2); border-color: var(--border); color: var(--ink); }

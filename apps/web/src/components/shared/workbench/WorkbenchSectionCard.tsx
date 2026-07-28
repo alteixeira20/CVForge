@@ -33,7 +33,7 @@ export function WorkbenchSectionCard({
 }: WorkbenchSectionCardProps) {
   return (
     <div
-      className={`group relative overflow-hidden rounded-xl border transition-all duration-200 ${
+      className={`group relative overflow-hidden rounded-xl border transition-[background-color,border-color,box-shadow,opacity] duration-200 ${
         isExpanded
           ? 'border-border-strong bg-bg-2 shadow-sm'
           : 'border-border bg-bg hover:border-border-strong hover:bg-bg-2/50'
@@ -45,8 +45,8 @@ export function WorkbenchSectionCard({
         }`}
       />
 
-      <div className="flex w-full items-center gap-10 p-4 pl-12 lg:pl-16">
-        <div className="flex items-center gap-10 flex-1 overflow-hidden min-w-0">
+      <div className="flex w-full items-center gap-3 p-4 pl-6 lg:pl-8">
+        <div className="flex items-center gap-3 flex-1 overflow-hidden min-w-0">
           {reorderActions && (
             <div className="flex flex-col shrink-0">
               {reorderActions}

@@ -33,7 +33,7 @@ function ActionButton({ icon, label, onClick }: { icon: 'import' | 'export'; lab
     <button 
       type="button" 
       onClick={onClick} 
-      className="btn sm bg-bg-3 border-border-strong hover:bg-bg-2 hover:border-border transition-all px-2 h-8"
+      className="btn sm bg-bg-3 border-border-strong hover:bg-bg-2 hover:border-border transition-[background-color,border-color] px-2 h-8"
       title={label}
     >
       <Icon name={icon} size={13} />

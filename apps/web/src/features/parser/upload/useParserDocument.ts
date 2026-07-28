@@ -6,6 +6,7 @@ import { type ParserDocument } from './parserTypes'
 
 export function useParserDocument() {
   const [document, setDocument] = useState<ParserDocument | null>(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   useEffect(() => () => {
     if (document?.objectUrl) URL.revokeObjectURL(document.objectUrl)
@@ -15,20 +16,32 @@ export function useParserDocument() {
     if (!isPdfFile(file)) return setDocument({ fileName: file.name, objectUrl: '', error: 'Choose a PDF file.' })
 
     const objectUrl = URL.createObjectURL(file)
-    const result = await analyzePdfImport(file)
-
-    if (result.success) {
+    setIsAnalyzing(true)
+    try {
+      const result = await analyzePdfImport(file)
+      if (result.success) {
+        setDocument({
+          fileName: file.name,
+          objectUrl,
+          ...result.analysis,
+        })
+      } else {
+        setDocument({
+          fileName: file.name,
+          objectUrl,
+          error: result.error,
+        })
+      }
+    } catch (error) {
       setDocument({
         fileName: file.name,
         objectUrl,
-        ...result.analysis
+        error: error instanceof Error
+          ? error.message
+          : 'CVForge could not analyze this PDF.',
       })
-    } else {
-      setDocument({
-        fileName: file.name,
-        objectUrl,
-        error: result.error
-      })
+    } finally {
+      setIsAnalyzing(false)
     }
   }
 
@@ -37,7 +50,7 @@ export function useParserDocument() {
     setDocument(null)
   }
 
-  return { document, handleFile, clearDocument }
+  return { document, isAnalyzing, handleFile, clearDocument }
 }
 
 function isPdfFile(file: File) {

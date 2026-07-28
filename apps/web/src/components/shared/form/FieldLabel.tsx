@@ -1,5 +1,3 @@
-'use client'
-
 import { type ReactNode } from 'react'
 
 interface FieldLabelProps {
@@ -16,7 +14,7 @@ export function FieldLabel({ children, htmlFor, required, className = '' }: Fiel
       className={`block text-[11px] font-semibold text-ink-2 uppercase tracking-wider ${className}`}
     >
       {children}
-      {required && <span className="text-ember ml-1">*</span>}
+      {required && <span className="text-ember ml-1" aria-hidden="true">*</span>}
     </label>
   )
 }

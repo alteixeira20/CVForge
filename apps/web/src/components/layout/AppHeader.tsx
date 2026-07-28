@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 interface AppHeaderProps {
   title?: string
@@ -10,6 +11,8 @@ interface AppHeaderProps {
 export function AppHeader({
   title = 'Workbench',
 }: AppHeaderProps) {
+  const pathname = usePathname()
+
   return (
     <header className="app-header">
       <Link href="/" className="brand-mini">
@@ -38,10 +41,18 @@ export function AppHeader({
       <span className="spacer" />
 
       <div className="actions">
-        <Link href="/builder" className="btn sm">
+        <Link
+          href="/builder"
+          className={`btn sm app-mode-link ${pathname === '/builder' ? 'active' : ''}`}
+          aria-current={pathname === '/builder' ? 'page' : undefined}
+        >
           Builder
         </Link>
-        <Link href="/parser" className="btn sm">
+        <Link
+          href="/parser"
+          className={`btn sm app-mode-link ${pathname === '/parser' ? 'active' : ''}`}
+          aria-current={pathname === '/parser' ? 'page' : undefined}
+        >
           Parser
         </Link>
       </div>

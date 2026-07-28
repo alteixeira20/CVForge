@@ -14,18 +14,20 @@ export function SectionReorderControls({ index, total, onMoveUp, onMoveDown }: P
   return (
     <div className="flex flex-col -ml-1 mr-1">
       <button
+        type="button"
         onClick={onMoveUp}
         disabled={!canMoveUp}
-        className={`p-1 rounded transition-colors ${canMoveUp ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
+        className={`inline-flex h-9 w-9 items-center justify-center rounded transition-colors ${canMoveUp ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section up"
         aria-label="Move section up"
       >
         <Icon name="arrow-up" size={10} />
       </button>
       <button
+        type="button"
         onClick={onMoveDown}
         disabled={!canMoveDown}
-        className={`p-1 rounded transition-colors ${canMoveDown ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
+        className={`inline-flex h-9 w-9 items-center justify-center rounded transition-colors ${canMoveDown ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section down"
         aria-label="Move section down"
       >

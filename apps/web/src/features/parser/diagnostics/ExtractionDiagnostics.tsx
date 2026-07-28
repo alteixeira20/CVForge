@@ -40,7 +40,11 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
           )}
         </div>
 
-        {document.error && <p className="text-xs text-red-300 font-medium">{document.error}</p>}
+        {document.error && (
+          <p className="text-xs text-red-200 font-medium" role="alert">
+            {document.error}
+          </p>
+        )}
         {extraction?.warnings.map((warning) => (
           <p key={warning} className="text-xs text-amber-200 font-medium">
             {warning}

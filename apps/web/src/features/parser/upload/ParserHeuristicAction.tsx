@@ -48,7 +48,7 @@ export function ParserHeuristicAction({ result }: { result: HeuristicResult }) {
           <button
             type="button"
             onClick={handleImport}
-            className="btn w-full justify-center bg-molten/10 border-molten/30 text-molten hover:bg-molten/20 hover:border-molten/50 transition-all font-semibold"
+            className="btn w-full justify-center bg-molten/10 border-molten/30 text-molten hover:bg-molten/20 hover:border-molten/50 transition-[background-color,border-color] font-semibold"
           >
             <Icon name="plus" size={14} />
             Create Editable Draft

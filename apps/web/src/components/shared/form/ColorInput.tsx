@@ -29,7 +29,7 @@ export function ColorInput({ value, onChange, className = '', ...props }: ColorI
       </div>
       <input
         type="text"
-        className="flex-1 bg-bg-2 border border-border rounded-md px-2 py-1.5 text-xs text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none focus-visible:outline-none transition-all"
+        className="flex-1 bg-bg-2 border border-border rounded-md px-2 py-1.5 text-xs text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none focus-visible:outline-none transition-[border-color,box-shadow]"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={handleHexKeyDown}

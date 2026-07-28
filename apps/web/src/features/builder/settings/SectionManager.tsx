@@ -60,7 +60,7 @@ export function SectionManager() {
               value={title}
               placeholder={placeholder}
               onChange={(e) => updateTitle(id, e.target.value)}
-              className="flex-1 min-w-0 bg-transparent border border-transparent rounded px-1.5 py-0.5 text-[11px] text-ink-2 placeholder:text-ink-4 focus:bg-bg-2 focus:border-border focus:text-ink outline-none transition-all"
+              className="flex-1 min-w-0 bg-transparent border border-transparent rounded px-1.5 py-0.5 text-[11px] text-ink-2 placeholder:text-ink-4 focus:bg-bg-2 focus:border-border focus:text-ink outline-none transition-[background-color,border-color,color]"
             />
 
             <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">

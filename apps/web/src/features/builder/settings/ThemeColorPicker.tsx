@@ -21,7 +21,7 @@ export function ThemeColorPicker({ value, onChange }: ThemeColorPickerProps) {
             title={color}
             onClick={() => onChange(color)}
             aria-pressed={selected}
-            className={`w-4 h-4 shrink-0 rounded-[4px] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/60 ${
+            className={`w-4 h-4 shrink-0 rounded-[4px] transition-[border-color,box-shadow,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ember/60 ${
               selected
                 ? 'ring-2 ring-ember ring-offset-1 ring-offset-bg scale-105 opacity-100'
                 : 'opacity-60 hover:opacity-100 hover:scale-105'
@@ -32,7 +32,7 @@ export function ThemeColorPicker({ value, onChange }: ThemeColorPickerProps) {
       })}
       <input
         type="text"
-        className="ml-1.5 min-w-[52px] flex-1 bg-bg-2 border border-border rounded-md px-1.5 py-0.5 text-[10px] text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-all focus-visible:outline-none"
+        className="ml-1.5 min-w-[52px] flex-1 bg-bg-2 border border-border rounded-md px-1.5 py-0.5 text-[10px] text-ink font-mono uppercase focus:border-ember focus:ring-[3px] focus:ring-lava-glow outline-none transition-[border-color,box-shadow] focus-visible:outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => {

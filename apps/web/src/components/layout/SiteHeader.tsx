@@ -22,16 +22,6 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
       <Brand href="/" />
 
       <nav aria-label="Main">
-        {onBuilderClick ? (
-          <button type="button" className="nav-link" onClick={onBuilderClick}>
-            Builder
-          </button>
-        ) : (
-          <Link href="/builder" className="nav-link">
-            Builder
-          </Link>
-        )}
-
         <Link href="/parser" className="nav-link">
           Parser
         </Link>
@@ -51,11 +41,13 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
       <div className="actions">
         {onBuilderClick ? (
           <button type="button" className="btn primary sm" onClick={onBuilderClick}>
-            Create CV
+            <span className="build-label-full">Build your CV</span>
+            <span className="build-label-compact">Build CV</span>
           </button>
         ) : (
           <Link href="/builder" className="btn primary sm">
-            Create CV
+            <span className="build-label-full">Build your CV</span>
+            <span className="build-label-compact">Build CV</span>
           </Link>
         )}
       </div>

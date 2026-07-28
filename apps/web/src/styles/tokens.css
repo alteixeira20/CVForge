@@ -16,8 +16,8 @@
   --border-faint: #1d1d22;
   --ink: #ededea;
   --ink-2: #b8b6b0;
-  --ink-3: #8a877f;
-  --ink-4: #5a5852;
+  --ink-3: #9a978f;
+  --ink-4: #85827a;
   --ember: #d97442;
   --ember-2: #b8582a;
   --molten: #ec8a4a;
@@ -68,4 +68,8 @@
 
   --container: 1120px;
   --header-h: 76px;
+
+  /* Layer contract: page content < sticky chrome < modal dialogs. */
+  --z-header: 50;
+  --z-modal: 100;
 }

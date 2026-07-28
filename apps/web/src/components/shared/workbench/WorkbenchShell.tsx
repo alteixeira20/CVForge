@@ -27,7 +27,7 @@ export function WorkbenchShell({
     : 'lg:grid-cols-2'
 
   return (
-    <div className="workbench-shell flex-1 relative overflow-hidden flex flex-col">
+    <main className="workbench-shell flex-1 relative overflow-hidden flex flex-col">
       <div className={`workbench-grid flex-1 grid grid-cols-1 ${gridClass} overflow-hidden`}>
         {showLeft && (
           <WorkbenchPanel 
@@ -50,6 +50,6 @@ export function WorkbenchShell({
         leftLabel={leftLabel}
         rightLabel={rightLabel}
       />
-    </div>
+    </main>
   )
 }

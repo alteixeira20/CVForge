@@ -4,7 +4,7 @@ input, textarea, select {
   border: 1px solid var(--border);
   color: var(--ink);
   border-radius: var(--radius-sm);
-  transition: all 160ms ease;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 input:focus, textarea:focus, select:focus {

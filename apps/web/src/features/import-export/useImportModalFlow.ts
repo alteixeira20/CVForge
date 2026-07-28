@@ -67,6 +67,7 @@ export function useImportModalFlow({ onClose, onComplete }: ImportModalFlowOptio
   const handleConfirm = () => {
     if (pendingState) {
       replaceState(pendingState)
+      resetPendingImport()
       onClose()
       onComplete?.()
     }
@@ -93,5 +94,6 @@ export function useImportModalFlow({ onClose, onComplete }: ImportModalFlowOptio
     isAnalyzing,
     openFileDialog,
     pendingState,
+    resetPendingImport,
   }
 }

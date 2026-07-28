@@ -50,6 +50,32 @@
 }
 .app-header .spacer { flex: 1; min-width: 0; }
 .app-header .actions { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
+.app-header .app-mode-link {
+  position: relative;
+  color: var(--ink-2);
+}
+.app-header .app-mode-link::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  bottom: 3px;
+  left: 10px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--ember);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity 160ms, transform 160ms;
+}
+.app-header .app-mode-link.active {
+  border-color: var(--border-strong);
+  background: var(--bg-3);
+  color: var(--ink);
+}
+.app-header .app-mode-link.active::after {
+  opacity: 0.9;
+  transform: none;
+}
 
 /* Synced badge variant */
 .app-header .badge.synced {
@@ -70,6 +96,7 @@
 @media (max-width: 720px) {
   .app-header .crumbs { display: none; }
   .app-header .actions .btn.sm {
+    height: 40px;
     padding: 0 10px;
     font-size: 13px;
   }
@@ -84,4 +111,3 @@
   .app-header .actions { gap: 4px; }
   .app-header .actions .btn.sm { padding: 0 9px; }
 }
-

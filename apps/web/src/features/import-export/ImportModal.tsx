@@ -10,7 +10,12 @@ import { type ImportModalProps } from './importModalTypes'
 import { useImportModalFlow } from './useImportModalFlow'
 import { useDialogFocus } from '@/hooks/useDialogFocus'
 
-export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
+export function ImportModal({
+  isOpen,
+  onClose,
+  onComplete,
+  restoreFocus = true,
+}: ImportModalProps) {
   const {
     analysis,
     error,
@@ -22,8 +27,13 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
     isAnalyzing,
     openFileDialog,
     pendingState,
+    resetPendingImport,
   } = useImportModalFlow({ onClose, onComplete })
-  const dialogRef = useDialogFocus(isOpen, onClose)
+  const handleClose = () => {
+    resetPendingImport()
+    onClose()
+  }
+  const dialogRef = useDialogFocus(isOpen, handleClose, { restoreFocus })
 
   if (!isOpen || typeof document === 'undefined') return null
 
@@ -31,7 +41,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
   const ownerName = pendingState?.resume.profile.name || 'Anonymous User'
 
   return createPortal((
-    <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && handleClose()}>
       <div
         ref={dialogRef}
         className="modal"
@@ -39,6 +49,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-modal-title"
+        aria-describedby="import-modal-description"
         tabIndex={-1}
       >
         <div className="modal-head">
@@ -47,9 +58,11 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
           </div>
           <div className="text">
             <h2 id="import-modal-title">Import CV Data</h2>
-            <p className="sub">Restore a JSON backup or import a PDF resume.</p>
+            <p className="sub" id="import-modal-description">
+              Restore a reliable JSON backup or review a PDF import.
+            </p>
           </div>
-          <button type="button" className="close" onClick={onClose} aria-label="Close">
+          <button type="button" className="close" onClick={handleClose} aria-label="Close import">
             <Icon name="x" size={16} />
           </button>
         </div>
