@@ -12,10 +12,11 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
   const extraction = document.extraction
   const isForge = extraction ? isCvForgeGenerated(extraction.metadata) : false
   const reliability = isForge ? 100 : document.heuristic?.confidence ?? 0
+  const hasSelectableText = Boolean(extraction?.text.trim())
 
   return (
     <WorkbenchSectionCard
-      title="Extraction Diagnostics"
+      title="Extraction Analysis"
       icon="activity"
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
@@ -25,7 +26,7 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
         <DiagnosticRow label="File" value={document.fileName} />
         <DiagnosticRow label="Pages" value={extraction ? String(extraction.pageCount) : 'Unavailable'} />
         <DiagnosticRow label="Characters" value={extraction ? String(extraction.text.length) : '0'} />
-        <DiagnosticRow label="Parser Reliability" value={extraction ? `${reliability}%` : '0%'} />
+        <DiagnosticRow label="Extraction Confidence" value={extraction ? `${reliability}%` : '0%'} />
         
         <div className="pt-2">
           {isForge && (
@@ -35,7 +36,7 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
           )}
           {!isForge && extraction && (
             <p className="text-[10px] text-ink-3 italic leading-relaxed">
-              Parser reliability describes text extraction and draft confidence. It is separate from CV quality.
+              Extraction confidence describes readable text and draft confidence. It is separate from CV quality.
             </p>
           )}
         </div>
@@ -45,8 +46,18 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
             {document.error}
           </p>
         )}
+        {extraction && !hasSelectableText && (
+          <p className="text-xs text-amber-200 font-medium" role="alert">
+            No selectable text was found. This PDF may be scanned, image-only, or protected.
+            Export a text-based PDF and try again; CVForge does not send the file to a cloud OCR service.
+          </p>
+        )}
         {extraction?.warnings.map((warning) => (
-          <p key={warning} className="text-xs text-amber-200 font-medium">
+          <p
+            key={warning}
+            className="text-xs text-amber-200 font-medium"
+            hidden={!hasSelectableText && warning === 'No selectable text was found in this PDF.'}
+          >
             {warning}
           </p>
         ))}
@@ -59,7 +70,7 @@ function EmptyDiagnostics() {
   const [isExpanded, setIsExpanded] = useState(true)
   return (
     <WorkbenchSectionCard
-      title="Extraction Diagnostics"
+      title="Extraction Analysis"
       icon="activity"
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}

@@ -1,22 +1,47 @@
-import { type ScoreIssue } from './scoringTypes'
+import {
+  type ScoreDimensionId,
+  type ScoreIssue,
+  type ScorePriority,
+  type ScoreStatus,
+} from './scoringTypes'
 
-export function createIssue(
-  id: string,
-  label: string,
-  detail: string,
-  passed: boolean,
-  maxPoints: number,
-): ScoreIssue {
+interface ScoreIssueInput {
+  id: string
+  label: string
+  detected: string
+  why: string
+  suggestion: string
+  dimension: ScoreDimensionId
+  priority: ScorePriority
+  status: ScoreStatus
+  points: number
+  maxPoints: number
+}
+
+export function createIssue(input: ScoreIssueInput): ScoreIssue {
   return {
-    id,
-    label,
-    detail,
-    status: passed ? 'pass' : 'fail',
-    points: passed ? maxPoints : 0,
-    maxPoints,
+    ...input,
+    detail: input.suggestion,
   }
 }
 
-export function createWarning(id: string, label: string, detail: string, points: number, maxPoints: number): ScoreIssue {
-  return { id, label, detail, status: 'warn', points, maxPoints }
+export function binaryIssue(
+  input: Omit<ScoreIssueInput, 'status' | 'points'> & { passed: boolean },
+) {
+  return createIssue({
+    ...input,
+    status: input.passed ? 'pass' : 'fail',
+    points: input.passed ? input.maxPoints : 0,
+  })
+}
+
+export function measuredIssue(
+  input: Omit<ScoreIssueInput, 'status'>,
+) {
+  const status: ScoreStatus = input.points >= input.maxPoints
+    ? 'pass'
+    : input.points > 0
+      ? 'warn'
+      : 'fail'
+  return createIssue({ ...input, status })
 }

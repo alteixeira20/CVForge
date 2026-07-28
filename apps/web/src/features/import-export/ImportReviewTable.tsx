@@ -19,7 +19,7 @@ export function ImportReviewTable({ result }: { result: HeuristicResult }) {
           value={`Work ${result.stats.workEntries}, education ${result.stats.educationEntries}, projects ${result.stats.projectEntries}`}
         />
         <ReviewRow
-          label="Parser signals"
+          label="Extraction signals"
           value={`Dates ${result.stats.dateRanges}, unmapped signals ${result.stats.unmappedLines}`}
         />
       </div>

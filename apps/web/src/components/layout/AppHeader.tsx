@@ -49,11 +49,11 @@ export function AppHeader({
           Builder
         </Link>
         <Link
-          href="/parser"
-          className={`btn sm app-mode-link ${pathname === '/parser' ? 'active' : ''}`}
-          aria-current={pathname === '/parser' ? 'page' : undefined}
+          href="/analyzer"
+          className={`btn sm app-mode-link ${pathname === '/analyzer' ? 'active' : ''}`}
+          aria-current={pathname === '/analyzer' ? 'page' : undefined}
         >
-          Parser
+          Analyzer
         </Link>
       </div>
     </header>

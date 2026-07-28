@@ -2,6 +2,7 @@
 
 import { useRef, type ChangeEvent } from 'react'
 import { Icon } from '@/components/ui/Icon'
+import { ANALYSIS_FILE_ACCEPT } from './analysisFileSupport'
 
 interface PdfUploadPanelProps {
   isAnalyzing: boolean
@@ -23,20 +24,20 @@ export function PdfUploadPanel({ isAnalyzing, onFile }: PdfUploadPanelProps) {
         type="button"
         disabled={isAnalyzing}
         onClick={() => inputRef.current?.click()}
-        aria-labelledby="parser-upload-title"
-        aria-describedby="parser-upload-description"
+        aria-labelledby="analyzer-upload-title"
+        aria-describedby="analyzer-upload-description"
         className="w-full p-8 lg:p-12 bg-bg-inset border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center text-center hover:border-ember hover:bg-bg-2 transition-[background-color,border-color] group"
       >
         <div className="w-12 h-12 rounded-full bg-bg-2 border border-border-strong flex items-center justify-center mb-4 group-hover:border-ember/50 transition-colors">
           <Icon name="upload" size={16} className="text-ink-3 group-hover:text-ember transition-colors" />
         </div>
-        <h3 id="parser-upload-title" className="text-sm font-medium text-ink">
+        <h3 id="analyzer-upload-title" className="text-sm font-medium text-ink">
           {isAnalyzing ? 'Analyzing PDF' : 'Upload PDF'}
         </h3>
-        <p id="parser-upload-description" className="text-[11px] text-ink-3 mt-1">
+        <p id="analyzer-upload-description" className="text-[11px] text-ink-3 mt-1">
           {isAnalyzing
             ? 'Reading the document locally. This may take a moment.'
-            : 'Choose a local PDF for extraction diagnostics.'}
+            : 'Choose a PDF for local extraction and CV improvement checks.'}
         </p>
       </button>
       <p className="sr-only" role="status" aria-live="polite">
@@ -45,10 +46,10 @@ export function PdfUploadPanel({ isAnalyzing, onFile }: PdfUploadPanelProps) {
       <input
         ref={inputRef}
         type="file"
-        accept="application/pdf,.pdf"
+        accept={ANALYSIS_FILE_ACCEPT}
         disabled={isAnalyzing}
         className="hidden"
-        aria-label="Choose a PDF for extraction diagnostics"
+        aria-label="Choose a PDF for local CV analysis"
         onChange={handleChange}
       />
     </section>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { analyzePdfImport } from '@/lib/parser/pdfImport'
+import { isSupportedAnalysisFile } from './analysisFileSupport'
 import { type ParserDocument } from './parserTypes'
 
 export function useParserDocument() {
@@ -13,7 +14,13 @@ export function useParserDocument() {
   }, [document?.objectUrl])
 
   const handleFile = async (file: File) => {
-    if (!isPdfFile(file)) return setDocument({ fileName: file.name, objectUrl: '', error: 'Choose a PDF file.' })
+    if (!isSupportedAnalysisFile(file)) {
+      return setDocument({
+        fileName: file.name,
+        objectUrl: '',
+        error: 'CVForge currently analyzes PDF files only. DOCX and plain-text analysis are not supported yet.',
+      })
+    }
 
     const objectUrl = URL.createObjectURL(file)
     setIsAnalyzing(true)
@@ -51,8 +58,4 @@ export function useParserDocument() {
   }
 
   return { document, isAnalyzing, handleFile, clearDocument }
-}
-
-function isPdfFile(file: File) {
-  return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
 }

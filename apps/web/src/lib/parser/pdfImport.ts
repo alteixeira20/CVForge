@@ -26,7 +26,7 @@ export async function analyzePdfImport(file: File): Promise<PdfImportResult> {
     ])
 
     // If we have an embedded state, we don't need to run heuristics for the primary import path
-    // though the extraction is still useful for diagnostics in the Parser view.
+    // though the extraction is still useful for diagnostics in the Analyzer view.
     const heuristic = !embeddedState ? parseHeuristicResume(extraction.text) : undefined
 
     return {

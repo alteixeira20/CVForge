@@ -29,19 +29,19 @@ export function resolveParserAnalysisTarget(
 
   if (document.embeddedState) {
     return {
-      score: scoreCV(document.embeddedState, extractedText),
+      score: scoreCV(document.embeddedState, extractedText, { includeExtraction: true }),
       isEmpty: false,
       target: {
         label: 'CVForge Embedded Session',
         description: 'These checks use the structured session embedded inside the uploaded CVForge PDF.',
-        caveat: 'Parser reliability remains separate from these CV content checks.',
+        caveat: 'Extraction confidence remains separate from these CV content checks.',
       },
     }
   }
 
   if (document.heuristic) {
     return {
-      score: scoreCV(document.heuristic.draft, extractedText),
+      score: scoreCV(document.heuristic.draft, extractedText, { includeExtraction: true }),
       isEmpty: false,
       target: {
         label: 'Best-Effort External PDF Draft',

@@ -44,7 +44,7 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
     <>
       <DownloadPdfButton state={state} />
       <Link
-        href="/parser?source=builder"
+        href="/analyzer?source=builder"
         className="btn sm justify-center bg-bg/50 border-border hover:border-border-strong px-3"
       >
         <Icon name="search" size={13} />

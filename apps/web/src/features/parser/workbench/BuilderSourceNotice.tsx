@@ -21,7 +21,7 @@ export function BuilderSourceNotice({ analysis }: { analysis: ParserAnalysisTarg
         </p>
         {analysis.isEmpty && (
           <p className="text-xs text-amber-200 leading-relaxed font-medium">
-            The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful diagnostics.
+            The current Builder CV is empty. Add profile details or a section in Builder, then return here for more useful analysis.
           </p>
         )}
       </div>

@@ -31,7 +31,7 @@ export function ParserWorkbench() {
   return (
     <div className="app-shell h-screen overflow-hidden">
       <EmberBackground subdued />
-      <AppHeader title="Parser Diagnostics" />
+      <AppHeader title="CV Analyzer" />
       <WorkbenchShell
         leftPanel={(
           <ParserAnalysisPanel
@@ -62,9 +62,9 @@ function ParserAnalysisPanel(props: {
     <div className="flex h-full min-h-0 flex-col" aria-busy={props.isAnalyzing}>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <WorkbenchHeader
-          eyebrow="Workbench / Parser"
-          title="Parser Diagnostics"
-          description="Upload a PDF for local extraction diagnostics. CVForge PDFs can restore embedded sessions; external PDFs can only create best-effort drafts."
+          eyebrow="Workbench / Analyzer"
+          title="Analyze your CV"
+          description="Inspect a PDF locally for extraction quality and actionable CV improvements. CVForge PDFs may restore an embedded session; external PDFs create review-first drafts."
           actions={props.document && (
             <button 
               type="button" 
