@@ -461,14 +461,20 @@ test('robots, sitemap, manifest, and social image routes are valid', async ({ re
   const robotsText = await robots.text()
   expect(robotsText).toContain('User-Agent: *')
   expect(robotsText).toContain('Allow: /')
-  expect(robotsText).toContain('Sitemap: http://localhost:3000/sitemap.xml')
+
+  const sitemapDirective = robotsText.match(/^Sitemap:\s+(\S+)$/m)?.[1]
+  expect(sitemapDirective).toBeTruthy()
+
+  const expectedOrigin = new URL(sitemapDirective!).origin
+  expect(sitemapDirective).toBe(`${expectedOrigin}/sitemap.xml`)
+  expect(robotsText).toContain(`Host: ${expectedOrigin}`)
 
   const sitemap = await request.get('/sitemap.xml')
   expect(sitemap.ok()).toBe(true)
   const sitemapText = await sitemap.text()
-  expect(sitemapText).toContain('<loc>http://localhost:3000/</loc>')
-  expect(sitemapText).toContain('<loc>http://localhost:3000/builder</loc>')
-  expect(sitemapText).toContain('<loc>http://localhost:3000/analyzer</loc>')
+  expect(sitemapText).toContain(`<loc>${expectedOrigin}/</loc>`)
+  expect(sitemapText).toContain(`<loc>${expectedOrigin}/builder</loc>`)
+  expect(sitemapText).toContain(`<loc>${expectedOrigin}/analyzer</loc>`)
   expect(sitemapText).not.toContain('/parser')
   expect(sitemapText).not.toContain('/resume-import')
 

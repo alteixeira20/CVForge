@@ -4,6 +4,14 @@ const port = Number(process.env.PLAYWRIGHT_PORT ?? 4317)
 const baseURL = `http://127.0.0.1:${port}`
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_PATH
 const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_SERVER === '1'
+const standaloneAppDir = '.next/standalone/apps/web'
+const standaloneCommand = [
+  `rm -rf ${standaloneAppDir}/public ${standaloneAppDir}/.next/static`,
+  `mkdir -p ${standaloneAppDir}/.next`,
+  `cp -R public ${standaloneAppDir}/public`,
+  `cp -R .next/static ${standaloneAppDir}/.next/static`,
+  `exec env HOSTNAME=127.0.0.1 PORT=${port} node ${standaloneAppDir}/server.js`,
+].join(' && ')
 
 export default defineConfig({
   testDir: './e2e',
@@ -23,7 +31,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   webServer: {
-    command: `pnpm start --hostname 127.0.0.1 --port ${port}`,
+    command: standaloneCommand,
     url: baseURL,
     reuseExistingServer,
     timeout: 120_000,

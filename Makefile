@@ -45,7 +45,7 @@ help:
 	@echo "  make docker-down   Stop production Docker container"
 	@echo "  make docker-status Show Docker container status"
 	@echo "  make docker-logs   Follow Docker logs"
-	@echo "  make docker-check  Start Docker container and check main routes"
+	@echo "  make docker-check  Temporarily start Docker, check routes, then stop it"
 	@echo ""
 	@echo "  make clean         Remove build artifacts"
 	@echo "  make clean-deps    Remove node_modules"
@@ -201,8 +201,25 @@ docker-clean:
 	docker compose down -v
 	docker rmi $(IMAGE) || true
 
-docker-check: docker-up
-	@echo "Waiting for container..."
-	@sleep 2
-	@echo "Checking routes..."
-	@node -e "const base='$(DOCKER_URL)'; const ok=['/','/builder','/analyzer','/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image']; Promise.all(ok.map(async (path) => { const response=await fetch(base+path); if (!response.ok) throw new Error(path+' returned '+response.status); console.log(response.status,path); })).then(async () => { for (const [path,status,location] of [['/parser',308,'/analyzer'],['/resume-import',307,'/builder']]) { const response=await fetch(base+path,{redirect:'manual'}); if (response.status!==status || response.headers.get('location')!==location) throw new Error(path+' redirect mismatch'); console.log(response.status,path,'->',location); } }).catch((error) => { console.error(error); process.exit(1); })"
+docker-check: docker-build
+	@set -eu; \
+	cleanup() { \
+		CVFORGE_PORT=$(DOCKER_PORT) docker compose down >/dev/null 2>&1 || true; \
+	}; \
+	trap cleanup EXIT INT TERM; \
+	echo "Starting temporary CVForge validation container..."; \
+	CVFORGE_PORT=$(DOCKER_PORT) docker compose up -d; \
+	echo "Waiting for CVForge on $(DOCKER_URL)..."; \
+	attempt=0; \
+	until node -e "fetch('$(DOCKER_URL)/').then((response) => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))"; do \
+		attempt=$$((attempt + 1)); \
+		if [ "$$attempt" -ge 30 ]; then \
+			echo "CVForge did not become ready within 30 seconds."; \
+			docker compose logs --tail 100; \
+			exit 1; \
+		fi; \
+		sleep 1; \
+	done; \
+	echo "Checking routes..."; \
+	node -e "const base='$(DOCKER_URL)'; const ok=['/','/builder','/analyzer','/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image']; Promise.all(ok.map(async (path) => { const response=await fetch(base+path); if (!response.ok) throw new Error(path+' returned '+response.status); console.log(response.status,path); })).then(async () => { for (const [path,status,location] of [['/parser',308,'/analyzer'],['/resume-import',307,'/builder']]) { const response=await fetch(base+path,{redirect:'manual'}); if (response.status!==status || response.headers.get('location')!==location) throw new Error(path+' redirect mismatch'); console.log(response.status,path,'->',location); } }).catch((error) => { console.error(error); process.exit(1); })"; \
+	echo "Docker validation passed. Temporary container will now be stopped."
