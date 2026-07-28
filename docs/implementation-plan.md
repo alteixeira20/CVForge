@@ -62,7 +62,7 @@ Current limitations:
 - External PDF-to-builder draft import is heuristic and requires review.
 - PDF font embedding (Geist Sans / Geist Mono) is deferred.
 
-## Phase 4: Analyzer & Parser Engine (In Progress)
+## Phase 4: Analyzer & Parser Engine (Completed for Public Beta)
 
 - [x] Add local PDF upload and text extraction.
 - [x] Implement standalone local heuristic scoring module.
@@ -72,14 +72,21 @@ Current limitations:
 - [x] Keep uploaded PDF draft/session scoring separate from unrelated current Builder state.
 - [x] Build Analyzer Workbench UI with source preview, diagnostics, and scorecard.
 - [x] Make `/analyzer` canonical and preserve `/parser` as a permanent redirect.
-- [x] Add transparent scoring method v2 dimensions and prioritized recommendations.
+- [x] Add transparent scoring method v3 dimensions, documented weights, and prioritized recommendations.
+- [x] Add contextual quantified-impact detection with positive and misleading-digit tests.
+- [x] Add English/PT-PT diagnostics and language-neutral fallback.
+- [x] Add normalized visible-text length analysis.
+- [x] Add PDF extraction-quality signals and honest reading-order warnings.
+- [x] Add 15 MB/20 page PDF limits, signature validation, sequential extraction,
+  cancellation, cleanup, and stale-upload protection.
 - [ ] Add richer parser field-level extraction evidence.
 
 Current Analyzer status:
 - `/analyzer` extracts selectable PDF text locally with `pdfjs-dist`.
 - `/parser` permanently redirects to `/analyzer`.
 - PDF is the only supported input; DOCX and plain text are not implemented.
-- Scanned or protected PDFs may produce no text and receive an actionable local-only message.
+- Scanned, image-only, protected, malformed, or truncated PDFs receive actionable
+  local-only messages. OCR is not implemented.
 - Analyzer checks are deterministic ATS-style signals and are not real ATS guarantees.
 - CVForge PDFs with embedded session attachments can restore builder state.
 - External PDFs can create best-effort editable drafts, but imported fields must be reviewed.
@@ -94,7 +101,9 @@ Current Analyzer status:
 - [x] Best-effort heuristic import from external PDFs.
 - [x] Builder-to-Analyzer handoff for analyzing the current local Builder CV.
 - [x] Final homepage, Analyzer, interaction, and SEO refinement pass.
-- [ ] Complete final human and cross-browser release review.
+- [x] Add Chromium, Firefox, and WebKit Playwright projects with axe coverage.
+- [x] Add safe release, Docker, production-preview, and CI validation workflows.
+- [ ] Complete the final production-origin release gate and owner manual review.
 
 Current import status:
 - JSON backup/restore is accessible within the Builder.
@@ -125,6 +134,21 @@ Release validation:
 - [x] Index the three meaningful routes and exclude redirect-only routes from the sitemap.
 - [x] Add `robots.ts`, `sitemap.ts`, factual homepage JSON-LD, and a generated 1200×630 social image.
 - [x] Add release tests for metadata, canonical URLs, JSON-LD parsing, robots, sitemap, and social image responses.
+- [x] Add production artifact assertions for localhost, production placeholders, and
+  CI-only origins.
+
+## Phase 8: Deployment Hardening (Implemented)
+
+- [x] Add production CSP and browser security headers without breaking local PDF flows.
+- [x] Add app/global error recovery, not-found handling, and a minimal health endpoint.
+- [x] Add unit coverage for scoring, PDF validation, and Builder data integrity.
+- [x] Add serious/critical axe checks for the principal product states.
+- [x] Add a pinned, non-root, health-checked standalone Docker image.
+- [x] Add self-cleaning configurable-port Docker validation.
+- [x] Add safe standalone preview lifecycle commands on port 3030.
+- [x] Add GitHub Actions static, Chromium, cross-browser, and Docker jobs with no deploy.
+- [x] Add deployment, reverse-proxy, Cloudflare Tunnel origin, backup, smoke, branch
+  protection, and rollback documentation.
 
 ## UI Implementation Checklist
 

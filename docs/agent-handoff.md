@@ -12,6 +12,10 @@
 - `apps/web/src/app/robots.ts`
 - `apps/web/src/app/sitemap.ts`
 - `apps/web/src/app/opengraph-image.tsx`
+- `apps/web/src/app/health/route.ts`
+- `apps/web/src/app/error.tsx`
+- `apps/web/src/app/global-error.tsx`
+- `apps/web/src/app/not-found.tsx`
 
 ### State and Persistence
 - `apps/web/src/context/CVContext.tsx`
@@ -61,6 +65,9 @@
 - `apps/web/src/features/parser/workbench/ParserWorkbench.tsx`
 - `apps/web/src/features/parser/upload/PdfUploadPanel.tsx`
 - `apps/web/src/features/parser/upload/analysisFileSupport.ts` (PDF-only boundary)
+- `apps/web/src/lib/parser/analysisFileValidation.ts`
+- `apps/web/src/lib/parser/analysisLimits.ts`
+- `apps/web/src/lib/parser/pdfExtraction.ts`
 - `apps/web/src/features/parser/upload/ParserHeuristicAction.tsx`
 - `apps/web/src/features/parser/upload/ParserRestoreAction.tsx`
 - `apps/web/src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
@@ -76,6 +83,8 @@
 - `apps/web/src/features/scoring/scoreCV.ts`
 - `apps/web/src/features/scoring/scoreSignals.ts`
 - `apps/web/src/features/scoring/scoringTypes.ts`
+- `apps/web/src/features/scoring/languageSignals.ts`
+- `apps/web/src/features/scoring/visibleResumeText.ts`
 
 ### Import and Export
 - `apps/web/src/features/import-export/ImportModal.tsx` (orchestrator)
@@ -138,8 +147,41 @@
 - `apps/web/package.json`
 - `apps/web/playwright.config.ts`
 - `apps/web/e2e/release-smoke.spec.ts`
+- `apps/web/e2e/accessibility.spec.ts`
 - `Dockerfile`
 - `docker-compose.yml`
+- `.github/workflows/validation.yml`
+- `scripts/release-check.sh`
+- `scripts/docker-check.sh`
+- `scripts/preview.sh`
+- `scripts/assert-release-artifacts.sh`
+- `scripts/cross-browser-check.sh`
+
+## Final Deployment-Hardening Pass
+
+- Analyzer PDF input is limited to 15 MB and 20 pages and validated by extension,
+  available MIME, signature, structure, and page count. Extraction runs sequentially,
+  supports cancellation, releases PDF.js resources, and rejects stale generations.
+- Scoring method v3 uses documented weights, normalized visible Builder text,
+  contextual impact patterns, English and PT-PT headings/action verbs, neutral-language
+  fallback, and expanded extraction-quality signals.
+- Result order prioritizes problems and warnings; passed checks are collapsed. Every
+  non-pass finding exposes priority, evidence, impact, action, and dimension.
+- Current-version CV objects preserve unknown extension fields. Unit tests cover
+  migrations, future-version rejection, malformed input, long accented content,
+  settings/order/visibility/theme, storage, and quota failure.
+- Axe covers the main homepage, Builder, Analyzer, and import-review states. Live regions
+  announce analysis and import/export outcomes without changing the visual design.
+- Production responses include CSP, nosniff, referrer, permissions, COOP, and CORP
+  policies compatible with the local PDF worker, blob downloads/previews, fonts, and
+  generated Open Graph route.
+- `make release-check` is the single strict release gate. The standalone preview defaults
+  to port 3030 and stops only its recorded process. Docker validation uses an isolated
+  random container name and removes it on every exit path.
+- GitHub Actions validates static checks, Chromium, Firefox/WebKit critical smoke, and
+  Docker without secrets, publication, or deployment.
+- Production deployment and rollback are owner operations documented in
+  `docs/deployment.md`.
 
 ## Recent Completed Work
 

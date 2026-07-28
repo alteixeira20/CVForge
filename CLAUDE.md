@@ -8,11 +8,16 @@ CVForge is a local-first, browser-only CV Builder, PDF exporter, and ATS-style C
 
 ## Commands
 
-**Run before suggesting done — do NOT run without user permission:**
+**Run before suggesting done (when the active task authorizes validation):**
 - `pnpm lint` — ESLint across the monorepo
 - `pnpm typecheck` — `tsc --noEmit` across the monorepo
 - `pnpm build` — production Next.js build (catches type errors lint misses)
 - `make check` — runs all three above in sequence
+- `pnpm test:unit` — deterministic scoring, PDF validation, and CV data-integrity tests
+- `pnpm test:e2e:chromium` — full standalone Chromium and axe release suite
+- `pnpm test:e2e:cross-browser` — critical Firefox and WebKit smoke
+- `make release-check` — complete production-origin release gate; requires explicit
+  `NEXT_PUBLIC_SITE_URL`
 
 **Never run without explicit user request:**
 - `git commit` / `git stash` / `git reset`
@@ -31,7 +36,7 @@ apps/web/          Next.js app (the only app)
     app/           Next.js App Router pages (builder, analyzer, parser redirect, resume-import redirect)
     context/       Global state (CVContext)
     features/      Feature modules (builder, parser, resume-pdf, import-export, scoring)
-    types/cv.ts    Single Zod schema file — the data contract for the entire app
+    types/cv/      Zod schemas and CV types — the data contract for the entire app
     lib/           Utilities (storage, cvState, exportCVState, importCVState, parser)
     components/    Shared UI primitives (workbench shell, form controls, section cards)
     styles/        Global CSS tokens and workspace styles
@@ -100,7 +105,8 @@ Dockerfile         Production Docker image
 - `ResumePdfSkills.tsx`, `ResumePdfCustomSections.tsx` — section-specific renderers
 - `resumePdfStyles.ts` — ALL style tokens live here; no inline styles elsewhere
 
-**`lib/parser/`** — `heuristicResumeParser.ts` is the public orchestrator. Internal helpers live under `heuristic/`:
+**`lib/parser/`** — `heuristicResumeParser.ts` is the public orchestrator. File
+validation, extraction diagnostics, and internal heuristic helpers remain local:
 - `heuristicTypes.ts` — shared internal types
 - `dateParsing.ts` — date range extraction
 - `sectionDetection.ts` — line normalization, section heading matching, line predicates
@@ -118,7 +124,9 @@ Dockerfile         Production Docker image
 
 - **No backend data.** CV data never leaves the browser unless the user exports it.
 - **Embedded sessions.** Session JSON is attached to downloaded PDFs only — never to the preview blob.
-- **Analyzer.** User-facing mode at `/analyzer`; internal parser modules may retain their names. Checks are deterministic and local. Never claim an ATS guarantee or exact server-side simulation.
+- **Analyzer.** User-facing mode at `/analyzer`; internal parser modules may retain their names. Scoring method v3 is deterministic, local, weighted, and explainable. English and PT-PT are explicitly supported; other languages use neutral fallback. Never claim AI, OCR, an ATS guarantee, recruiter prediction, or exact server-side simulation.
+- **PDF boundary.** Analyzer accepts only signed PDF input up to 15 MB and 20 pages.
+  Extraction is sequential and cancelable; stale work must never replace a newer upload.
 - **Import.** External PDF import is best-effort and must show a review UI before replacing Builder state.
 - **No fake UI.** No `href="#"`, no placeholder text, no "Save to server", no "Share", no "RoadForge / roadmap / phase / sprint / backlog" copy.
 - **Typography.** Avoid casual em dashes (`—`) and en dashes (`–`). The approved product headline and metadata may use a single em dash; use ASCII hyphens elsewhere.

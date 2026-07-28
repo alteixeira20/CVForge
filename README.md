@@ -30,7 +30,10 @@ Implemented:
 - Direct Builder-to-Analyzer analysis for the current local Builder CV without exporting or uploading a file.
 - CVForge-generated PDF detection and embedded session restore.
 - Best-effort external PDF draft review and import that must be checked before use.
-- Local scoring method v2 with whole-number dimensions, prioritized issues, detected evidence summaries, explanations, and concrete suggestions.
+- Local scoring method v3 with documented weights, contextual impact detection, English and Portuguese (Portugal) diagnostics, PDF extraction signals, prioritized issues, detected evidence summaries, explanations, and concrete suggestions.
+- Safe PDF analysis limits (15 MB and 20 pages), signature validation, sequential extraction, cancellation, and stale-upload protection.
+- Automated accessibility checks, Chromium coverage, and critical Firefox/WebKit smoke coverage.
+- Standalone production preview, self-cleaning Docker validation, and a single production release gate.
 
 Planned (Pinned Future Slices):
 - Drag-and-drop section reordering (arrow-based reordering is shipped).
@@ -54,47 +57,79 @@ make install
 - `make build`: Build the production application.
 - `make start`: Run the production build locally.
 - `make check`: Run linting, type-checking, and a production build.
-- `pnpm test:e2e`: Run the Playwright release smoke suite against a production server.
+- `pnpm test:unit`: Run deterministic scoring, PDF validation, and data-integrity tests.
+- `pnpm test:e2e:chromium`: Run the full Chromium and axe release suite against the standalone production server.
+- `pnpm test:e2e:cross-browser`: Run critical Firefox and WebKit smoke checks.
+- `make preview-build`: Build and assemble the standalone production preview.
+- `make preview-start`: Start the already-built preview on port 3030.
+- `make docker-check`: Build, run, poll, validate, and remove an isolated production container.
 - `make clean`: Clear build artifacts.
 
-## Deployment & Self-Hosting
+## Production Release Gate
 
-### Standard Node.js
-
-Follow the production build steps above. Ensure you have a Node.js 20+ environment.
-
-Set `NEXT_PUBLIC_SITE_URL` to the confirmed public origin at build time:
+The owner-facing release gate uses the confirmed production origin and an isolated Bash
+script with strict error handling:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example pnpm build
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+DOCKER_PORT=3030 \
+make release-check
 ```
 
-This value is the single source for canonical links, Open Graph URLs, JSON-LD URLs, `robots.txt`, and `sitemap.xml`. Local development safely falls back to `http://localhost:3000`; do not deploy production metadata with that fallback.
+It performs a frozen install, lint, TypeScript, production build and artifact assertions,
+production dependency audit, unit tests, Chromium plus axe validation, Firefox/WebKit
+critical smoke, and self-cleaning Docker validation. It rejects localhost, placeholder
+origins, and `.invalid` origins outside the explicitly configured CI path. Ordinary
+`make check` remains suitable for local development and does not require a public domain.
+
+## Local Production Preview
+
+Build metadata for the real production origin, then run the standalone server locally
+without Docker:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make preview-build
+make preview-start
+make preview-status
+make preview-logs
+make preview-stop
+```
+
+The default test URL is `http://127.0.0.1:3030`. `preview-start` never rebuilds, refuses
+an occupied port, records the process identity, and stops only the process it started.
+Set `PREVIEW_PORT` to use another free port. The canonical origin remains the build-time
+production URL; the local preview URL is only where the owner exercises that build.
+
+## Deployment and Self-Hosting
+
+`NEXT_PUBLIC_SITE_URL` is a build-time input and the source for canonical links, Open
+Graph URLs, JSON-LD URLs, `robots.txt`, and `sitemap.xml`. Production builds default to
+the confirmed CVForge origin, while development uses localhost. Supply the value
+explicitly for auditable releases.
 
 ### Docker
 
-CVForge includes a multi-stage, non-root Docker configuration for self-hosting.
+CVForge includes a pinned multi-stage, non-root standalone image with a health check:
 
 ```bash
-# Build the image
-make docker-build SITE_URL=https://your-confirmed-domain.example
-
-# Start the container
-NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example make docker-up
-
-# View logs
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make docker-build
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev DOCKER_PORT=3030 make docker-up
+make docker-status
 make docker-logs
-
-# Stop the container
-make docker-down
+DOCKER_PORT=3030 make docker-down
 ```
 
-The application will be available at `http://localhost:3000`.
-If that port is occupied, use a matching host port and site URL, for example:
+The service is available at `http://localhost:3030`. For an isolated validation that
+does not affect Compose or unrelated containers:
 
 ```bash
-DOCKER_PORT=4321 NEXT_PUBLIC_SITE_URL=http://localhost:4321 make docker-check
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+DOCKER_PORT=3030 \
+make docker-check
 ```
+
+See [`docs/deployment.md`](docs/deployment.md) for reverse-proxy, Cloudflare Tunnel
+origin, production smoke, backup, branch-protection, deployment, and rollback guidance.
 
 ## Anvilary Product Family
 
@@ -123,7 +158,13 @@ Switching between Builder and Analyzer should feel like changing modes inside on
 - PDF is the only supported Analyzer input format in this release.
 - DOCX and plain-text analysis are not implemented or advertised.
 - Selectable PDF text is extracted locally with `pdfjs-dist`.
-- Image-only, scanned, or protected PDFs receive an honest no-selectable-text message; CVForge does not use cloud OCR.
+- Uploaded PDFs are limited to 15 MB and 20 pages and must pass extension, available
+  MIME, and PDF signature checks.
+- Image-only, scanned, malformed, truncated, encrypted, or protected PDFs receive
+  specific local recovery guidance; CVForge does not use OCR.
+- English and Portuguese from Portugal are the explicitly supported diagnostic
+  languages. Other languages receive language-neutral fallback checks and are not
+  penalized merely for lacking English headings or action verbs.
 - JSON remains the most reliable structured restore path. A CVForge PDF may restore an embedded session, while an external PDF produces a best-effort draft that must be reviewed.
 
 ## SEO Architecture
@@ -141,10 +182,16 @@ Switching between Builder and Analyzer should feel like changing modes inside on
 pnpm lint
 pnpm typecheck
 pnpm build
-pnpm test:e2e
+pnpm test:unit
+pnpm test:e2e:chromium
+pnpm test:e2e:cross-browser
 ```
 
-Playwright needs a Chromium browser. Install its managed browser with `pnpm exec playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium executable. Analyzer results are local rule-based signals and must not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
+Install managed browsers with `pnpm --filter web exec playwright install chromium firefox webkit`.
+On Linux hosts missing WebKit runtime libraries, `scripts/cross-browser-check.sh` retries
+the critical suite in the version-matched official Playwright container. Analyzer
+results are local rule-based signals, not commercial ATS equivalence, acceptance
+guarantees, or recruiter-outcome predictions.
 
 ## Clean-Room Rebuild
 
@@ -155,3 +202,6 @@ CVForge is a clean-room rebuild. Comparable features may be rebuilt from scratch
 - `docs/product-scope.md`: product scope, implemented status, and planned work.
 - `docs/clean-room.md`: clean-room rules, folder structure, and state/storage notes.
 - `docs/implementation-plan.md`: implementation plan and validation expectations.
+- `docs/current-qa-plan.md`: automated and manual release QA matrix.
+- `docs/deployment.md`: production build, reverse proxy, Cloudflare Tunnel, smoke,
+  backup, and rollback runbook.

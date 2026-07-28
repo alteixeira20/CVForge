@@ -8,18 +8,35 @@ Run this checklist before deployment. Record browser, viewport, source PDF type,
 pnpm install --frozen-lockfile
 make check
 pnpm audit-prod
-pnpm test:e2e
+pnpm test:unit
+pnpm test:e2e:chromium
+pnpm test:e2e:cross-browser
 git diff --check
 ```
 
-Playwright needs Chromium. Install its managed browser with `pnpm exec playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium executable.
-Set `PLAYWRIGHT_REUSE_SERVER=1` only when intentionally testing an already-running CVForge production server.
-
-When Docker is available:
+Install managed browsers with:
 
 ```bash
-make docker-check
+pnpm --filter web exec playwright install chromium firefox webkit
 ```
+
+The full suite runs on Chromium; the critical subset runs on Firefox and WebKit. On
+Linux hosts that lack WebKit runtime libraries, use the version-matched fallback:
+
+```bash
+bash scripts/cross-browser-check.sh
+```
+
+Run the complete production gate:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+DOCKER_PORT=3030 \
+make release-check
+```
+
+It includes self-cleaning Docker validation. After every run, confirm no
+`cvforge-check-*` container and no temporary standalone server remain.
 
 ## Route and Asset Smoke Checks
 
@@ -28,6 +45,7 @@ Verify successful responses for:
 - `/`
 - `/builder`
 - `/analyzer`
+- `/health`
 - `/parser` (permanent redirect to `/analyzer`)
 - `/resume-import` (redirects to `/builder`)
 - `/robots.txt`
@@ -80,14 +98,48 @@ At every size confirm:
 - **Analyzer with CVForge PDF:** Confirm source preview, embedded-session detection, restore action, extraction confidence, and scoring target.
 - **Analyzer with external PDF:** Confirm extraction analysis, Parseability dimension, and a mandatory best-effort review before Builder replacement.
 - **Unsupported formats:** Confirm DOCX and plain text receive an honest PDF-only message.
-- **Image-only PDF:** Confirm the no-selectable-text guidance mentions a text-based re-export and no cloud OCR.
-- **Scoring:** Confirm whole-number dimensions, priorities, detected evidence summaries, explanations, suggestions, and deterministic reload results.
+- **File safety:** Confirm zero-byte, renamed non-PDF, malformed, truncated, encrypted,
+  over-15-MB, and over-20-page files receive actionable errors. Rapidly replace an
+  upload and confirm stale analysis cannot replace the new result.
+- **Image-only PDF:** Confirm the no-selectable-text guidance mentions a text-based re-export and no OCR.
+- **Scoring:** Confirm method v3 whole-number weighted dimensions, priorities, detected
+  evidence summaries, explanations, suggestions, and deterministic reload results.
+  Check strong English and PT-PT samples, neutral-language fallback, misleading digits,
+  actual impact metrics, and malformed extraction.
 - **Persistence:** Refresh and reopen the same browser profile after edits.
 - **Reduced motion:** Confirm moving canvas embers are suppressed while the static heat glow remains.
 - **Deprecated route:** Confirm `/resume-import` reaches `/builder`.
 - **Canonical route:** Confirm `/parser` returns a permanent redirect to `/analyzer`.
 - **SEO:** Inspect initial HTML for one H1, unique title/description/canonical, Open Graph and Twitter tags. Parse JSON-LD, robots, and sitemap; confirm redirect-only routes are absent from the sitemap.
 - **Social image:** Confirm the 1200×630 PNG endpoint renders legibly and metadata references it.
+- **Security headers:** Confirm document responses contain CSP, nosniff, referrer,
+  permissions, COOP, and CORP headers without breaking PDF analysis/export or fonts.
+- **Recovery:** Exercise app/route recovery, not-found navigation, Analyzer retry/reset,
+  and Builder persistence after a simulated UI failure.
+- **Announcements:** Confirm analysis start/completion/failure and import/export completion
+  are announced once without repeated noise.
+
+## Accessibility Matrix
+
+Automated axe coverage includes homepage, Builder initial/populated/mobile states,
+Analyzer empty/result states, and the Import review dialog. Manually verify one H1,
+landmarks, heading order, dialog names/descriptions, focus trap/restoration, keyboard-only
+operation, score semantics, icon labels, disabled controls, touch targets, contrast,
+reduced motion, and 200% zoom. Record any assistive technology and version used.
+
+## Local Production and Rollback Checks
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make preview-build
+make preview-start
+make preview-status
+make preview-stop
+make preview-status
+```
+
+Confirm 3030 is released after stopping. Test occupied-port refusal with a known
+disposable listener; never stop an unrelated process. Review `docs/deployment.md` and
+verify that the previous immutable image tag is available before deployment.
 
 ## Expected Pass Signals
 
@@ -98,3 +150,5 @@ At every size confirm:
 - Builder and Analyzer remain separate, route-aware modes of the same workbench.
 - Only PDF is advertised as an Analyzer input.
 - ATS-style analysis remains clearly framed as local best-practice signals, not a hiring or ATS guarantee.
+- No CV contents, filenames, extracted text, secrets, or tokens are sent to a server.
+- Production output contains no localhost or production placeholder origin.
