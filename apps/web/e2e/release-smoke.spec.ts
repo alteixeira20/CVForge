@@ -34,21 +34,125 @@ test('homepage loads without console errors and exposes one strong builder path'
   page.on('pageerror', (error) => errors.push(error.message))
 
   await page.goto('/')
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('starts on your machine')
-  await expect(page.locator('.site-header').getByText('Builder', { exact: true })).toHaveCount(0)
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Build, analyze, and improve your CV')
+  await expect(page.locator('.site-header').getByRole('link', { name: 'Builder' })).toBeVisible()
+  await expect(page.locator('.site-header').getByRole('link', { name: 'Analyzer' })).toBeVisible()
+  await expect(page.locator('.site-header').getByRole('link', { name: 'Source' })).toBeVisible()
+  await expect(page.locator('.site-header').getByRole('link', { name: /Open GitHub to star/ })).toBeVisible()
   await expect(page.locator('.site-header').getByRole('button', { name: 'Build your CV' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Source' }).last()).toBeVisible()
+  await expect(page.locator('.site-header-inner')).toHaveCSS('max-width', '1120px')
   expect(errors).toEqual([])
 })
 
-test('homepage, Builder, and Parser do not overflow the acceptance viewports', async ({ page }) => {
+test('homepage, Builder, and Analyzer do not overflow the acceptance viewports', async ({ page }) => {
   for (const viewport of RESPONSIVE_VIEWPORTS) {
     await page.setViewportSize(viewport)
-    for (const route of ['/', '/builder', '/parser']) {
+    for (const route of ['/', '/builder', '/analyzer']) {
       await page.goto(route)
       await expectNoHorizontalOverflow(page)
     }
   }
+})
+
+test('homepage header keeps the primary journey usable at every acceptance viewport', async ({ page }) => {
+  for (const viewport of RESPONSIVE_VIEWPORTS) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    const header = page.locator('.site-header')
+    await expect(header.getByRole('link', { name: 'Builder' })).toBeVisible()
+    await expect(header.getByRole('link', { name: 'Analyzer' })).toBeVisible()
+    await expect(header.getByRole('link', { name: /Open GitHub to star/ })).toBeVisible()
+    await expect(header.getByRole('button', { name: /Build (your )?CV/ })).toBeVisible()
+    await expectNoHorizontalOverflow(page)
+  }
+})
+
+test('desktop header is constrained and exposes the complete navigation and action set', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  const header = page.locator('.site-header')
+  const inner = page.locator('.site-header-inner')
+  const headerBox = await header.boundingBox()
+  const innerBox = await inner.boundingBox()
+  expect(headerBox).not.toBeNull()
+  expect(innerBox).not.toBeNull()
+  expect(innerBox!.width).toBeLessThan(headerBox!.width)
+  expect(innerBox!.width).toBeLessThanOrEqual(1120)
+
+  await expect(header.getByRole('link', { name: 'Builder' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Analyzer' })).toHaveAttribute('href', '/analyzer')
+  await expect(header.getByRole('link', { name: 'Source' })).toBeVisible()
+  const star = header.getByRole('link', { name: /Open GitHub to star/ })
+  await expect(star).toHaveAttribute('href', 'https://github.com/alteixeira20/CVForge')
+  await expect(star).toHaveAttribute('target', '_blank')
+  await expect(star).toHaveAttribute('rel', 'noopener noreferrer')
+  await expect(star.locator('svg')).toBeVisible()
+  await expect(header.getByRole('button', { name: 'Build your CV' })).toBeVisible()
+})
+
+test('hero trust facts are visible before scrolling on desktop acceptance viewports', async ({ page }) => {
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1280, height: 800 },
+  ]) {
+    await page.setViewportSize(viewport)
+    await page.goto('/')
+    const trustRow = page.locator('.hero .meta-row')
+    await expect(trustRow).toBeVisible()
+    const box = await trustRow.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.y).toBeGreaterThanOrEqual(0)
+    expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height)
+    await expect(page.locator('.preview-bar')).toBeVisible()
+  }
+})
+
+test('Analyze CV reaches the canonical Analyzer route', async ({ page }) => {
+  await page.goto('/')
+  await page.locator('.hero').getByRole('link', { name: 'Analyze CV' }).click()
+  await expect(page).toHaveURL(/\/analyzer$/)
+  await expect(page.getByRole('heading', { name: 'Analyze your CV' })).toBeVisible()
+})
+
+test('the legacy Parser route permanently redirects to Analyzer', async ({ request }) => {
+  const response = await request.get('/parser', { maxRedirects: 0 })
+  expect(response.status()).toBe(308)
+  expect(response.headers().location).toBe('/analyzer')
+})
+
+test('prominent button interaction moves the complete surface and respects reduced motion', async ({ page }) => {
+  await page.goto('/')
+  const button = page.locator('.hero').getByRole('button', { name: 'Build your CV' })
+  await button.hover()
+  const hoverState = await button.evaluate((element) => ({
+    transform: getComputedStyle(element).transform,
+    childTransforms: Array.from(element.children).map((child) => getComputedStyle(child).transform),
+  }))
+  expect(hoverState.transform).not.toBe('none')
+  expect(hoverState.childTransforms.every((transform) => transform === 'none')).toBe(true)
+
+  await button.focus()
+  await expect(button).toBeFocused()
+  expect(await button.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe('none')
+
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.reload()
+  const reducedButton = page.locator('.hero').getByRole('button', { name: 'Build your CV' })
+  await reducedButton.hover()
+  await expect(reducedButton).toHaveCSS('transform', 'none')
+})
+
+test('homepage preview communicates a complete fictional CV and practical Analyzer signals', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await expect(page.getByText('Maya Chen', { exact: true })).toBeVisible()
+  await expect(page.getByText('Northstar Works', { exact: false })).toBeVisible()
+  await expect(page.getByText('Juniper Studio', { exact: false })).toBeVisible()
+  await expect(page.getByText('Open Metrics Toolkit', { exact: true })).toBeVisible()
+  await expect(page.getByText('Extraction quality', { exact: true })).toBeVisible()
+  await expect(page.getByText('Structure completeness', { exact: true })).toBeVisible()
+  await expect(page.getByText('Improve first', { exact: true })).toBeVisible()
+  await expect(page.getByText('Diagnostics are practical signals, not hiring guarantees.')).toHaveCount(0)
 })
 
 test('entry dialog fits compact and short viewports with reachable controls', async ({ page }) => {
@@ -250,18 +354,135 @@ test('Import replaces the entry dialog and returns focus to the parent control',
   await expect(trigger).toBeFocused()
 })
 
-test('Builder and Parser expose unambiguous route-aware active modes', async ({ page }) => {
+test('Builder and Analyzer expose unambiguous route-aware active modes', async ({ page }) => {
   await page.goto('/builder')
   await expect(page.locator('.app-header').getByRole('link', { name: 'Builder' }))
     .toHaveAttribute('aria-current', 'page')
-  await expect(page.locator('.app-header').getByRole('link', { name: 'Parser' }))
+  await expect(page.locator('.app-header').getByRole('link', { name: 'Analyzer' }))
     .not.toHaveAttribute('aria-current', 'page')
 
-  await page.goto('/parser')
-  await expect(page.locator('.app-header').getByRole('link', { name: 'Parser' }))
+  await page.goto('/analyzer')
+  await expect(page.locator('.app-header').getByRole('link', { name: 'Analyzer' }))
     .toHaveAttribute('aria-current', 'page')
   await expect(page.locator('.app-header').getByRole('link', { name: 'Builder' }))
     .not.toHaveAttribute('aria-current', 'page')
+})
+
+test('Analyzer scoring is multidimensional, prioritized, explainable, and deterministic', async ({ page }) => {
+  await page.goto('/analyzer')
+  await expect(page.getByText('ATS-Style CV Analysis', { exact: true })).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="completeness"]')).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="structure"]')).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="clarity"]')).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="impact"]')).toBeVisible()
+  await expect(page.locator('[data-analysis-dimension="ats-compatibility"]')).toBeVisible()
+  await expect(page.getByText('high priority', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Why it matters:', { exact: true }).first()).toBeVisible()
+  await expect(page.getByText('Improve:', { exact: true }).first()).toBeVisible()
+
+  const scoreBefore = await page.locator('[data-analysis-dimension]').evaluateAll((elements) => (
+    elements.map((element) => element.textContent)
+  ))
+  await page.reload()
+  const scoreAfter = await page.locator('[data-analysis-dimension]').evaluateAll((elements) => (
+    elements.map((element) => element.textContent)
+  ))
+  expect(scoreAfter).toEqual(scoreBefore)
+})
+
+test('Analyzer accepts PDF only and reports image-only extraction honestly', async ({ page }) => {
+  await page.goto('/analyzer')
+  const input = page.locator('input[type="file"]')
+
+  await input.setInputFiles({
+    name: 'candidate.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('Plain text CV'),
+  })
+  const analysisAlert = page.locator('p[role="alert"]')
+  await expect(analysisAlert).toContainText('currently analyzes PDF files only')
+  await expect(analysisAlert).toContainText('DOCX and plain-text analysis are not supported')
+
+  const scannedPdf = await PDFDocument.create()
+  scannedPdf.addPage([595, 842])
+  await input.setInputFiles({
+    name: 'scanned-candidate.pdf',
+    mimeType: 'application/pdf',
+    buffer: Buffer.from(await scannedPdf.save()),
+  })
+  await expect(analysisAlert).toContainText('No selectable text was found', { timeout: 20_000 })
+  await expect(analysisAlert).toContainText('does not send the file to a cloud OCR service')
+})
+
+test('page metadata is unique, canonical, social-ready, and paired with one H1', async ({ page }) => {
+  const results: Array<{ route: string; title: string; description: string }> = []
+  for (const route of ['/', '/builder', '/analyzer']) {
+    await page.goto(route)
+    const title = await page.title()
+    const description = await page.locator('meta[name="description"]').getAttribute('content')
+    const canonical = await page.locator('link[rel="canonical"]').getAttribute('href')
+    const canonicalUrl = new URL(canonical!)
+
+    expect(title.length).toBeGreaterThan(20)
+    expect(description?.length).toBeGreaterThan(70)
+    expect(canonicalUrl.pathname).toBe(route)
+    await expect(page.locator('h1')).toHaveCount(1)
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title)
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', description!)
+    await expect(page.locator('meta[property="og:image"]')).toHaveCount(1)
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image')
+    await expect(page.locator('meta[name="twitter:image"]')).toHaveCount(1)
+    results.push({ route, title, description: description! })
+  }
+
+  expect(new Set(results.map((result) => result.title)).size).toBe(results.length)
+  expect(new Set(results.map((result) => result.description)).size).toBe(results.length)
+})
+
+test('homepage JSON-LD parses and uses the canonical CVForge URL', async ({ page }) => {
+  await page.goto('/')
+  const rawJson = await page.locator('script[type="application/ld+json"]').textContent()
+  const structuredData = JSON.parse(rawJson!)
+  expect(structuredData['@context']).toBe('https://schema.org')
+  expect(structuredData['@graph'].map((entry: { '@type': string }) => entry['@type']))
+    .toEqual(['Organization', 'WebSite', 'SoftwareApplication'])
+
+  const canonical = await page.locator('link[rel="canonical"]').getAttribute('href')
+  const software = structuredData['@graph'].find(
+    (entry: { '@type': string }) => entry['@type'] === 'SoftwareApplication',
+  )
+  expect(software.url).toBe(new URL(canonical!).origin)
+  expect(software.image).toBe(`${new URL(canonical!).origin}/opengraph-image`)
+})
+
+test('robots, sitemap, manifest, and social image routes are valid', async ({ request }) => {
+  const robots = await request.get('/robots.txt')
+  expect(robots.ok()).toBe(true)
+  const robotsText = await robots.text()
+  expect(robotsText).toContain('User-Agent: *')
+  expect(robotsText).toContain('Allow: /')
+  expect(robotsText).toContain('Sitemap: http://localhost:3000/sitemap.xml')
+
+  const sitemap = await request.get('/sitemap.xml')
+  expect(sitemap.ok()).toBe(true)
+  const sitemapText = await sitemap.text()
+  expect(sitemapText).toContain('<loc>http://localhost:3000/</loc>')
+  expect(sitemapText).toContain('<loc>http://localhost:3000/builder</loc>')
+  expect(sitemapText).toContain('<loc>http://localhost:3000/analyzer</loc>')
+  expect(sitemapText).not.toContain('/parser')
+  expect(sitemapText).not.toContain('/resume-import')
+
+  const manifest = await request.get('/site.webmanifest')
+  expect(manifest.ok()).toBe(true)
+  expect(await manifest.json()).toMatchObject({
+    name: 'CVForge',
+    start_url: '/',
+  })
+
+  const socialImage = await request.get('/opengraph-image')
+  expect(socialImage.ok()).toBe(true)
+  expect(socialImage.headers()['content-type']).toContain('image/png')
+  expect((await socialImage.body()).byteLength).toBeGreaterThan(10_000)
 })
 
 test('reduced motion suppresses the canvas while preserving the static atmosphere', async ({ page }) => {
