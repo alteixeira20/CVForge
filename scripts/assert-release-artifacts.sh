@@ -6,38 +6,57 @@ BUILD_ROOT="${REPOSITORY_ROOT}/apps/web/.next"
 SITE_URL="${NEXT_PUBLIC_SITE_URL:-}"
 ALLOW_INVALID="${ALLOW_INVALID_SITE_URL:-0}"
 
-if [[ ! -d "${BUILD_ROOT}/server" || ! -d "${BUILD_ROOT}/static" ]]; then
-  echo "Production artifacts are missing. Run pnpm build first." >&2
-  exit 1
-fi
+node - "${BUILD_ROOT}" "${SITE_URL}" "${ALLOW_INVALID}" <<'NODE'
+const fs = require('node:fs')
+const path = require('node:path')
 
-scan_roots=("${BUILD_ROOT}/server" "${BUILD_ROOT}/static")
-[[ -d "${BUILD_ROOT}/standalone" ]] && scan_roots+=("${BUILD_ROOT}/standalone")
+const [buildRoot, siteUrl, allowInvalid] = process.argv.slice(2)
+const requiredRoots = ['server', 'static'].map((name) => path.join(buildRoot, name))
+if (requiredRoots.some((root) => !fs.existsSync(root))) {
+  throw new Error('Production artifacts are missing. Run pnpm build first.')
+}
 
-blocked_patterns=(
-  "localhost:3000"
-  "YOUR-CONFIRMED-DOMAIN"
-  "replace-with-confirmed-production-origin"
-  "YOUR_PRODUCTION_ORIGIN"
-  "https://cvforge.example.com"
-)
+const standaloneRoot = path.join(buildRoot, 'standalone')
+const scanRoots = fs.existsSync(standaloneRoot)
+  ? [...requiredRoots, standaloneRoot]
+  : requiredRoots
+const blocked = [
+  'localhost:3000',
+  'YOUR-CONFIRMED-DOMAIN',
+  'replace-with-confirmed-production-origin',
+  'YOUR_PRODUCTION_ORIGIN',
+  'https://cvforge.example.com',
+]
+if (allowInvalid !== '1') blocked.push('https://cvforge.example.invalid')
+if (!siteUrl) throw new Error('NEXT_PUBLIC_SITE_URL is required for artifact assertions.')
 
-for pattern in "${blocked_patterns[@]}"; do
-  if rg -uuu -g '!**/node_modules/**' -F -l -- "${pattern}" "${scan_roots[@]}" >/dev/null; then
-    echo "Release artifact assertion failed: found blocked value '${pattern}'." >&2
-    exit 1
-  fi
-done
+let expectedOriginFound = false
+const expectedOrigin = Buffer.from(siteUrl)
+const blockedBuffers = blocked.map((value) => [value, Buffer.from(value)])
 
-if [[ "${ALLOW_INVALID}" != "1" ]] \
-  && rg -uuu -g '!**/node_modules/**' -F -l -- "https://cvforge.example.invalid" "${scan_roots[@]}" >/dev/null; then
-  echo "Release artifact assertion failed: CI-only canonical origin found in a production build." >&2
-  exit 1
-fi
+function scanDirectory(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name === 'node_modules') continue
+    const entryPath = path.join(directory, entry.name)
+    if (entry.isDirectory()) {
+      scanDirectory(entryPath)
+      continue
+    }
+    if (!entry.isFile()) continue
+    const contents = fs.readFileSync(entryPath)
+    expectedOriginFound ||= contents.includes(expectedOrigin)
+    for (const [value, pattern] of blockedBuffers) {
+      if (contents.includes(pattern)) {
+        throw new Error(`Release artifact assertion failed: found blocked value '${value}'.`)
+      }
+    }
+  }
+}
 
-if [[ -z "${SITE_URL}" ]] || ! rg -uuu -g '!**/node_modules/**' -F -l -- "${SITE_URL}" "${scan_roots[@]}" >/dev/null; then
-  echo "Release artifact assertion failed: expected canonical origin '${SITE_URL}' was not found." >&2
-  exit 1
-fi
+scanRoots.forEach(scanDirectory)
+if (!expectedOriginFound) {
+  throw new Error(`Release artifact assertion failed: expected canonical origin '${siteUrl}' was not found.`)
+}
+NODE
 
 echo "Release artifacts contain the expected origin and no blocked placeholders."
