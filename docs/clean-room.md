@@ -19,12 +19,12 @@ CVForge is a clean-room rebuild. Comparable features can be rebuilt, but source 
   - `.gitignore`: excludes dependencies, build output, `tmp/`, `.handoff/`, and TypeScript build caches.
 - `apps/web`: the Next.js app.
 - `apps/web/src/app`: route pages and app layout.
-- `apps/web/src/context`: React providers for CV state and theme state.
+- `apps/web/src/context`: CV state provider, reducer actions, and state update helpers.
 - `apps/web/src/types`: Zod schemas and inferred TypeScript types.
 - `apps/web/src/components`: shared layout, form, section, workbench, home, and UI components.
 - `apps/web/src/features`: feature-specific builder, parser, scoring, PDF, and import/export modules.
 - `apps/web/src/lib`: browser storage and parser helpers.
-- `apps/web/src/styles`: Forge-family CSS tokens and app styles.
+- `apps/web/src/styles`: Anvilary-family CSS tokens, atmosphere, landing, modal, and workbench styles.
 
 Current builder feature folders:
 - `src/features/builder/profile`
@@ -69,7 +69,7 @@ Implemented utility behavior:
 
 Current limitations:
 - Builder preview renders the generated PDF through the PDF.js canvas pipeline; download/export uses the same @react-pdf/renderer document with an embedded session attachment. The two paths are designed to stay visually aligned, not guaranteed identical.
-- Parser extraction depends on selectable text and does not import fields into the builder.
+- Parser extraction depends on selectable text. External PDFs can produce a best-effort draft only after an explicit review step.
 - No CV data is uploaded to a server by the implemented app.
 
 ## 5. Hygiene Rules
@@ -78,9 +78,9 @@ Current limitations:
 - TypeScript build cache files such as `tsconfig.tsbuildinfo` should not be committed.
 - Keep public docs factual. Do not claim PDF-to-builder import, ATS guarantees, or server sync until implemented.
 
-## 6. Forge UI Rules
+## 6. Anvilary UI Rules
 
-Forge apps should be useful, self-hostable tools with interfaces that ordinary users can understand and developers can inspect.
+CVForge should be recognizable as Anvilary Labs → Anvilary Tools → CVForge while remaining useful, self-hostable, and understandable to ordinary users.
 
 - Keep UI minimal, organized, and task-focused.
 - Do not add shallow filler content.

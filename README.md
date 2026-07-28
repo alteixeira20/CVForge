@@ -36,7 +36,6 @@ Planned (Pinned Future Slices):
 - Drag-and-drop section reordering (arrow-based reordering is shipped).
 - PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
 - Photo support and photo-layout PDF template.
-- Website/marketing polish.
 - Richer parser extraction and scoring checks.
 
 ## Development Workflow
@@ -54,7 +53,8 @@ make install
 - `make dev`: Start the development server with hot-reloading.
 - `make build`: Build the production application.
 - `make start`: Run the production build locally.
-- `make verify`: Run linting, type-checking, and build validation.
+- `make check`: Run linting, type-checking, and a production build.
+- `pnpm test:e2e`: Run the Playwright release smoke suite against a production server.
 - `make clean`: Clear build artifacts.
 
 ## Deployment & Self-Hosting
@@ -63,9 +63,9 @@ make install
 
 Follow the production build steps above. Ensure you have a Node.js 20+ environment.
 
-### Docker (Recommended for Self-Hosting)
+### Docker
 
-CVForge includes a production-ready Docker configuration.
+CVForge includes a multi-stage, non-root Docker configuration for self-hosting.
 
 ```bash
 # Build the image
@@ -83,9 +83,9 @@ make docker-down
 
 The application will be available at `http://localhost:3000`.
 
-## Product Principles
+## Anvilary Product Family
 
-CVForge is part of a planned family of Forge tools. Forge apps should be practical, self-hostable, free to use, and useful to non-technical users as well as developers.
+CVForge follows the hierarchy Anvilary Labs → Anvilary Tools → CVForge. It shares the dark forge palette, interaction primitives, responsive hierarchy, and ember atmosphere used across the Anvilary product family.
 
 Interface rules:
 - Keep screens minimal, organized, and task-focused.
@@ -108,9 +108,10 @@ Switching between Builder and Parser should feel like changing modes inside one 
 pnpm lint
 pnpm typecheck
 pnpm build
+pnpm test:e2e
 ```
 
-Run validation after each implementation slice. Parser diagnostics are local rule-based checks and should not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
+Playwright needs a Chromium browser. Install its managed browser with `pnpm exec playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium executable. Parser diagnostics are local rule-based checks and should not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
 
 ## Clean-Room Rebuild
 

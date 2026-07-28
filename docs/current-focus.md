@@ -1,48 +1,40 @@
-# Current Focus: Manual QA and Post-Refactor Validation
+# Current Focus: Release Validation
 
 ## 1. Current State
 
-CVForge has completed a full pre-QA architecture refactoring sprint. The codebase is now in its post-refactor state, waiting for validation and manual QA.
+CVForge is in release-readiness validation after its architecture and Anvilary frontend migrations.
 
-### Architecture refactoring (completed)
-- **Parser split**: `heuristicResumeParser.ts` is now an orchestrator. Internal logic lives in `lib/parser/heuristic/` (heuristicTypes, dateParsing, sectionDetection, profileExtraction, sectionExtraction).
-- **ImportModal split**: `ImportModal.tsx` orchestrates state. `ImportFileDropzone`, `ImportConfirmStep`, and `PdfHeuristicReview` own the three presentational states.
-- **PDF preview hooks extracted**: `useZoomControl.ts` and `useDevicePixelRatio.ts` extracted from `PdfCanvasPreview.tsx` into standalone files in `features/builder/workbench/`.
-- **Folder renames**: `features/builder/work/` renamed to `features/builder/work-experience/`.
-- **File moves**: `features/resume-formatting.ts` moved to `lib/resume-formatting.ts`; `context/BuilderAddFocusContext.tsx` moved to `features/builder/context/BuilderAddFocusContext.tsx`.
-- **Schema migration**: `lib/cvMigrations.ts` added. `migrateCVState()` runs before `parseCVState` on all external state sources. `CURRENT_CV_SCHEMA_VERSION` is the single version constant. `CVStateSchema.schemaVersion` uses `z.literal()` so states from newer builds are rejected, not silently loaded.
-- **Pre-QA hygiene**: `.gitignore` updated; `crypto.randomUUID()` adopted for ID generation; empty `Badge.tsx` deleted; Homepage ThemeToggle inline style replaced with Tailwind class.
+Implemented release work:
 
-### Prior sprint (still in the build)
-- Advanced PDF layout settings, section reordering/visibility, inline editable section titles, and 10 professional color presets.
-- Builder Workbench modularity: `BuilderSectionList.tsx` decomposed into config, hook, and card component files.
-- Accessibility: Enter-to-blur inputs, `focus-visible` ring, `aria-label`/`aria-pressed` throughout.
-- PDF parity confirmed: accent stripe, always-mono dates, `<View>` bullet markers, all 9 layout settings wired.
+- Responsive homepage hierarchy with one primary Builder path and a discoverable Parser path.
+- Route-aware Builder and Parser navigation with visible active state and `aria-current`.
+- Responsive entry/import dialogs with one active modal at a time.
+- Shared focus trapping with forward/backward recovery, active-dialog Escape handling, focus restoration, and reference-counted body scroll locking.
+- Dark-only Anvilary palette with the ember atmosphere retained at full landing intensity and subdued workbench intensity.
+- Improved normal-text contrast, explicit transitions, semantic landmarks, route metadata, associated form labels, and parser loading/error announcements.
+- Playwright production-server smoke coverage for responsive routes, dialog behavior, reduced motion, persistence, JSON backup/restore, embedded PDF session detection, and review-first external PDF import.
+- Security-only dependency patches for Next.js, PostCSS, and Sharp, with explicit standalone tracing for Sharp's glibc and musl libvips runtimes.
+- A non-root standalone Docker build whose routes, manifest, brand assets, and image optimizer have been exercised locally.
 
-## 2. What to Do Next
+Protected state, PDF, parser, and scoring contracts remain unchanged.
 
-**Immediate - Validation:**
-- Run `make check` (typecheck + lint + build) to surface any type or lint errors from all refactoring slices.
-- Manual QA: open the live Builder, fill in representative CV data, spot-check the PDF preview canvas, and compare against a downloaded PDF. The two paths are designed to stay visually aligned. `pdf-mockup/` has been removed as a root-level working artifact.
+## 2. Immediate Work
 
-**PDF Phase 2 Refinements (deferred):**
-- `sectionTitleText.letterSpacing`: 1.2 -> 1.3
-- `skillLabel`: add `paddingTop: 1.5`, `letterSpacing: 0.2`
-- `entrySubtitle.marginBottom`: 2 -> 3
-- `dateSize` offset: -1.5 -> -2 (gives 9pt at default font size 11pt)
+- Complete any desired Firefox, Safari, and assistive-technology spot checks; the automated release suite currently targets Chromium.
+- Perform a final human comparison of exported PDFs against the in-app preview using representative real CV content.
+- Review the release branch and deploy the exact reviewed commit through the target hosting environment.
 
-## 3. Genuinely Deferred (Do Not Implement Unless Instructed)
+## 3. Deferred Product Work
 
-- **Font embedding**: Geist Sans / Geist Mono as real PDF font assets (Phase 3 of PDF work).
-- **Photo support**: User photo upload and photo-layout PDF template.
-- **Drag-and-drop section reordering**: Arrow-based reorder is shipped; drag-and-drop is a UX enhancement for later.
-- **Richer parser extraction and scoring**: Heuristic checks remain minimal by design.
-- **Website/marketing polish**: Landing page copy and visual improvements.
-- **Root architecture cleanup**: Monorepo tooling, Docker CI, deployment polish.
+- PDF font embedding with real font assets.
+- Photo support and a photo-layout PDF template.
+- Drag-and-drop section reordering; arrow controls remain the supported implementation.
+- Richer parser extraction and scoring checks.
+- PDF Phase 2 typography refinements listed in `docs/implementation-plan.md`.
 
-## 4. Constraints (Do Not Touch List)
+## 4. Constraints
 
-- Do NOT implement product or UI code when asked to audit or document.
-- Do NOT redesign the core product layout or Workbench shell.
-- Do NOT add database, backend, or account-related language to documentation.
-- Maintain the local-first, browser-only product identity.
+- Preserve the CV schema, serialized data, reducer behavior, storage key, migrations, JSON backup, PDF session attachment, parser review boundary, and scoring semantics.
+- Keep CVForge browser-only and local-first.
+- Do not introduce backend, database, account, or server-side CV storage assumptions.
+- Treat RoadForge and Anvilary-Website as read-only design references.

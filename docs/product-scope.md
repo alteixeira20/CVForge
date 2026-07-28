@@ -35,13 +35,12 @@ Planned but not implemented (Pinned Future Slices):
 - PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
 - Photo support and photo-layout PDF template.
 - PDF Phase 2 visual refinements (letter-spacing, subtitle margin, date size).
-- Website/marketing polish.
 - Richer parser extraction and scoring checks.
 
 ## 4. Current Limitations
 
 - Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
-- Builder preview and PDF export both use the same high-fidelity model, ensuring visual consistency.
+- Builder preview and PDF export use the same document model and are designed to remain visually aligned.
 - Session restoration from PDF works only for CVForge-generated files when an embedded session attachment is present.
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
 - Parser reliability is separate from CV quality diagnostics.
@@ -80,9 +79,9 @@ Planned but not implemented (Pinned Future Slices):
 - Small feature folders and focused components.
 - Validation after each implementation slice.
 
-## 7. Forge App Principles
+## 7. Anvilary Product Family
 
-CVForge should follow the same product rules as future Forge tools:
+CVForge sits within Anvilary Labs → Anvilary Tools → CVForge and follows the shared Anvilary product rules:
 - Practical before decorative.
 - Useful to everyday users, not only programmers.
 - Free to use and straightforward to self-host.

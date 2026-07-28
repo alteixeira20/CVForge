@@ -90,11 +90,12 @@
 - `apps/web/src/components/shared/sections/SectionItemHeader.tsx`
 - `apps/web/src/components/shared/sections/HoldDeleteButton.tsx`
 
-### Branding and Theme
+### Branding and Atmosphere
 - `apps/web/src/components/ui/Brand.tsx`
-- `apps/web/src/components/ui/BrandMark.tsx`
+- `apps/web/src/components/ui/EmberBackground.tsx`
 - `apps/web/src/components/layout/SiteHeader.tsx`
 - `apps/web/src/components/layout/AppHeader.tsx`
+- `apps/web/src/components/layout/SiteFooter.tsx`
 - `apps/web/public/brand/`
 - `apps/web/src/styles/workspace.css`
 
@@ -121,10 +122,22 @@
 - `Makefile`
 - `package.json`
 - `apps/web/package.json`
+- `apps/web/playwright.config.ts`
+- `apps/web/e2e/release-smoke.spec.ts`
 - `Dockerfile`
 - `docker-compose.yml`
 
 ## Recent Completed Work
+
+### Ship-readiness pass
+- Responsive homepage navigation now presents one primary Builder path, keeps Parser secondary, and moves Source out of the smallest header while retaining it in the footer.
+- Builder entry and import dialogs use responsive dimensions, a single assistive-technology-visible modal at a time, stacked scroll locking, reliable focus recovery, and trigger restoration.
+- Builder and Parser navigation is route-aware with visible active treatment and `aria-current`.
+- The landing page has a clearer Builder-versus-Parser story, a shorter three-step workflow, six consolidated capability cards, and a concise Anvilary Labs → Anvilary Tools → CVForge footer.
+- Workbench controls, text contrast, loading/error announcements, touch targets, reduced-motion handling, and compact-width layouts were hardened.
+- Playwright release smoke coverage verifies route availability, horizontal overflow, modal focus/semantics, active navigation, reduced motion, persistence, JSON restore, embedded-PDF detection, and review-first external PDF import.
+- Next.js, PostCSS, and Sharp received security-only patch updates; standalone tracing now includes Sharp's glibc and musl libvips runtimes for local and Alpine deployments.
+- `make docker-check` uses Node's built-in `fetch`, removing an undeclared host `curl` dependency.
 
 ### Architecture Refactoring (pre-QA)
 - `heuristicResumeParser.ts` split into orchestrator + `lib/parser/heuristic/` submodules (types, date parsing, section detection, profile extraction, section extraction).
@@ -134,10 +147,10 @@
 - `features/resume-formatting.ts` moved to `lib/resume-formatting.ts` (no feature dependency).
 - `context/BuilderAddFocusContext.tsx` moved to `features/builder/context/BuilderAddFocusContext.tsx`.
 - `lib/cvMigrations.ts` added: `migrateCVState()` runs before `parseCVState` on localStorage restore, JSON import, and PDF attachment restore. `CURRENT_CV_SCHEMA_VERSION` exported from `types/cv.ts`. `CVStateSchema.schemaVersion` uses `z.literal(CURRENT_CV_SCHEMA_VERSION)` to reject states saved by a newer build.
-- Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` adopted for ID generation, empty `Badge.tsx` deleted, Homepage ThemeToggle inline style replaced with Tailwind class.
+- Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` adopted for ID generation, and the empty `Badge.tsx` deleted.
 
 ### Prior Sprint
-- Major visual alignment for Builder, Parser, and Forge Apps branding.
+- Major visual alignment for Builder, Parser, and the Anvilary product family.
 - Full implementation of Builder sections and shared workbench primitives.
 - Integration of parser scoring and diagnostic signals.
 - PDF.js canvas preview pipeline replacing the iframe: flicker-free, zoom/fit controls.

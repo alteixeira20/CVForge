@@ -106,11 +106,12 @@ Current import status:
 - [x] Move `features/resume-formatting.ts` to `lib/resume-formatting.ts` (CVF-105).
 - [x] Move `context/BuilderAddFocusContext.tsx` to `features/builder/context/BuilderAddFocusContext.tsx` (CVF-106).
 - [x] Add schema migration system: `lib/cvMigrations.ts`, `CURRENT_CV_SCHEMA_VERSION`, `z.literal` version guard, migration wired before `parseCVState` on all external state sources (CVF-107).
-- [x] Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` for IDs, empty `Badge.tsx` deleted, Homepage ThemeToggle Tailwind conversion (CVF-201/204).
+- [x] Pre-QA hygiene: `.gitignore` updated, `crypto.randomUUID()` adopted for IDs, and dead placeholder UI removed (CVF-201/204).
 
-Pending:
-- [ ] Run `make check` (typecheck + lint + build) — validation gate before manual QA.
-- [ ] Manual QA against `docs/current-qa-plan.md`.
+Release validation:
+- [x] `make check` baseline completed.
+- [x] Playwright release smoke coverage added for responsive routes, dialog behavior, persistence, import/export, PDF session restore, and reduced motion.
+- [ ] Complete final cross-browser and human visual review against `docs/current-qa-plan.md`.
 
 ## UI Implementation Checklist
 
