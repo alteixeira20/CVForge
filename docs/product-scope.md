@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-CVForge is a local-first CV builder for creating structured resumes in the browser. The project is being rebuilt with a clean, inspectable codebase while adding parser, local heuristic diagnostics, backup/restore, and PDF export work in small slices.
+CVForge is a local-first CV Builder and ATS-style CV Analyzer for creating and improving structured resumes in the browser. The codebase keeps parser internals, local analysis, backup/restore, and PDF export in focused slices.
 
 The near-term goal is a maintainable builder that can be self-hosted without a database or account system.
 
@@ -13,7 +13,7 @@ The current app includes:
 - A Zod CV contract in `apps/web/src/types/cv.ts`.
 - Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
 - Browser persistence through `localStorage`.
-- A responsive workbench shell for builder and parser pages.
+- A responsive workbench shell for Builder and Analyzer pages.
 - Builder sections for profile, settings, work experience, education, projects, skills, custom sections, and languages.
 - Major section reordering and visibility toggles.
 - A high-fidelity PDF-backed live preview for the current builder state.
@@ -21,12 +21,15 @@ The current app includes:
 - JSON backup export and validated restore (the simplest reliable session portability path).
 - PDF export generated from current CV state with embedded session metadata.
 - Local PDF upload, source preview, and raw text extraction.
-- Direct analysis of the current Builder CV in Parser without PDF download/upload.
+- Direct analysis of the current Builder CV in Analyzer without PDF download/upload.
 - CVForge-generated PDF detection and session restoration.
 - Best-effort heuristic parsing for external PDFs with a structured draft review before replacement.
-- Parser reliability scoring and CV diagnostics presented as local rule-based signals.
+- Extraction confidence kept separate from CV quality scoring.
 - Uploaded PDF analysis scores the embedded CVForge session or best-effort draft when one exists, not unrelated current Builder data.
-- Local heuristic scoring and transparent diagnostic checks.
+- Scoring method v2 with whole-number dimensions for completeness, structure, clarity, impact, ATS-style compatibility, and PDF parseability when applicable.
+- Prioritized checks with detected evidence summaries, why-it-matters copy, and concrete improvement suggestions.
+- Canonical `/analyzer` route with permanent `/parser` compatibility redirect.
+- Shared metadata URL source, canonical metadata, robots, sitemap, JSON-LD, and generated social image.
 
 ## 3. Planned Scope
 
@@ -35,18 +38,21 @@ Planned but not implemented (Pinned Future Slices):
 - PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
 - Photo support and photo-layout PDF template.
 - PDF Phase 2 visual refinements (letter-spacing, subtitle margin, date size).
-- Richer parser extraction and scoring checks.
+- Richer parser extraction and field-level Analyzer evidence.
+- DOCX and plain-text analysis after a local, robust, tested extraction path is chosen.
 
 ## 4. Current Limitations
 
-- Parser extraction depends on selectable PDF text and may fail for scanned or protected PDFs.
+- Analyzer extraction currently supports PDF only and depends on selectable text.
+- Scanned, image-only, or protected PDFs may produce no text. CVForge does not use cloud OCR.
 - Builder preview and PDF export use the same document model and are designed to remain visually aligned.
 - Session restoration from PDF works only for CVForge-generated files when an embedded session attachment is present.
 - External PDF draft import is heuristic and may create incomplete or inaccurate fields.
-- Parser reliability is separate from CV quality diagnostics.
+- Extraction confidence is separate from CV quality analysis.
 - Data is saved only in the current browser's `localStorage`.
 - Persisted state is migrated to the current schema version before validation; states saved by a newer build are rejected rather than silently loaded.
-- Current Builder CV analysis in Parser uses in-browser state only and does not upload CV data.
+- Current Builder CV analysis in Analyzer uses in-browser state only and does not upload CV data.
+- ATS-style checks are deterministic best-practice signals, not guaranteed ATS behavior or hiring predictions.
 - There is no server-side persistence, authentication, or database.
 
 ## 5. MVP Status
@@ -60,13 +66,13 @@ Planned but not implemented (Pinned Future Slices):
 - JSON backup and restore (the simplest reliable restore path).
 - PDF download with embedded session restore.
 - High-fidelity PDF-backed live preview.
-- Local PDF parser diagnostics (heuristic).
-- Builder-to-parser handoff for analyzing the current local Builder CV.
+- Local PDF extraction and ATS-style analysis.
+- Builder-to-Analyzer handoff for analyzing the current local Builder CV.
 - Structured review before importing an external PDF draft.
-- Local rule-based scoring and issue rows, not real ATS guarantees.
+- Explainable multidimensional local scoring and prioritized issue rows, not real ATS guarantees.
 
 ### Planned
-- Richer parser extraction and scoring checks.
+- Richer parser extraction and Analyzer evidence.
 - Drag-and-drop section reordering.
 - PDF font embedding (Geist Sans / Geist Mono).
 - Photo support and photo-layout PDF template.
@@ -97,11 +103,11 @@ UI rules:
 
 ## 8. Workbench Contract
 
-Builder and Parser must use the same workbench template so they feel like modes of one tool.
+Builder and Analyzer must use the same workbench template so they feel like modes of one tool.
 
 - Builder left panel: editing workbench.
 - Builder right panel: generated CV/PDF preview.
-- Parser left panel: diagnostics/parser workbench.
-- Parser right panel: uploaded/source PDF preview.
+- Analyzer left panel: analysis and parser controls.
+- Analyzer right panel: uploaded/source PDF preview.
 
 The layout should remain visually consistent across mobile, tablet, and desktop. Mobile can switch panels, but it should not duplicate the feature UI or hide core workflows behind unrelated screens.

@@ -16,11 +16,11 @@ pnpm build
 - [x] Implement responsive `WorkbenchShell` and layout hook.
 
 Workbench contract:
-- Builder and Parser share the same workbench template.
+- Builder and Analyzer share the same workbench template.
 - Builder left panel is for editing.
 - Builder right panel is for generated CV/PDF preview.
-- Parser left panel is for diagnostics and parser controls.
-- Parser right panel is for uploaded/source PDF preview.
+- Analyzer left panel is for local analysis and parser controls.
+- Analyzer right panel is for uploaded/source PDF preview.
 - Mobile, tablet, and desktop should feel like the same tool with responsive panel behavior.
 
 ## Phase 2: Core State & Types (Completed)
@@ -62,7 +62,7 @@ Current limitations:
 - External PDF-to-builder draft import is heuristic and requires review.
 - PDF font embedding (Geist Sans / Geist Mono) is deferred.
 
-## Phase 4: Parser & Engine (In Progress)
+## Phase 4: Analyzer & Parser Engine (In Progress)
 
 - [x] Add local PDF upload and text extraction.
 - [x] Implement standalone local heuristic scoring module.
@@ -70,16 +70,20 @@ Current limitations:
 - [x] Implement best-effort heuristic import for external PDFs.
 - [x] Add structured review before replacing Builder data with an external PDF draft.
 - [x] Keep uploaded PDF draft/session scoring separate from unrelated current Builder state.
-- [x] Build Parser Workbench UI with source preview, diagnostics, and scorecard.
-- [ ] Add richer parser diagnostics and field-level extraction.
+- [x] Build Analyzer Workbench UI with source preview, diagnostics, and scorecard.
+- [x] Make `/analyzer` canonical and preserve `/parser` as a permanent redirect.
+- [x] Add transparent scoring method v2 dimensions and prioritized recommendations.
+- [ ] Add richer parser field-level extraction evidence.
 
-Current parser status:
-- `/parser` extracts selectable PDF text locally with `pdfjs-dist`.
-- Scanned or protected PDFs may produce no text or an extraction error.
-- Parser diagnostics are heuristic and are not real ATS guarantees.
+Current Analyzer status:
+- `/analyzer` extracts selectable PDF text locally with `pdfjs-dist`.
+- `/parser` permanently redirects to `/analyzer`.
+- PDF is the only supported input; DOCX and plain text are not implemented.
+- Scanned or protected PDFs may produce no text and receive an actionable local-only message.
+- Analyzer checks are deterministic ATS-style signals and are not real ATS guarantees.
 - CVForge PDFs with embedded session attachments can restore builder state.
 - External PDFs can create best-effort editable drafts, but imported fields must be reviewed.
-- Parser reliability describes extraction and draft confidence. It is separate from CV quality checks.
+- Extraction confidence describes text and draft confidence. It is separate from CV quality checks.
 
 ## Phase 5: Import, Export, and Launch (In Progress)
 
@@ -88,13 +92,14 @@ Current parser status:
 - [x] PDF upload flow.
 - [x] High-fidelity session restoration from CVForge PDFs.
 - [x] Best-effort heuristic import from external PDFs.
-- [x] Builder-to-parser handoff for analyzing the current local Builder CV.
-- [ ] Final visual polish and performance audit.
+- [x] Builder-to-Analyzer handoff for analyzing the current local Builder CV.
+- [x] Final homepage, Analyzer, interaction, and SEO refinement pass.
+- [ ] Complete final human and cross-browser release review.
 
 Current import status:
 - JSON backup/restore is accessible within the Builder.
 - Current Builder CV analysis is accessible from Builder without PDF export/upload.
-- PDF restoration and heuristic import are accessible within the Parser.
+- PDF restoration and heuristic import are accessible within the Analyzer.
 - Standalone `/resume-import` route is deprecated.
 
 ## Phase 6: Pre-QA Architecture Refactoring (Completed)
@@ -113,6 +118,14 @@ Release validation:
 - [x] Playwright release smoke coverage added for responsive routes, dialog behavior, persistence, import/export, PDF session restore, and reduced motion.
 - [ ] Complete final cross-browser and human visual review against `docs/current-qa-plan.md`.
 
+## Phase 7: SEO Foundation (Completed)
+
+- [x] Add `NEXT_PUBLIC_SITE_URL` as the single canonical URL source with a local development fallback.
+- [x] Add unique metadata and canonical links for `/`, `/builder`, and `/analyzer`.
+- [x] Index the three meaningful routes and exclude redirect-only routes from the sitemap.
+- [x] Add `robots.ts`, `sitemap.ts`, factual homepage JSON-LD, and a generated 1200×630 social image.
+- [x] Add release tests for metadata, canonical URLs, JSON-LD parsing, robots, sitemap, and social image responses.
+
 ## UI Implementation Checklist
 
 Use this checklist before closing any UI slice:
@@ -121,4 +134,4 @@ Use this checklist before closing any UI slice:
 - Does the feature use existing form, section, and workbench primitives where practical?
 - Does the responsive behavior come from layout rules rather than duplicated UI?
 - Does the feature remain usable on mobile, tablet, and desktop?
-- Does Builder or Parser still follow the shared workbench contract?
+- Does Builder or Analyzer still follow the shared workbench contract?

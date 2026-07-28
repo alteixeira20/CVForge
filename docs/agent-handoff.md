@@ -6,8 +6,12 @@
 - `apps/web/src/app/page.tsx`
 - `apps/web/src/app/layout.tsx`
 - `apps/web/src/app/builder/page.tsx`
-- `apps/web/src/app/parser/page.tsx`
+- `apps/web/src/app/analyzer/page.tsx` (canonical Analyzer)
+- `apps/web/src/app/parser/page.tsx` (permanent compatibility redirect)
 - `apps/web/src/app/resume-import/page.tsx`
+- `apps/web/src/app/robots.ts`
+- `apps/web/src/app/sitemap.ts`
+- `apps/web/src/app/opengraph-image.tsx`
 
 ### State and Persistence
 - `apps/web/src/context/CVContext.tsx`
@@ -53,9 +57,10 @@
 - `apps/web/src/features/builder/workbench/useZoomControl.ts` (zoom/fit state)
 - `apps/web/src/features/builder/workbench/useDevicePixelRatio.ts` (DPR tracking)
 
-### Parser Workbench
+### Analyzer Workbench (internal parser modules)
 - `apps/web/src/features/parser/workbench/ParserWorkbench.tsx`
 - `apps/web/src/features/parser/upload/PdfUploadPanel.tsx`
+- `apps/web/src/features/parser/upload/analysisFileSupport.ts` (PDF-only boundary)
 - `apps/web/src/features/parser/upload/ParserHeuristicAction.tsx`
 - `apps/web/src/features/parser/upload/ParserRestoreAction.tsx`
 - `apps/web/src/features/parser/diagnostics/ExtractionDiagnostics.tsx`
@@ -69,6 +74,8 @@
 - `apps/web/src/lib/parser/heuristic/sectionExtraction.ts`
 - `apps/web/src/lib/parser/extractCVForgeAttachment.ts`
 - `apps/web/src/features/scoring/scoreCV.ts`
+- `apps/web/src/features/scoring/scoreSignals.ts`
+- `apps/web/src/features/scoring/scoringTypes.ts`
 
 ### Import and Export
 - `apps/web/src/features/import-export/ImportModal.tsx` (orchestrator)
@@ -98,6 +105,13 @@
 - `apps/web/src/components/layout/SiteFooter.tsx`
 - `apps/web/public/brand/`
 - `apps/web/src/styles/workspace.css`
+
+### SEO
+- `apps/web/src/lib/siteConfig.ts` (`NEXT_PUBLIC_SITE_URL` source of truth)
+- `apps/web/src/components/seo/StructuredData.tsx`
+- `apps/web/src/app/robots.ts`
+- `apps/web/src/app/sitemap.ts`
+- `apps/web/src/app/opengraph-image.tsx`
 
 ### Styles
 - `apps/web/src/styles/tokens.css`
@@ -129,11 +143,25 @@
 
 ## Recent Completed Work
 
-### Ship-readiness pass
-- Responsive homepage navigation now presents one primary Builder path, keeps Parser secondary, and moves Source out of the smallest header while retaining it in the footer.
+### Analyzer and SEO polish pass
+- `/analyzer` is canonical; `/parser` permanently redirects and `/resume-import` keeps its Builder compatibility redirect.
+- Header content is constrained to the site container and exposes Builder, Analyzer, Source, an explicit GitHub star handoff, and the primary Builder action.
+- Hero copy, trust ordering, fictional Builder preview, and Analyzer insight preview now communicate the complete product in the first viewport.
+- Analyzer scoring method v2 reports whole-number Completeness, Structure, Clarity, Impact, ATS-style compatibility, and conditional PDF Parseability dimensions.
+- Prioritized checks include detected evidence summaries, why-it-matters context, and concrete improvement suggestions.
+- PDF remains the only supported analysis format. Image-only PDFs receive actionable local-only guidance; DOCX, plain text, and cloud OCR remain unimplemented.
+- Landing cards, preview chrome, footer, and outer workbench surfaces use a restrained transparent hierarchy so the forge atmosphere remains visible.
+- Buttons move as complete surfaces, keep icon/text locked, return on press, preserve focus visibility, disable honestly, and remove transforms under reduced motion.
+- `NEXT_PUBLIC_SITE_URL` drives metadata, canonical links, robots, sitemap, JSON-LD, and social URLs. The local fallback is `http://localhost:3000`.
+- `/`, `/builder`, and `/analyzer` are the only indexable sitemap routes; each has unique metadata and meaningful visible content.
+- Homepage JSON-LD and the generated 1200×630 Open Graph image contain only shipped, factual claims.
+- Release smoke coverage now includes the full responsive matrix, header constraints, trust-row visibility, interactions, Analyzer routes/scoring/formats, metadata, JSON-LD, robots, sitemap, manifest, and social image.
+
+### Ship-readiness pass (historical baseline)
+- Responsive homepage navigation presented one primary Builder path, kept the then-named Parser secondary, and moved Source out of the smallest header while retaining it in the footer.
 - Builder entry and import dialogs use responsive dimensions, a single assistive-technology-visible modal at a time, stacked scroll locking, reliable focus recovery, and trigger restoration.
-- Builder and Parser navigation is route-aware with visible active treatment and `aria-current`.
-- The landing page has a clearer Builder-versus-Parser story, a shorter three-step workflow, six consolidated capability cards, and a concise Anvilary Labs → Anvilary Tools → CVForge footer.
+- Builder and the then-named Parser navigation became route-aware with visible active treatment and `aria-current`.
+- The landing page gained a clearer Builder-versus-Parser story, a shorter three-step workflow, six consolidated capability cards, and a concise Anvilary Labs → Anvilary Tools → CVForge footer.
 - Workbench controls, text contrast, loading/error announcements, touch targets, reduced-motion handling, and compact-width layouts were hardened.
 - Playwright release smoke coverage verifies route availability, horizontal overflow, modal focus/semantics, active navigation, reduced motion, persistence, JSON restore, embedded-PDF detection, and review-first external PDF import.
 - Next.js, PostCSS, and Sharp received security-only patch updates; standalone tracing now includes Sharp's glibc and musl libvips runtimes for local and Alpine deployments.

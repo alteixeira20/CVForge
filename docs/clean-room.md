@@ -64,12 +64,12 @@ Implemented builder sections:
 Implemented utility behavior:
 - JSON backup export and restore run in the browser and validate with `parseCVState`.
 - PDF export is generated from current CV state with `@react-pdf/renderer`.
-- Parser upload and extraction run locally in the browser with `pdfjs-dist`.
+- Analyzer upload and extraction run locally in the browser with `pdfjs-dist`; the implementation remains under internal parser modules.
 - ATS-style scoring is deterministic and transparent, but it is a diagnostic signal only.
 
 Current limitations:
 - Builder preview renders the generated PDF through the PDF.js canvas pipeline; download/export uses the same @react-pdf/renderer document with an embedded session attachment. The two paths are designed to stay visually aligned, not guaranteed identical.
-- Parser extraction depends on selectable text. External PDFs can produce a best-effort draft only after an explicit review step.
+- Analyzer extraction depends on selectable PDF text. External PDFs can produce a best-effort draft only after an explicit review step.
 - No CV data is uploaded to a server by the implemented app.
 
 ## 5. Hygiene Rules
@@ -89,10 +89,10 @@ CVForge should be recognizable as Anvilary Labs → Anvilary Tools → CVForge w
 - Prefer responsive layout rules over duplicated mobile/desktop implementations.
 - Keep pages dense enough to be useful without becoming cluttered.
 
-Builder and Parser must stay on the shared workbench template:
+Builder and Analyzer must stay on the shared workbench template:
 - Builder left: editing workbench.
 - Builder right: generated CV/PDF preview.
-- Parser left: diagnostics/parser workbench.
-- Parser right: uploaded/source PDF preview.
+- Analyzer left: local analysis and parser controls.
+- Analyzer right: uploaded/source PDF preview.
 
 Route files should compose workbench modes. Feature internals belong under `src/features`, shared UI belongs under `src/components/shared`, and responsive workbench behavior belongs in the workbench shell/hook.

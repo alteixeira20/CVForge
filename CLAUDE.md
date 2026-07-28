@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Identity
 
-CVForge is a local-first, browser-only CV builder, PDF exporter, and parser diagnostics tool. No accounts, no backend, no server-side storage. All user data lives in `localStorage` or is embedded in exported PDFs.
+CVForge is a local-first, browser-only CV Builder, PDF exporter, and ATS-style CV Analyzer. No accounts, no backend, no server-side storage. All user data lives in browser storage or is embedded in exported PDFs.
 
 ## Commands
 
@@ -28,7 +28,7 @@ CVForge is a local-first, browser-only CV builder, PDF exporter, and parser diag
 ```
 apps/web/          Next.js app (the only app)
   src/
-    app/           Next.js App Router pages (builder, parser, resume-import)
+    app/           Next.js App Router pages (builder, analyzer, parser redirect, resume-import redirect)
     context/       Global state (CVContext)
     features/      Feature modules (builder, parser, resume-pdf, import-export, scoring)
     types/cv.ts    Single Zod schema file — the data contract for the entire app
@@ -118,10 +118,10 @@ Dockerfile         Production Docker image
 
 - **No backend data.** CV data never leaves the browser unless the user exports it.
 - **Embedded sessions.** Session JSON is attached to downloaded PDFs only — never to the preview blob.
-- **Parser.** Heuristic local checks. Never claim ATS guarantee or exact server-side simulation.
+- **Analyzer.** User-facing mode at `/analyzer`; internal parser modules may retain their names. Checks are deterministic and local. Never claim an ATS guarantee or exact server-side simulation.
 - **Import.** External PDF import is best-effort and must show a review UI before replacing Builder state.
 - **No fake UI.** No `href="#"`, no placeholder text, no "Save to server", no "Share", no "RoadForge / roadmap / phase / sprint / backlog" copy.
-- **Typography.** No em dashes (`—`) or en dashes (`–`). ASCII hyphens (`-`) only.
+- **Typography.** Avoid casual em dashes (`—`) and en dashes (`–`). The approved product headline and metadata may use a single em dash; use ASCII hyphens elsewhere.
 
 ## Before Editing
 

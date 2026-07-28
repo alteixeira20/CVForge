@@ -1,13 +1,13 @@
 # CVForge
 
-CVForge is a local-first CV builder and parser workbench built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
+CVForge is a local-first CV Builder and ATS-style CV Analyzer built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
 
-The current app focuses on structured CV editing, browser localStorage persistence, JSON backup/import, PDF export with session embedding, CVForge PDF session restore, and local parser diagnostics in a shared workbench UI.
+The current app focuses on structured CV editing, browser persistence, JSON backup/import, PDF export with session embedding, CVForge PDF session restore, and transparent local analysis in a shared workbench UI.
 
 ## Product Principles
 
 - **Local-Only Privacy**: CVForge does not use a database, account system, or server-side persistence. Your data remains in your browser's `localStorage`.
-- **Heuristic Diagnostics**: Parser scoring and diagnostics are rule-based local checks. They are intended as useful signals for manual CV polish, not as a hiring outcome guarantee or an exact simulation of server-side ATS parsing.
+- **Transparent Analysis**: Analyzer scoring uses deterministic local checks across completeness, structure, clarity, impact, and ATS-style compatibility. Parseability is added only for an uploaded PDF. These are improvement signals, not a hiring outcome guarantee or an exact simulation of every ATS.
 - **Reliable Portability**: Validated JSON export/import is the simplest reliable way to move or back up your full session data. CVForge-generated PDFs can also include an embedded session attachment for restoration when that attachment is present.
 
 ## Current Status
@@ -26,17 +26,17 @@ Implemented:
 - JSON backup export and validated JSON restore.
 - PDF download generated from current CV data with embedded session metadata.
 - Section visibility and bullet visibility controls.
-- Local PDF upload, source preview, text extraction, and parser diagnostics.
-- Direct Builder-to-Parser analysis for the current local Builder CV without exporting or uploading a file.
+- Local PDF upload, source preview, text extraction, and CV analysis.
+- Direct Builder-to-Analyzer analysis for the current local Builder CV without exporting or uploading a file.
 - CVForge-generated PDF detection and embedded session restore.
 - Best-effort external PDF draft review and import that must be checked before use.
-- Local heuristic scoring with transparent issue rows.
+- Local scoring method v2 with whole-number dimensions, prioritized issues, detected evidence summaries, explanations, and concrete suggestions.
 
 Planned (Pinned Future Slices):
 - Drag-and-drop section reordering (arrow-based reordering is shipped).
 - PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
 - Photo support and photo-layout PDF template.
-- Richer parser extraction and scoring checks.
+- Richer parser extraction and Analyzer checks.
 
 ## Development Workflow
 
@@ -63,16 +63,24 @@ make install
 
 Follow the production build steps above. Ensure you have a Node.js 20+ environment.
 
+Set `NEXT_PUBLIC_SITE_URL` to the confirmed public origin at build time:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example pnpm build
+```
+
+This value is the single source for canonical links, Open Graph URLs, JSON-LD URLs, `robots.txt`, and `sitemap.xml`. Local development safely falls back to `http://localhost:3000`; do not deploy production metadata with that fallback.
+
 ### Docker
 
 CVForge includes a multi-stage, non-root Docker configuration for self-hosting.
 
 ```bash
 # Build the image
-make docker-build
+make docker-build SITE_URL=https://your-confirmed-domain.example
 
 # Start the container
-make docker-up
+NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example make docker-up
 
 # View logs
 make docker-logs
@@ -82,6 +90,11 @@ make docker-down
 ```
 
 The application will be available at `http://localhost:3000`.
+If that port is occupied, use a matching host port and site URL, for example:
+
+```bash
+DOCKER_PORT=4321 NEXT_PUBLIC_SITE_URL=http://localhost:4321 make docker-check
+```
 
 ## Anvilary Product Family
 
@@ -94,13 +107,33 @@ Interface rules:
 - Keep density useful without making the page feel cluttered.
 - Make mobile, tablet, and desktop layouts feel like the same app, not separate products.
 
-Builder and Parser use the same workbench pattern:
+Builder and Analyzer use the same workbench pattern:
 - Builder left panel: editing workbench.
 - Builder right panel: generated CV/PDF preview.
-- Parser left panel: diagnostics/parser workbench.
-- Parser right panel: uploaded/source PDF preview.
+- Analyzer left panel: local analysis and import controls (implemented internally by parser modules).
+- Analyzer right panel: uploaded/source PDF preview.
 
-Switching between Builder and Parser should feel like changing modes inside one tool.
+Switching between Builder and Analyzer should feel like changing modes inside one tool.
+
+## Analyzer, Routes, and Supported Formats
+
+- `/analyzer` is the canonical user-facing Analyzer route.
+- `/parser` is a permanent compatibility redirect to `/analyzer`.
+- `/resume-import` retains its compatibility redirect to `/builder`.
+- PDF is the only supported Analyzer input format in this release.
+- DOCX and plain-text analysis are not implemented or advertised.
+- Selectable PDF text is extracted locally with `pdfjs-dist`.
+- Image-only, scanned, or protected PDFs receive an honest no-selectable-text message; CVForge does not use cloud OCR.
+- JSON remains the most reliable structured restore path. A CVForge PDF may restore an embedded session, while an external PDF produces a best-effort draft that must be reviewed.
+
+## SEO Architecture
+
+- `apps/web/src/lib/siteConfig.ts` owns the site URL and page copy constants.
+- App Router metadata provides unique titles, descriptions, canonicals, Open Graph, and Twitter tags for `/`, `/builder`, and `/analyzer`.
+- `robots.ts` and `sitemap.ts` include only the three canonical, indexable pages.
+- `/parser` and `/resume-import` are redirect-only and absent from the sitemap.
+- `opengraph-image.tsx` generates the shared 1200×630 social image.
+- Homepage JSON-LD describes the factual `WebSite`, `SoftwareApplication`, and Anvilary Labs relationship.
 
 ## Validation Commands
 
@@ -111,7 +144,7 @@ pnpm build
 pnpm test:e2e
 ```
 
-Playwright needs a Chromium browser. Install its managed browser with `pnpm exec playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium executable. Parser diagnostics are local rule-based checks and should not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
+Playwright needs a Chromium browser. Install its managed browser with `pnpm exec playwright install chromium`, or set `PLAYWRIGHT_CHROMIUM_PATH` to an existing Chromium executable. Analyzer results are local rule-based signals and must not be described as real ATS guarantees. External PDF draft import is heuristic and requires manual review.
 
 ## Clean-Room Rebuild
 
