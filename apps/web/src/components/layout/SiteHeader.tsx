@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Brand } from '@/components/ui/Brand'
-import { Icon } from '@/components/ui/Icon'
 
 interface SiteHeaderProps {
   onBuilderClick?: () => void
@@ -21,16 +20,10 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
   return (
     <header className={`site-header ${scrolled ? 'scrolled' : ''}`}>
       <Brand href="/" />
-      
-      <span className="spacer" />
-      
-      <div className="actions">
+
+      <nav aria-label="Main">
         {onBuilderClick ? (
-          <button 
-            type="button"
-            className="nav-link"
-            onClick={onBuilderClick}
-          >
+          <button type="button" className="nav-link" onClick={onBuilderClick}>
             Builder
           </button>
         ) : (
@@ -38,20 +31,33 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
             Builder
           </Link>
         )}
-        
+
         <Link href="/parser" className="nav-link">
           Parser
         </Link>
-        
-        <a 
-          href="https://github.com/alteixeira20/CVForge" 
-          target="_blank" 
-          rel="noreferrer"
-          className="btn sm bg-bg shadow-sm ml-4 site-github-action"
+
+        <a
+          href="https://github.com/alteixeira20/CVForge"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-link nav-source"
         >
-          <Icon name="github" size={14} />
-          <span>Star</span>
+          Source
         </a>
+      </nav>
+
+      <span className="spacer" />
+
+      <div className="actions">
+        {onBuilderClick ? (
+          <button type="button" className="btn primary sm" onClick={onBuilderClick}>
+            Create CV
+          </button>
+        ) : (
+          <Link href="/builder" className="btn primary sm">
+            Create CV
+          </Link>
+        )}
       </div>
     </header>
   )

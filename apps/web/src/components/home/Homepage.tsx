@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { EmberBackground } from '@/components/ui/EmberBackground'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { HeroSection } from './HeroSection'
@@ -24,6 +24,7 @@ export function Homepage() {
 
   return (
     <div className="home">
+      <EmberBackground />
       <SiteHeader onBuilderClick={openEntryModal} />
       <HeroSection onCreateClick={openEntryModal} />
       <HowItWorksSection />
@@ -35,10 +36,6 @@ export function Homepage() {
         onClose={closeEntryModal}
         onComplete={handleComplete}
       />
-
-      <div className="fixed bottom-5 right-5 z-40">
-        <ThemeToggle />
-      </div>
     </div>
   )
 }

@@ -1,14 +1,6 @@
 /* --- Content sections ------------------------------------------------------- */
-.section { padding: 64px 0 48px; }
-@media (min-width: 960px) {
-  .section {
-    min-height: calc(100svh - var(--header-h));
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 48px 0;
-  }
-}
+/* Natural-height sections with consistent breathing room - grids never clip. */
+.section { padding: clamp(52px, 7vh, 80px) 0; }
 
 .section h2 {
   font-family: var(--font-display);

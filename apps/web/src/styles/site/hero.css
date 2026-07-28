@@ -35,12 +35,17 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+/* Product facts - shown beneath the preview, RoadForge landing pattern */
 .hero .meta-row {
-  display: flex; gap: 16px;
+  display: flex; gap: 8px 20px;
   justify-content: center;
   flex-wrap: wrap;
-  font-size: 13px;
+  margin-top: clamp(4px, 1vh, 10px);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
   color: var(--ink-3);
 }
 .hero .meta-row span { display: inline-flex; align-items: center; gap: 6px; }
+.hero .meta-row svg { color: var(--ember); opacity: 0.85; }
 

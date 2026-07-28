@@ -5,5 +5,5 @@
   .section { padding: 52px 0 32px; }
   .site-footer { padding: 20px 20px; margin-top: 16px; }
   .site-footer .row { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .site-footer .links { gap: 14px; }
+  .site-footer .dot { display: none; }
 }

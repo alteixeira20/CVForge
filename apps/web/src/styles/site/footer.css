@@ -14,7 +14,10 @@
   gap: 24px;
   flex-wrap: wrap;
 }
-.site-footer a { color: var(--ink-3); }
+.site-footer .dot { color: var(--ink-4); }
+.site-footer a { color: var(--ink-2); transition: color 160ms; }
 .site-footer a:hover { color: var(--ink); }
-.site-footer .links { display: flex; gap: 18px; flex-wrap: wrap; }
+.site-footer .row.sub { margin-top: 16px; color: var(--ink-4); font-size: 13px; }
+.site-footer .row.sub a { color: var(--ink-3); }
+.site-footer .row.sub a:hover { color: var(--ink); }
 

@@ -21,36 +21,44 @@ export function HowItWorksSection() {
       </div>
       <div className="steps">
         <div className="step-card">
-          <div className="step-ic"><Icon name="device" size={17} /></div>
           <span className="num">STEP 01</span>
-          <h3>Build your CV locally.</h3>
+          <div className="step-head">
+            <div className="step-ic"><Icon name="device" size={17} /></div>
+            <h3>Build your CV locally.</h3>
+          </div>
           <p>
             Use the Builder to edit structured CV sections. Changes are
             saved in your browser localStorage, without an account.
           </p>
         </div>
         <div className="step-card">
-          <div className="step-ic"><Icon name="download" size={17} /></div>
           <span className="num">STEP 02</span>
-          <h3>Export PDF or JSON.</h3>
+          <div className="step-head">
+            <div className="step-ic"><Icon name="download" size={17} /></div>
+            <h3>Export PDF or JSON.</h3>
+          </div>
           <p>
             Download a PDF for sharing or a JSON backup for the most
             reliable full-session restore path.
           </p>
         </div>
         <div className="step-card">
-          <div className="step-ic"><Icon name="search" size={17} /></div>
           <span className="num">STEP 03</span>
-          <h3>Analyze a PDF locally.</h3>
+          <div className="step-head">
+            <div className="step-ic"><Icon name="search" size={17} /></div>
+            <h3>Analyze a PDF locally.</h3>
+          </div>
           <p>
             Upload a PDF in Parser to inspect selectable text and
             local heuristic diagnostics. No server upload is required.
           </p>
         </div>
         <div className="step-card">
-          <div className="step-ic"><Icon name="import" size={17} /></div>
           <span className="num">STEP 04</span>
-          <h3>Restore or create a draft.</h3>
+          <div className="step-head">
+            <div className="step-ic"><Icon name="import" size={17} /></div>
+            <h3>Restore or create a draft.</h3>
+          </div>
           <p>
             CVForge PDFs can restore embedded sessions. External PDFs
             can only create best-effort drafts that need review.

@@ -7,15 +7,29 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="row">
         <Brand />
-        <span style={{ color: 'var(--ink-4)' }}>·</span>
-        <span>Local-first CV builder and parser</span>
+        <span className="dot" aria-hidden="true">·</span>
+        <span>
+          Part of{' '}
+          <a href="https://anvilary.tools" target="_blank" rel="noopener noreferrer">
+            Anvilary Tools
+          </a>
+        </span>
         <span className="flex-1" />
         <span>No account or backend CV storage.</span>
       </div>
-      <div className="row sub" style={{ marginTop: 16, color: 'var(--ink-4)', fontSize: 13 }}>
-        <span>CVForge stores CV data in your browser localStorage.</span>
+      <div className="row sub">
+        <a href="https://anvilary.tools" target="_blank" rel="noopener noreferrer">
+          anvilary.tools
+        </a>
+        <a
+          href="https://github.com/alteixeira20/CVForge"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Source
+        </a>
         <span className="flex-1" />
-        <span>Use JSON export for the simplest reliable backup and restore path.</span>
+        <span>CV data stays in your browser localStorage; JSON export is the reliable backup path.</span>
       </div>
     </footer>
   )
