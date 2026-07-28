@@ -194,7 +194,9 @@
 - PDF remains the only supported analysis format. Image-only PDFs receive actionable local-only guidance; DOCX, plain text, and cloud OCR remain unimplemented.
 - Landing cards, preview chrome, footer, and outer workbench surfaces use a restrained transparent hierarchy so the forge atmosphere remains visible.
 - Buttons move as complete surfaces, keep icon/text locked, return on press, preserve focus visibility, disable honestly, and remove transforms under reduced motion.
-- `NEXT_PUBLIC_SITE_URL` drives metadata, canonical links, robots, sitemap, JSON-LD, and social URLs. The local fallback is `http://localhost:3000`.
+- `NEXT_PUBLIC_SITE_URL` drives metadata, canonical links, robots, sitemap, JSON-LD, and
+  social URLs. Development uses `http://localhost:3000`; production defaults to the
+  confirmed public origin and the release gate still requires it explicitly.
 - `/`, `/builder`, and `/analyzer` are the only indexable sitemap routes; each has unique metadata and meaningful visible content.
 - Homepage JSON-LD and the generated 1200×630 Open Graph image contain only shipped, factual claims.
 - Release smoke coverage now includes the full responsive matrix, header constraints, trust-row visibility, interactions, Analyzer routes/scoring/formats, metadata, JSON-LD, robots, sitemap, manifest, and social image.
