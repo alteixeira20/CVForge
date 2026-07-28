@@ -26,6 +26,7 @@ export interface ScoreDimension {
   id: ScoreDimensionId
   label: string
   score: number
+  weight: number
   summary: string
 }
 
@@ -33,7 +34,9 @@ export interface ScoreResult {
   score: number
   maxScore: number
   band: 'Strong signals' | 'Solid foundation' | 'Needs attention' | 'Limited signals'
-  methodVersion: 2
+  methodVersion: 3
+  language: 'English' | 'Portuguese (Portugal)' | 'Language-neutral fallback'
+  methodology: string
   dimensions: ScoreDimension[]
   issues: ScoreIssue[]
 }

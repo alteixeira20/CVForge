@@ -1,18 +1,25 @@
 import { type CVState } from '@/types/cv'
-import { binaryIssue, measuredIssue } from './scoreIssues'
+import { type PdfExtractionResult } from '@/lib/parser/pdfTextExtraction'
+import { analyzeExtractionEvidence, type PdfPageEvidence } from '@/lib/parser/extractionDiagnostics'
+import { binaryIssue, createIssue, measuredIssue } from './scoreIssues'
 import {
-  actionBulletPoints,
+  actionLanguagePoints,
+  languageLabel,
+  recognizableSectionHeadings,
+  selectAnalyzerLanguage,
+  type AnalyzerLanguage,
+} from './languageDiagnostics'
+import {
   compactnessPoints,
   dateAndRolePoints,
   hasLinks,
-  hasRecognizableSectionTitles,
   hasSkills,
   hasVisibleUrls,
   impactBulletPoints,
   metricPoints,
-  parseabilityPoints,
   summaryPoints,
 } from './scoreSignals'
+import { normalizedVisibleText } from './visibleText'
 import {
   type ScoreDimension,
   type ScoreDimensionId,
@@ -23,20 +30,31 @@ import {
 export function scoreCV(
   state: CVState,
   extractedText = '',
-  options: { includeExtraction?: boolean } = {},
+  options: {
+    includeExtraction?: boolean
+    extraction?: PdfExtractionResult
+    language?: AnalyzerLanguage
+  } = {},
 ): ScoreResult {
-  const issues = buildIssues(state, extractedText, options.includeExtraction ?? false)
-  const dimensions = buildDimensions(issues)
-  const score = Math.round(
-    dimensions.reduce((total, dimension) => total + dimension.score, 0) /
-      dimensions.length,
-  )
+  const visibleText = normalizedVisibleText(state)
+  const language = selectAnalyzerLanguage(state, visibleText, options.language)
+  const includeExtraction = options.includeExtraction ?? false
+  const issues = buildIssues(state, extractedText, includeExtraction, language, options.extraction)
+  const dimensions = buildDimensions(issues, includeExtraction)
+  const score = Math.round(dimensions.reduce(
+    (total, dimension) => total + (dimension.score * dimension.weight / 100),
+    0,
+  ))
 
   return {
     score,
     maxScore: 100,
     band: scoreBand(score),
-    methodVersion: 2,
+    methodVersion: 3,
+    language: languageName(language),
+    methodology: includeExtraction
+      ? 'Weighted local checks: parseability 22%, completeness 18%, impact 18%, structure 16%, clarity 16%, and ATS-style compatibility 10%.'
+      : 'Weighted local checks: completeness 23%, impact 23%, structure 20%, clarity 20%, and ATS-style compatibility 14%. Parseability is added only when a PDF is uploaded.',
     dimensions,
     issues,
   }
@@ -46,14 +64,18 @@ function buildIssues(
   state: CVState,
   extractedText: string,
   includeExtraction: boolean,
+  language: AnalyzerLanguage,
+  extraction?: PdfExtractionResult,
 ): ScoreIssue[] {
   const { profile, workExperience, education, projects } = state.resume
   const summaryScore = summaryPoints(profile.summary)
   const dateRoleScore = dateAndRolePoints(state)
   const bulletScore = impactBulletPoints(state)
-  const actionScore = actionBulletPoints(state)
+  const actionScore = actionLanguagePoints(state, language)
   const metricsScore = metricPoints(state)
-  const compactScore = compactnessPoints(state, extractedText)
+  const compactScore = compactnessPoints(state)
+  const headingScore = recognizableSectionHeadings(state, language)
+  const selectedLanguage = languageLabel(language)
 
   const issues = [
     binaryIssue({
@@ -186,9 +208,13 @@ function buildIssues(
     measuredIssue({
       id: 'action-language',
       label: 'Clear action language',
-      detected: `${actionScore.actionLed} of ${actionScore.total} bullets start with a clear action verb.`,
+      detected: language === 'neutral'
+        ? `${actionScore.total} bullets were assessed with language-neutral fallback; action-verb vocabulary was not scored as English.`
+        : `${actionScore.actionLed} of ${actionScore.total} bullets start with a recognized ${selectedLanguage} action verb.`,
       why: 'Direct action language makes achievements easier to understand quickly.',
-      suggestion: 'Start key bullets with a specific action verb such as built, led, improved, reduced, or delivered.',
+      suggestion: language === 'pt-PT'
+        ? 'Comece os pontos principais com verbos de ação específicos, como liderei, desenvolvi, melhorei, reduzi ou entreguei.'
+        : 'Start key bullets with a specific action verb such as built, led, improved, reduced, or delivered.',
       dimension: 'impact',
       priority: 'medium',
       points: actionScore.points,
@@ -198,7 +224,7 @@ function buildIssues(
       id: 'metrics',
       label: 'Quantified impact',
       detected: metricsScore.hasMetric
-        ? 'At least one bullet contains a quantified result.'
+        ? `${metricsScore.matchingBullets} bullet${metricsScore.matchingBullets === 1 ? '' : 's'} contain likely measurable outcomes.`
         : 'No quantified result was detected in experience or project bullets.',
       why: 'Honest numbers can make scope and outcomes more concrete.',
       suggestion: 'Where accurate, add scale, time, quality, revenue, adoption, or efficiency measures.',
@@ -234,31 +260,30 @@ function buildIssues(
     binaryIssue({
       id: 'section-headings',
       label: 'Recognizable section headings',
-      detected: hasRecognizableSectionTitles(state)
-        ? 'Core sections use recognizable headings.'
+      detected: headingScore.recognized
+        ? headingScore.fallback
+          ? 'Core section titles are present; language-neutral fallback did not judge their vocabulary.'
+          : `Core sections use headings recognized for ${selectedLanguage}.`
         : 'One or more core section headings may be difficult to recognize.',
       why: 'Conventional headings help readers and rule-based extractors identify content.',
-      suggestion: 'Use clear headings such as Experience, Education, Projects, and Skills.',
+      suggestion: language === 'pt-PT'
+        ? 'Use títulos claros como Experiência Profissional, Formação Académica, Projetos e Competências.'
+        : 'Use clear headings such as Experience, Education, Projects, and Skills.',
       dimension: 'ats-compatibility',
       priority: 'medium',
-      passed: hasRecognizableSectionTitles(state),
+      passed: headingScore.recognized,
       maxPoints: 8,
     }),
   ]
 
   if (includeExtraction) {
-    const parseScore = parseabilityPoints(extractedText)
-    issues.push(measuredIssue({
-      id: 'selectable-text',
-      label: 'Selectable text',
-      detected: parseScore.detected,
-      why: 'ATS-style extraction depends on readable text rather than only page images.',
-      suggestion: 'Export a text-based PDF and avoid flattening the document into an image.',
+    const diagnostics = extraction?.diagnostics
+      ?? analyzeExtractionEvidence(fallbackPages(extraction, extractedText))
+    issues.push(...diagnostics.signals.map((signal) => createIssue({
+      ...signal,
+      id: `extraction-${signal.id}`,
       dimension: 'parseability',
-      priority: 'high',
-      points: parseScore.points,
-      maxPoints: 10,
-    }))
+    })))
   }
 
   return issues
@@ -291,7 +316,26 @@ const DIMENSION_DETAILS: Record<ScoreDimensionId, { label: string; summary: stri
   },
 }
 
-function buildDimensions(issues: ScoreIssue[]): ScoreDimension[] {
+const DIMENSION_WEIGHTS: Record<'builder' | 'pdf', Record<ScoreDimensionId, number>> = {
+  builder: {
+    completeness: 23,
+    structure: 20,
+    clarity: 20,
+    impact: 23,
+    'ats-compatibility': 14,
+    parseability: 0,
+  },
+  pdf: {
+    completeness: 18,
+    structure: 16,
+    clarity: 16,
+    impact: 18,
+    'ats-compatibility': 10,
+    parseability: 22,
+  },
+}
+
+function buildDimensions(issues: ScoreIssue[], includeExtraction: boolean): ScoreDimension[] {
   const ids = Array.from(new Set(issues.map((issue) => issue.dimension)))
   return ids.map((id) => {
     const dimensionIssues = issues.filter((issue) => issue.dimension === id)
@@ -301,9 +345,32 @@ function buildDimensions(issues: ScoreIssue[]): ScoreDimension[] {
       id,
       label: DIMENSION_DETAILS[id].label,
       score: Math.round((points / maxPoints) * 100),
+      weight: DIMENSION_WEIGHTS[includeExtraction ? 'pdf' : 'builder'][id],
       summary: DIMENSION_DETAILS[id].summary,
     }
   })
+}
+
+function fallbackPages(extraction: PdfExtractionResult | undefined, extractedText: string): PdfPageEvidence[] {
+  const pageTexts = extraction?.pageTexts?.length ? extraction.pageTexts : [extractedText]
+  return pageTexts.map((text) => {
+    const lines = text.split('\n').filter(Boolean)
+    return {
+      text,
+      lineCount: lines.length,
+      itemCount: lines.length,
+      fragmentedLineRatio: lines.length
+        ? lines.filter((line) => line.trim().length < 20).length / lines.length
+        : 0,
+      possibleColumnOrder: false,
+    }
+  })
+}
+
+function languageName(language: AnalyzerLanguage): ScoreResult['language'] {
+  if (language === 'en') return 'English'
+  if (language === 'pt-PT') return 'Portuguese (Portugal)'
+  return 'Language-neutral fallback'
 }
 
 function scoreBand(score: number): ScoreResult['band'] {

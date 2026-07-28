@@ -13,6 +13,9 @@ export interface ScorePanelTarget {
 export function ScorePanel({ result, target }: { result: ScoreResult | null; target: ScorePanelTarget }) {
   const [isExpanded, setIsExpanded] = useState(true)
   const orderedIssues = result ? [...result.issues].sort(compareIssues) : []
+  const improvements = orderedIssues.filter((issue) => issue.status === 'fail')
+  const warnings = orderedIssues.filter((issue) => issue.status === 'warn')
+  const passed = orderedIssues.filter((issue) => issue.status === 'pass')
 
   return (
     <WorkbenchSectionCard
@@ -27,14 +30,34 @@ export function ScorePanel({ result, target }: { result: ScoreResult | null; tar
         {result ? (
           <>
             <DimensionGrid result={result} />
-            <div className="space-y-3">
-              <div>
-                <h3 className="text-sm font-semibold text-ink">Prioritized checks</h3>
-                <p className="mt-1 text-[11px] leading-relaxed text-ink-3">
-                  High-priority gaps appear first. Every score comes from the explicit checks below.
-                </p>
+            <ScoreIssueGroup
+              title="Highest-priority improvements"
+              description="Failed checks appear first, ordered by priority."
+              issues={improvements}
+              emptyMessage="No failed checks were detected."
+            />
+            {warnings.length > 0 && (
+              <ScoreIssueGroup
+                title="Warnings"
+                description="Partial signals worth reviewing; they are not guarantees of a parsing problem."
+                issues={warnings}
+              />
+            )}
+            <details className="rounded-lg border border-border-faint bg-bg-inset/15 p-4">
+              <summary className="cursor-pointer text-xs font-semibold text-ink-3">
+                Passed checks ({passed.length})
+              </summary>
+              <div className="mt-4 space-y-3">
+                {passed.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
               </div>
-              {orderedIssues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
+            </details>
+            <div className="rounded-lg border border-border-faint bg-bg-inset/20 p-4">
+              <h3 className="text-xs font-semibold text-ink">How the overall score works</h3>
+              <p className="mt-2 text-[11px] leading-relaxed text-ink-3">{result.methodology}</p>
+              <p className="mt-2 text-[10px] leading-relaxed text-ink-4">
+                Detected language: {result.language}. Scores are deterministic whole-number rule results,
+                not commercial ATS equivalence, acceptance prediction, or recruiter outcome prediction.
+              </p>
             </div>
           </>
         ) : (
@@ -57,7 +80,12 @@ function ScoreHeader({ result, target }: { result: ScoreResult | null; target: S
         <p className="text-[10px] uppercase tracking-[0.16em] text-ember font-semibold">{target.label}</p>
         {result && (
           <div className="text-right">
-            <strong className="block text-2xl font-bold text-ember">{result.score}</strong>
+            <strong
+              className="block text-2xl font-bold text-ember"
+              aria-label={`Overall ATS-style analysis score: ${result.score} out of 100`}
+            >
+              {result.score}
+            </strong>
             <span className="text-[10px] text-ink-4">{result.band}</span>
           </div>
         )}
@@ -86,9 +114,39 @@ function DimensionGrid({ result }: { result: ScoreResult }) {
             <strong className="text-sm text-ember">{dimension.score}</strong>
           </div>
           <p className="mt-2 text-[10px] leading-relaxed text-ink-4">{dimension.summary}</p>
+          <p className="mt-1 text-[9px] uppercase tracking-wider text-ink-4">
+            {dimension.weight}% overall weight
+          </p>
         </div>
       ))}
     </div>
+  )
+}
+
+function ScoreIssueGroup({
+  title,
+  description,
+  issues,
+  emptyMessage,
+}: {
+  title: string
+  description: string
+  issues: ScoreIssue[]
+  emptyMessage?: string
+}) {
+  return (
+    <section className="space-y-3">
+      <div>
+        <h3 className="text-sm font-semibold text-ink">{title}</h3>
+        <p className="mt-1 text-[11px] leading-relaxed text-ink-3">{description}</p>
+      </div>
+      {issues.map((issue) => <ScoreIssueRow key={issue.id} issue={issue} />)}
+      {!issues.length && emptyMessage && (
+        <p className="rounded-lg border border-border-faint bg-bg-inset/15 p-4 text-xs text-ink-3">
+          {emptyMessage}
+        </p>
+      )}
+    </section>
   )
 }
 

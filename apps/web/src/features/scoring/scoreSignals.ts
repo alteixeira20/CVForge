@@ -1,4 +1,6 @@
 import { type CVState } from '@/types/cv'
+import { hasQuantifiedImpact } from './impactMetrics'
+import { normalizedVisibleText } from './visibleText'
 
 export function hasLinks(state: CVState) {
   const { website, github, linkedin } = state.resume.profile
@@ -21,19 +23,23 @@ export function hasVisibleUrls(state: CVState, text: string) {
 }
 
 export function metricPoints(state: CVState) {
-  const hasMetric = collectBullets(state).some((bullet) => /\d/.test(bullet))
-  return { hasMetric, points: hasMetric ? 8 : 2 }
+  const matchingBullets = collectBullets(state).filter(hasQuantifiedImpact)
+  return {
+    hasMetric: matchingBullets.length > 0,
+    matchingBullets: matchingBullets.length,
+    points: matchingBullets.length > 0 ? 8 : 0,
+  }
 }
 
-export function compactnessPoints(state: CVState, text: string) {
-  const sourceLength = text.trim().length || JSON.stringify(state.resume).length
+export function compactnessPoints(state: CVState) {
+  const sourceLength = normalizedVisibleText(state).length
   if (sourceLength < 6000) {
-    return { points: 6, detected: `The analyzed source contains about ${sourceLength} characters.` }
+    return { points: 6, sourceLength, detected: `The visible CV content contains about ${sourceLength} characters.` }
   }
   if (sourceLength < 9000) {
-    return { points: 4, detected: `The analyzed source contains about ${sourceLength} characters and may benefit from trimming.` }
+    return { points: 4, sourceLength, detected: `The visible CV content contains about ${sourceLength} characters and may benefit from trimming.` }
   }
-  return { points: 1, detected: `The analyzed source contains about ${sourceLength} characters and appears unusually long.` }
+  return { points: 1, sourceLength, detected: `The visible CV content contains about ${sourceLength} characters and appears unusually long.` }
 }
 
 export function summaryPoints(summary: string) {
@@ -70,46 +76,6 @@ export function impactBulletPoints(state: CVState) {
     substantive,
     total: bullets.length,
   }
-}
-
-export function actionBulletPoints(state: CVState) {
-  const bullets = collectBullets(state).filter((bullet) => bullet.trim())
-  const actionPattern = /^(built|created|delivered|designed|developed|drove|improved|increased|launched|led|managed|optimized|reduced|resolved|scaled|shipped|streamlined|implemented|automated|coordinated|owned)\b/i
-  const actionLed = bullets.filter((bullet) => actionPattern.test(bullet.trim())).length
-  if (!bullets.length) return { points: 0, actionLed: 0, total: 0 }
-  const ratio = actionLed / bullets.length
-  return {
-    points: ratio >= 0.6 ? 6 : ratio >= 0.3 ? 3 : actionLed > 0 ? 1 : 0,
-    actionLed,
-    total: bullets.length,
-  }
-}
-
-export function hasRecognizableSectionTitles(state: CVState) {
-  const titles = state.settings.sectionTitles
-  const patterns = {
-    workExperience: /\b(experience|employment|work)\b/i,
-    education: /\b(education|training|qualifications?)\b/i,
-    projects: /\b(projects?|portfolio)\b/i,
-    skills: /\b(skills?|competencies|technologies)\b/i,
-  }
-  return (
-    patterns.workExperience.test(titles.workExperience) &&
-    patterns.education.test(titles.education) &&
-    patterns.projects.test(titles.projects) &&
-    patterns.skills.test(titles.skills)
-  )
-}
-
-export function parseabilityPoints(text: string) {
-  const length = text.trim().length
-  if (length >= 200) {
-    return { points: 10, detected: `${length} selectable characters were extracted from the PDF.` }
-  }
-  if (length >= 40) {
-    return { points: 4, detected: `Only ${length} selectable characters were extracted from the PDF.` }
-  }
-  return { points: 0, detected: 'Little or no selectable text was extracted from the PDF.' }
 }
 
 function collectLinks(state: CVState) {

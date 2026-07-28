@@ -29,7 +29,10 @@ export function resolveParserAnalysisTarget(
 
   if (document.embeddedState) {
     return {
-      score: scoreCV(document.embeddedState, extractedText, { includeExtraction: true }),
+      score: scoreCV(document.embeddedState, extractedText, {
+        includeExtraction: true,
+        extraction: document.extraction,
+      }),
       isEmpty: false,
       target: {
         label: 'CVForge Embedded Session',
@@ -41,7 +44,10 @@ export function resolveParserAnalysisTarget(
 
   if (document.heuristic) {
     return {
-      score: scoreCV(document.heuristic.draft, extractedText, { includeExtraction: true }),
+      score: scoreCV(document.heuristic.draft, extractedText, {
+        includeExtraction: true,
+        extraction: document.extraction,
+      }),
       isEmpty: false,
       target: {
         label: 'Best-Effort External PDF Draft',

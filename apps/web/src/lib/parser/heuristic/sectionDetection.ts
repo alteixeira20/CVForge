@@ -2,13 +2,13 @@ import { type SectionKey, type DetectedSection, type CurrentSection } from './he
 import { extractDateRange } from './dateParsing'
 
 export const SECTION_DEFINITIONS: Array<{ key: SectionKey; label: string; pattern: RegExp }> = [
-  { key: 'summary', label: 'Summary / Profile', pattern: /^(summary|profile|about|professional summary|executive summary)$/i },
-  { key: 'experience', label: 'Work / Experience', pattern: /^(work experience|professional experience|experience|employment|work history|professional history|employment history)$/i },
-  { key: 'education', label: 'Education', pattern: /^(education|academic background|academic|scholastic history)$/i },
-  { key: 'skills', label: 'Skills', pattern: /^(skills|technical skills|core skills|expertise|technical expertise|skills & expertise)$/i },
-  { key: 'projects', label: 'Projects', pattern: /^(projects|selected projects|personal projects|academic projects)$/i },
-  { key: 'languages', label: 'Languages', pattern: /^(languages|language skills|linguistic skills)$/i },
-  { key: 'certifications', label: 'Certifications', pattern: /^(certifications|certificates|licenses|accreditations)$/i },
+  { key: 'summary', label: 'Summary / Profile', pattern: /^(summary|profile|about|professional summary|executive summary|resumo|perfil|perfil profissional)$/i },
+  { key: 'experience', label: 'Work / Experience', pattern: /^(work experience|professional experience|experience|employment|work history|professional history|employment history|experi[eê]ncia|experi[eê]ncia profissional|historial profissional)$/i },
+  { key: 'education', label: 'Education', pattern: /^(education|academic background|academic|scholastic history|forma[cç][aã]o|forma[cç][aã]o acad[eé]mica|educa[cç][aã]o|qualifica[cç][oõ]es)$/i },
+  { key: 'skills', label: 'Skills', pattern: /^(skills|technical skills|core skills|expertise|technical expertise|skills & expertise|compet[eê]ncias|aptid[oõ]es|tecnologias|conhecimentos t[eé]cnicos)$/i },
+  { key: 'projects', label: 'Projects', pattern: /^(projects|selected projects|personal projects|academic projects|projetos|projetos selecionados|projetos pessoais|projetos acad[eé]micos)$/i },
+  { key: 'languages', label: 'Languages', pattern: /^(languages|language skills|linguistic skills|idiomas|l[ií]nguas|compet[eê]ncias lingu[ií]sticas)$/i },
+  { key: 'certifications', label: 'Certifications', pattern: /^(certifications|certificates|licenses|accreditations|certifica[cç][oõ]es|certificados|acredita[cç][oõ]es)$/i },
   { key: 'awards', label: 'Awards', pattern: /^(awards|honors|awards & honors|recognition)$/i },
   { key: 'publications', label: 'Publications', pattern: /^(publications|papers|presentations)$/i },
   { key: 'volunteering', label: 'Volunteering', pattern: /^(volunteering|volunteer experience|community service)$/i },
