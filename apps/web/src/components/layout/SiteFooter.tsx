@@ -1,5 +1,3 @@
-'use client'
-
 import { Brand } from '@/components/ui/Brand'
 
 export function SiteFooter() {
@@ -7,20 +5,16 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="row">
         <Brand />
-        <span className="dot" aria-hidden="true">·</span>
-        <span>
-          Part of{' '}
+        <span className="footer-family" aria-label="Anvilary Labs, Anvilary Tools, CVForge">
+          <span>Anvilary Labs</span>
+          <span aria-hidden="true">→</span>
           <a href="https://anvilary.tools" target="_blank" rel="noopener noreferrer">
             Anvilary Tools
           </a>
+          <span aria-hidden="true">→</span>
+          <strong>CVForge</strong>
         </span>
         <span className="flex-1" />
-        <span>No account or backend CV storage.</span>
-      </div>
-      <div className="row sub">
-        <a href="https://anvilary.tools" target="_blank" rel="noopener noreferrer">
-          anvilary.tools
-        </a>
         <a
           href="https://github.com/alteixeira20/CVForge"
           target="_blank"
@@ -28,8 +22,13 @@ export function SiteFooter() {
         >
           Source
         </a>
+      </div>
+      <div className="row sub">
+        <span>
+          CV data stays in this browser. Export JSON for the most reliable backup.
+        </span>
         <span className="flex-1" />
-        <span>CV data stays in your browser localStorage; JSON export is the reliable backup path.</span>
+        <span>No account or server-side CV storage.</span>
       </div>
     </footer>
   )

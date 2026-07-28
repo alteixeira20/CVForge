@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { ParserWorkbench } from '@/features/parser/workbench/ParserWorkbench'
+
+export const metadata: Metadata = {
+  title: 'Parser',
+  description: 'Review PDF extraction and local rule-based CV diagnostics in your browser.',
+}
 
 export default function ParserPage() {
   return (

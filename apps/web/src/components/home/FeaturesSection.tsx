@@ -1,103 +1,73 @@
-'use client'
+import { Icon, type IconName } from '@/components/ui/Icon'
 
-import { Icon } from '@/components/ui/Icon'
+const FEATURES: Array<{
+  description: string
+  icon: IconName
+  title: string
+}> = [
+  {
+    icon: 'users',
+    title: 'Structured building and preview',
+    description:
+      'Edit every major CV section, reorder content, control visibility, and preview the generated document as you work.',
+  },
+  {
+    icon: 'device',
+    title: 'Private browser autosave',
+    description:
+      'Your current CV stays in this browser. There is no account, user database, or server-side CV storage.',
+  },
+  {
+    icon: 'export',
+    title: 'Reliable JSON backup',
+    description:
+      'Export validated structured data for the simplest reliable backup and full-session restore path.',
+  },
+  {
+    icon: 'download',
+    title: 'PDF export with session restore',
+    description:
+      'Download a polished PDF. CVForge-generated files can also carry an embedded session for later restoration.',
+  },
+  {
+    icon: 'search',
+    title: 'Transparent PDF diagnostics',
+    description:
+      'Inspect selectable text, extraction quality, and local rule-based checks without sending the PDF to a server.',
+  },
+  {
+    icon: 'import',
+    title: 'Review-first external import',
+    description:
+      'Turn a readable external PDF into a best-effort draft only after reviewing what CVForge could extract.',
+  },
+]
 
 export function FeaturesSection() {
   return (
     <section className="section container" id="features">
       <div className="section-head">
-        <h2>Real CVForge features, kept local.</h2>
+        <h2>Everything needed to build, back up, and review.</h2>
         <p className="section-lede">
-          Everything here is part of the browser app today: structured editing,
-          local persistence, portable exports, and best-effort PDF diagnostics.
+          CVForge keeps reliable structured data separate from best-effort PDF
+          extraction, so every action is clear about what it preserves.
         </p>
       </div>
       <div className="features">
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="users" size={20} /></div>
-            <h3>Structured CV Builder</h3>
-          </div>
-          <p>
-            Edit profile, experience, education, projects, skills,
-            languages, and custom sections with focused forms.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="device" size={20} /></div>
-            <h3>Local Browser Storage</h3>
-          </div>
-          <p>
-            CV data is stored in browser localStorage. There is no
-            account system, backend CV storage, or user database.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="download" size={20} /></div>
-            <h3>PDF Export</h3>
-          </div>
-          <p>
-            Generate a PDF from the current builder state with the
-            selected document size, section order, and visibility.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="export" size={20} /></div>
-            <h3>JSON Backup and Import</h3>
-          </div>
-          <p>
-            Export a validated JSON backup and import it later to
-            replace the current local builder session.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="file-text" size={20} /></div>
-            <h3>CVForge PDF Session Restore</h3>
-          </div>
-          <p>
-            CVForge PDFs can include an embedded session attachment.
-            Upload one in Parser to restore the builder state.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="search" size={20} /></div>
-            <h3>Parser Diagnostics</h3>
-          </div>
-          <p>
-            Upload a PDF locally to inspect extracted text, page count,
-            parser confidence, and rule-based diagnostic signals.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="import" size={20} /></div>
-            <h3>Best-Effort External Draft Import</h3>
-          </div>
-          <p>
-            External PDFs can create an editable draft when text is
-            readable, but every imported field must be reviewed.
-          </p>
-        </div>
-        <div className="feature">
-          <div className="feature-head">
-            <div className="ic"><Icon name="eye" size={20} /></div>
-            <h3>Section Controls</h3>
-          </div>
-          <p>
-            Reorder major sections, hide sections, and control bullet
-            visibility before previewing or exporting.
-          </p>
-        </div>
+        {FEATURES.map((feature) => (
+          <article className="feature" key={feature.title}>
+            <div className="feature-head">
+              <div className="ic"><Icon name={feature.icon} size={20} /></div>
+              <h3>{feature.title}</h3>
+            </div>
+            <p>{feature.description}</p>
+          </article>
+        ))}
       </div>
       <div className="gh-cta">
         <div className="gh-cta-text">
-          <strong>Local diagnostics are rule-based checks, not hiring guarantees.</strong>
-          <span>JSON is the simplest reliable restore path · External PDF import is best-effort</span>
+          <strong>Diagnostics are practical signals, not hiring guarantees.</strong>
+          <span>JSON is reliable · CVForge PDFs may restore · External PDFs require review</span>
         </div>
       </div>
     </section>

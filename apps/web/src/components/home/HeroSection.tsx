@@ -9,26 +9,26 @@ interface HeroSectionProps {
 
 export function HeroSection({ onCreateClick }: HeroSectionProps) {
   return (
-    <section className="hero container">
-      <h1>
+    <section className="hero container" aria-labelledby="home-title">
+      <h1 id="home-title">
         The CV tool that{' '}
         <span className="accent">starts on your machine.</span>
       </h1>
       <p className="lede">
-        Build a structured CV in your browser, export PDF or JSON,
-        and inspect uploaded PDFs with local rule-based diagnostics.
-        No account, no database, no server-side CV storage.
+        Build and preview a structured CV, keep a reliable JSON backup,
+        and review PDFs with local rule-based diagnostics. No account
+        and no server-side CV storage.
       </p>
       <div className="ctas">
         <button type="button" onClick={onCreateClick} className="btn primary lg">
-          Create CV <Icon name="plus" size={16} />
+          Build your CV <Icon name="arrow-right" size={16} />
         </button>
         <Link href="/parser" className="btn lg">
-          Analyze PDF <Icon name="file-text" size={16} />
+          Review a PDF <Icon name="file-text" size={16} />
         </Link>
       </div>
 
-      <div className="preview-wrap">
+      <div className="preview-wrap" aria-hidden="true">
         <div className="preview">
           <div className="preview-bar">
             <span className="dots"><i /><i /><i /></span>
@@ -83,9 +83,9 @@ export function HeroSection({ onCreateClick }: HeroSectionProps) {
 
       <div className="meta-row" aria-label="CVForge highlights">
         <span><Icon name="lock" size={14} /> No account required</span>
-        <span><Icon name="device" size={14} /> Browser localStorage</span>
-        <span><Icon name="file-text" size={14} /> PDF and JSON export</span>
-        <span><Icon name="search" size={14} /> Heuristic diagnostics</span>
+        <span><Icon name="device" size={14} /> Autosaved in this browser</span>
+        <span><Icon name="file-text" size={14} /> PDF export</span>
+        <span><Icon name="export" size={14} /> Reliable JSON backup</span>
       </div>
     </section>
   )

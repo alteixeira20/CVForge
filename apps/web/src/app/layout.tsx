@@ -18,7 +18,10 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'CVForge - Local-first CV Builder',
+  title: {
+    default: 'CVForge - Local-first CV Builder',
+    template: '%s | CVForge',
+  },
   description:
     'Build, back up, export, and inspect a CV locally in the browser without an account.',
   // Static dark-UI favicons - the white Anvilary mark reads on dark browser chrome.

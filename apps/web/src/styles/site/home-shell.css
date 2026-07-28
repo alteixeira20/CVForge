@@ -1,9 +1,7 @@
 /* --- Homepage shell --------------------------------------------------------- */
 .home {
   position: relative;
-  background-image:
-    radial-gradient(900px 540px at 90% -10%, var(--lava-glow), transparent 60%),
-    radial-gradient(700px 400px at -5% 50%, var(--lava-glow), transparent 60%);
+  overflow-x: clip;
 }
 .container {
   max-width: var(--container);
@@ -11,4 +9,3 @@
   padding: 0 32px;
 }
 @media (max-width: 720px) { .container { padding: 0 20px; } }
-

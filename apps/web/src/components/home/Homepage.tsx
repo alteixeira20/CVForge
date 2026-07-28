@@ -26,9 +26,11 @@ export function Homepage() {
     <div className="home">
       <EmberBackground />
       <SiteHeader onBuilderClick={openEntryModal} />
-      <HeroSection onCreateClick={openEntryModal} />
-      <HowItWorksSection />
-      <FeaturesSection />
+      <main>
+        <HeroSection onCreateClick={openEntryModal} />
+        <HowItWorksSection />
+        <FeaturesSection />
+      </main>
       <SiteFooter />
 
       <BuilderEntryModal
