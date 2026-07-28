@@ -1,9 +1,7 @@
-import type { Theme } from '@/types/ui'
 import { type CVState, parseCVState } from '@/types/cv'
 import { migrateCVState } from '@/lib/cvMigrations'
 
 const KEYS = {
-  theme: 'cv:theme',
   displayName: 'cv:displayName',
   lastSession: 'cv:lastSession',
   saved: 'cv:saved',
@@ -38,14 +36,6 @@ function remove(key: string): void {
 }
 
 export const storage = {
-  getTheme(): Theme | null {
-    const v = get(KEYS.theme)
-    return v === 'dark' || v === 'light' ? v : null
-  },
-  setTheme(theme: Theme): void {
-    set(KEYS.theme, theme)
-  },
-
   getDisplayName(): string | null {
     return get(KEYS.displayName)
   },

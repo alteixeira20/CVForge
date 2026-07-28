@@ -1,6 +1,10 @@
 /* --- Base reset and global element styles ----------------------------------- */
 
 * { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
 html, body {
   margin: 0; padding: 0;
   background: var(--bg);
@@ -22,6 +26,21 @@ section[id] { scroll-margin-top: var(--header-h); }
 
 .mono { font-family: var(--font-mono); }
 .muted { color: var(--ink-3); }
+
+/* Keyboard-only focus indicator */
+*:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 
 /* --- Scrollbar -------------------------------------------------------------- */
 ::-webkit-scrollbar { width: 10px; height: 10px; }

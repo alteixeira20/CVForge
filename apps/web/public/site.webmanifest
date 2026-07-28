@@ -3,17 +3,17 @@
   "short_name": "CVForge",
   "icons": [
     {
-      "src": "./android-chrome-192x192.png",
+      "src": "/brand/anvilary-logo-mark-square-192-white.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./android-chrome-512x512.png",
+      "src": "/brand/anvilary-logo-mark-square-512-white.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "theme_color": "#0b0f14",
-  "background_color": "#0b0f14",
+  "theme_color": "#0e0e10",
+  "background_color": "#0e0e10",
   "display": "standalone"
 }

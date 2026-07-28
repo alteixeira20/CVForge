@@ -1,23 +1,32 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
-import { BrandMark } from './BrandMark'
 
 interface BrandProps {
   href?: string
+  className?: string
 }
 
-export function Brand({ href }: BrandProps) {
+/** Anvilary product brand: shared logo mark plus the CVForge wordmark. */
+export function Brand({ href, className = 'brand' }: BrandProps) {
   const inner = (
     <>
-      <BrandMark variant="tight" style={{ width: '42px' }} />
+      <span className="brand-logo" aria-hidden="true">
+        <Image
+          src="/brand/anvilary-logo-mark-tight-white.png"
+          alt=""
+          width={24}
+          height={28}
+        />
+      </span>
       <span>CVForge</span>
     </>
   )
 
   if (href) {
-    return <Link href={href} className="brand">{inner}</Link>
+    return <Link href={href} className={className}>{inner}</Link>
   }
 
-  return <div className="brand">{inner}</div>
+  return <div className={className}>{inner}</div>
 }
