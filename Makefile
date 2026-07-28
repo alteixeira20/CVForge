@@ -7,6 +7,9 @@
 WEB_PORT ?= 3000
 WEB_HOST ?= 127.0.0.1
 WEB_URL  := http://localhost:$(WEB_PORT)
+SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),http://localhost:3000)
+DOCKER_PORT ?= 3000
+DOCKER_URL := http://localhost:$(DOCKER_PORT)
 
 APP_NAME := cvforge
 IMAGE    := cvforge:latest
@@ -174,13 +177,13 @@ clean-deps:
 # --- Docker Production Workflow ----------------------------------------------
 
 docker-build:
-	docker build -t $(IMAGE) .
+	docker build --build-arg NEXT_PUBLIC_SITE_URL=$(SITE_URL) -t $(IMAGE) .
 
 docker-up: docker-build
-	docker compose up -d
+	CVFORGE_PORT=$(DOCKER_PORT) docker compose up -d
 
 docker-down:
-	docker compose down
+	CVFORGE_PORT=$(DOCKER_PORT) docker compose down
 
 docker-status:
 	docker compose ps
@@ -202,4 +205,4 @@ docker-check: docker-up
 	@echo "Waiting for container..."
 	@sleep 2
 	@echo "Checking routes..."
-	@node -e "Promise.all(['/','/builder','/parser'].map(async (path) => { const response = await fetch('http://localhost:3000' + path); if (!response.ok) throw new Error(path + ' returned ' + response.status); console.log(response.status, path); })).catch((error) => { console.error(error); process.exit(1); })"
+	@node -e "const base='$(DOCKER_URL)'; const ok=['/','/builder','/analyzer','/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image']; Promise.all(ok.map(async (path) => { const response=await fetch(base+path); if (!response.ok) throw new Error(path+' returned '+response.status); console.log(response.status,path); })).then(async () => { for (const [path,status,location] of [['/parser',308,'/analyzer'],['/resume-import',307,'/builder']]) { const response=await fetch(base+path,{redirect:'manual'}); if (response.status!==status || response.headers.get('location')!==location) throw new Error(path+' redirect mismatch'); console.log(response.status,path,'->',location); } }).catch((error) => { console.error(error); process.exit(1); })"

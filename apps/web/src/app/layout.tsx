@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Lexend, JetBrains_Mono } from 'next/font/google'
 import { CVProvider } from '@/context/CVContext'
+import { siteConfig } from '@/lib/siteConfig'
 import './globals.css'
 
 const lexend = Lexend({
@@ -18,12 +19,58 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: 'CVForge - Local-first CV Builder',
+    default: siteConfig.title,
     template: '%s | CVForge',
   },
-  description:
-    'Build, back up, export, and inspect a CV locally in the browser without an account.',
+  description: siteConfig.description,
+  applicationName: siteConfig.applicationName,
+  authors: [{ name: siteConfig.organizationName, url: siteConfig.familyUrl }],
+  creator: siteConfig.organizationName,
+  publisher: siteConfig.organizationName,
+  keywords: [
+    'CV builder',
+    'resume builder',
+    'CV analyzer',
+    'ATS-style CV checker',
+    'local-first',
+    'PDF export',
+    'JSON backup',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    url: '/',
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: [{
+      url: '/opengraph-image',
+      width: 1200,
+      height: 630,
+      alt: 'CVForge — build and analyze your CV locally',
+    }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ['/opengraph-image'],
+  },
   // Static dark-UI favicons - the white Anvilary mark reads on dark browser chrome.
   icons: {
     icon: [
@@ -36,6 +83,7 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
+  category: 'business',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

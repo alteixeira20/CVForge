@@ -1,6 +1,12 @@
 {
   "name": "CVForge",
   "short_name": "CVForge",
+  "description": "Local-first CV Builder and ATS-style CV Analyzer.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
       "src": "/brand/anvilary-logo-mark-square-192-white.png",

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { EmberBackground } from '@/components/ui/EmberBackground'
+import { StructuredData } from '@/components/seo/StructuredData'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { HeroSection } from './HeroSection'
@@ -24,6 +25,7 @@ export function Homepage() {
 
   return (
     <div className="home">
+      <StructuredData />
       <EmberBackground />
       <SiteHeader onBuilderClick={openEntryModal} />
       <main>
