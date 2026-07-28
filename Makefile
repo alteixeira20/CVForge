@@ -202,6 +202,4 @@ docker-check: docker-up
 	@echo "Waiting for container..."
 	@sleep 2
 	@echo "Checking routes..."
-	@curl -I http://localhost:3000
-	@curl -I http://localhost:3000/builder
-	@curl -I http://localhost:3000/parser
+	@node -e "Promise.all(['/','/builder','/parser'].map(async (path) => { const response = await fetch('http://localhost:3000' + path); if (!response.ok) throw new Error(path + ' returned ' + response.status); console.log(response.status, path); })).catch((error) => { console.error(error); process.exit(1); })"
