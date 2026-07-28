@@ -7,9 +7,9 @@ const FEATURES: Array<{
 }> = [
   {
     icon: 'users',
-    title: 'Structured building and preview',
+    title: 'Structured CV Builder',
     description:
-      'Edit every major CV section, reorder content, control visibility, and preview the generated document as you work.',
+      'Use the free browser-based Builder to edit major CV sections, reorder content, control visibility, and preview the document.',
   },
   {
     icon: 'device',
@@ -31,9 +31,9 @@ const FEATURES: Array<{
   },
   {
     icon: 'search',
-    title: 'Transparent PDF diagnostics',
+    title: 'ATS-style CV Analyzer',
     description:
-      'Inspect selectable text, extraction quality, and local rule-based checks without sending the PDF to a server.',
+      'Check PDF extraction, structure, completeness, clarity, and impact with transparent local rules and practical suggestions.',
   },
   {
     icon: 'import',
@@ -47,10 +47,10 @@ export function FeaturesSection() {
   return (
     <section className="section container" id="features">
       <div className="section-head">
-        <h2>Everything needed to build, back up, and review.</h2>
+        <h2>Practical tools for a CV you can keep improving.</h2>
         <p className="section-lede">
-          CVForge keeps reliable structured data separate from best-effort PDF
-          extraction, so every action is clear about what it preserves.
+          Build a complete CV or resume, keep a dependable structured backup,
+          and use honest local analysis to decide what to improve next.
         </p>
       </div>
       <div className="features">
@@ -63,12 +63,6 @@ export function FeaturesSection() {
             <p>{feature.description}</p>
           </article>
         ))}
-      </div>
-      <div className="gh-cta">
-        <div className="gh-cta-text">
-          <strong>Diagnostics are practical signals, not hiring guarantees.</strong>
-          <span>JSON is reliable · CVForge PDFs may restore · External PDFs require review</span>
-        </div>
       </div>
     </section>
   )

@@ -5,6 +5,9 @@
   margin-top: 16px;
   font-size: 14px;
   color: var(--ink-3);
+  background: color-mix(in srgb, var(--bg-2) 56%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .site-footer .row {
   max-width: var(--container);
@@ -30,7 +33,13 @@
   color: var(--ink-2);
   font-weight: 500;
 }
+.footer-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
 
 @media (max-width: 580px) {
   .footer-family { flex-wrap: wrap; }
+  .footer-links { flex-wrap: wrap; gap: 10px 16px; }
 }

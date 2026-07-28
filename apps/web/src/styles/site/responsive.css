@@ -7,3 +7,14 @@
   .site-footer .row { flex-direction: column; align-items: flex-start; gap: 14px; }
   .site-footer .dot { display: none; }
 }
+
+@media (max-width: 480px) {
+  .hero .meta-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 350px);
+    gap: 9px 12px;
+    text-align: left;
+  }
+  .hero .meta-row span { align-items: flex-start; }
+}

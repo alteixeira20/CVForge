@@ -38,7 +38,7 @@
   pointer-events: none;
 }
 
-/* Restrained variant behind the dense Builder/Parser workbench */
+/* Restrained variant behind the dense Builder/Analyzer workbench */
 .ember-background--subdued {
   --forge-glow-opacity: 0.4;
   --forge-glow-opacity-low: 0.32;

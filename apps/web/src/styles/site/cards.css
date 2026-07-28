@@ -18,6 +18,8 @@
   position: relative;
   overflow: hidden;
   transition: border-color 200ms, border-top-color 200ms, transform 200ms;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
 }
 .step-card:hover {
   border-color: var(--border-strong);
@@ -73,6 +75,8 @@
   display: flex; flex-direction: column;
   gap: 12px;
   transition: border-color 200ms;
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
 }
 .feature:hover { border-color: var(--border-strong); }
 .feature .feature-head {
@@ -155,4 +159,8 @@
   color: var(--ink-3);
   font-family: var(--font-mono);
   font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-card:hover { transform: none; }
 }

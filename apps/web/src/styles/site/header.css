@@ -1,9 +1,7 @@
 /* --- Site header ------------------------------------------------------------ */
 .site-header {
   position: sticky; top: 0; z-index: 50;
-  display: flex; align-items: center; gap: 24px;
   min-width: 0;
-  padding: 16px 32px;
   background: color-mix(in oklab, var(--bg) 88%, transparent);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
@@ -11,6 +9,16 @@
   transition: border-color 200ms;
 }
 .site-header.scrolled { border-bottom-color: var(--border); }
+.site-header-inner {
+  width: 100%;
+  max-width: var(--container);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
 .site-header .brand { flex: 0 0 auto; }
 .site-header nav {
   display: inline-flex; flex: 0 1 auto; gap: 6px;
@@ -44,29 +52,41 @@
 .site-header nav .nav-link.active::after { opacity: 0.9; transform: none; }
 .site-header .spacer { flex: 1 1 auto; min-width: 0; }
 .site-header .actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+.site-header .github-star { color: var(--ink-2); }
+.site-header .github-star:hover { color: var(--ink); }
 .build-label-compact { display: none; }
+
+@media (max-width: 1040px) {
+  .site-header-inner { gap: 16px; }
+  .site-header nav { margin-left: 0; }
+}
+
+@media (max-width: 900px) {
+  .site-header nav .nav-source { display: none; }
+}
 
 @media (max-width: 768px) {
   :root { --header-h: 72px; }
-  .site-header { gap: 12px; padding: 12px 16px; }
+  .site-header-inner { gap: 12px; padding: 12px 16px; }
   .site-header nav { gap: 2px; margin-left: 0; }
   .site-header nav .nav-link { padding: 7px 8px; }
   .site-header .spacer { flex: 1 1 0; }
   .site-header .actions .btn.sm { height: 40px; }
+  .site-header .github-star { width: 40px; padding: 0; }
+  .site-header .star-label { display: none; }
 }
 
-@media (max-width: 560px) {
-  /* The footer retains Source and Anvilary links on compact layouts. */
-  .site-header nav .nav-source { display: none; }
+@media (max-width: 520px) {
+  .site-header .brand > span:last-child { display: none; }
 }
 
 @media (max-width: 430px) {
-  .site-header { gap: 8px; padding: 10px 12px; }
+  .site-header-inner { gap: 8px; padding: 10px 12px; }
   .brand { gap: 7px; font-size: 16px; }
   .site-header nav { gap: 0; }
   .site-header nav .nav-link {
     min-height: 40px;
-    padding: 9px 8px;
+    padding: 9px 6px;
     font-size: 13px;
   }
   .site-header .actions .btn.sm {
@@ -79,6 +99,8 @@
 }
 
 @media (max-width: 340px) {
-  .site-header { padding-right: 8px; padding-left: 8px; }
-  .site-header .actions .btn.sm { padding: 0 10px; }
+  .site-header-inner { gap: 6px; padding-right: 8px; padding-left: 8px; }
+  .site-header .actions { gap: 3px; }
+  .site-header .actions .btn.sm { padding: 0 8px; }
+  .site-header nav .nav-link { padding-right: 5px; padding-left: 5px; }
 }

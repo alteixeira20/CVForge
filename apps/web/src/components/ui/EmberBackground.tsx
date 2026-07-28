@@ -33,7 +33,7 @@ interface EmberParticle {
 }
 
 interface EmberBackgroundProps {
-  /** Restrained variant for dense surfaces like the Builder/Parser workbench. */
+  /** Restrained variant for dense surfaces like the Builder/Analyzer workbench. */
   subdued?: boolean
 }
 

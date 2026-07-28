@@ -15,8 +15,16 @@
   letter-spacing: -0.005em;
   transition: background 160ms, border-color 160ms, transform 160ms, box-shadow 160ms;
 }
-.btn:hover { background: var(--bg-3); border-color: var(--border-strong); }
-.btn:active { transform: translateY(1px); }
+.btn:hover {
+  background: var(--bg-3);
+  border-color: var(--border-strong);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  transform: translateY(-1px);
+}
+.btn:active {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(0);
+}
 .btn.sm { height: 36px; padding: 0 14px; font-size: 14px; }
 .btn.lg { height: 52px; padding: 0 22px; font-size: 16px; border-radius: 12px; }
 
@@ -33,12 +41,18 @@
   box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset, 0 10px 28px var(--accent-shadow);
   transform: translateY(-1px);
 }
-.btn svg { transition: transform 200ms; }
-.btn:hover svg { transform: translateX(2px); }
+.btn.primary:active {
+  border-color: var(--action-end);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.12) inset, 0 5px 14px var(--accent-shadow);
+  transform: translateY(0);
+}
+.btn svg { flex: 0 0 auto; }
 
 .btn:disabled, .btn[aria-disabled="true"] {
   opacity: 0.5;
   cursor: default;
+  pointer-events: none;
+  box-shadow: none;
   transform: none;
 }
 
@@ -65,6 +79,15 @@
 }
 .iconbtn svg { display: block; flex: 0 0 auto; }
 .iconbtn:hover { background: var(--bg-2); border-color: var(--border); color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover,
+  .btn:active,
+  .btn.primary:hover,
+  .btn.primary:active {
+    transform: none;
+  }
+}
 
 /* --- Brand ------------------------------------------------------------------ */
 .brand {

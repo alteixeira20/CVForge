@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Brand } from '@/components/ui/Brand'
 
 export function SiteFooter() {
@@ -15,13 +16,18 @@ export function SiteFooter() {
           <strong>CVForge</strong>
         </span>
         <span className="flex-1" />
-        <a
-          href="https://github.com/alteixeira20/CVForge"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Source
-        </a>
+        <nav className="footer-links" aria-label="Footer navigation">
+          <Link href="/">Home</Link>
+          <Link href="/builder">Builder</Link>
+          <Link href="/analyzer">Analyzer</Link>
+          <a
+            href="https://github.com/alteixeira20/CVForge"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source
+          </a>
+        </nav>
       </div>
       <div className="row sub">
         <span>

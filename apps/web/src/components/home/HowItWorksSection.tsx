@@ -4,10 +4,10 @@ export function HowItWorksSection() {
   return (
     <section className="section container" id="how">
       <div className="section-head">
-        <h2>A local workflow from editing to review.</h2>
+        <h2>Build first, then improve with clear signals.</h2>
         <p className="section-lede">
-          CVForge separates reliable structured editing from best-effort
-          PDF review, so you always know what can be restored exactly.
+          CVForge keeps structured editing and best-effort document extraction
+          distinct, so every restore and analysis path stays understandable.
         </p>
       </div>
       <div className="steps">
@@ -37,11 +37,11 @@ export function HowItWorksSection() {
           <span className="num">STEP 03</span>
           <div className="step-head">
             <div className="step-ic"><Icon name="search" size={17} /></div>
-            <h3>Review or restore locally.</h3>
+            <h3>Analyze or restore locally.</h3>
           </div>
           <p>
-            Parser can restore embedded CVForge sessions or create a
-            review-first draft from a readable external PDF.
+            Analyzer checks a readable PDF for extraction, structure, and CV
+            improvement signals. External PDF drafts always require review.
           </p>
         </div>
       </div>
