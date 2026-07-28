@@ -1,3 +1,10 @@
+import { validateAnalysisPageCount } from './analysisFileValidation'
+import {
+  analyzeExtractionEvidence,
+  type PdfExtractionDiagnostics,
+  type PdfPageEvidence,
+} from './extractionDiagnostics'
+
 export interface PdfMetadata {
   creator?: string
   producer?: string
@@ -10,47 +17,203 @@ export interface PdfExtractionResult {
   pageCount: number
   text: string
   pageTexts: string[]
+  pages: PdfPageEvidence[]
   metadata: PdfMetadata
+  diagnostics: PdfExtractionDiagnostics
   warnings: string[]
 }
 
-export async function extractPdfText(file: File): Promise<PdfExtractionResult> {
-  const pdfjs = await import('pdfjs-dist')
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
-
-  const pdf = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise
-  const pageTexts = await extractPageTexts(pdf)
-  const text = pageTexts.join('\n\n')
-  
-  const { info } = await pdf.getMetadata()
-  const metadata = (info || {}) as PdfMetadata
-
-  return {
-    pageCount: pdf.numPages,
-    text,
-    pageTexts,
-    metadata,
-    warnings: text.trim() ? [] : ['No selectable text was found in this PDF.'],
+export class PdfAnalysisError extends Error {
+  constructor(
+    message: string,
+    public readonly code:
+      | 'cancelled'
+      | 'encrypted'
+      | 'malformed'
+      | 'page-limit'
+      | 'unsupported',
+  ) {
+    super(message)
+    this.name = 'PdfAnalysisError'
   }
 }
 
-async function extractPageTexts(pdf: { numPages: number; getPage: (pageNumber: number) => Promise<PdfPage> }) {
-  const pages = Array.from({ length: pdf.numPages }, (_, index) => index + 1)
-  return Promise.all(pages.map((pageNumber) => extractPageText(pdf, pageNumber)))
+export async function extractPdfText(
+  file: File,
+  options: { signal?: AbortSignal } = {},
+): Promise<PdfExtractionResult> {
+  const { signal } = options
+  throwIfAborted(signal)
+  const pdfjs = await import('pdfjs-dist')
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
+
+  const loadingTask = pdfjs.getDocument({
+    data: new Uint8Array(await file.arrayBuffer()),
+    stopAtErrors: true,
+  })
+  let pdf: PdfDocument | null = null
+  const abortLoading = () => {
+    void loadingTask.destroy()
+  }
+  signal?.addEventListener('abort', abortLoading, { once: true })
+
+  try {
+    pdf = await loadingTask.promise as PdfDocument
+    throwIfAborted(signal)
+    const pageCountError = validateAnalysisPageCount(pdf.numPages)
+    if (pageCountError) {
+      throw new PdfAnalysisError(
+        pageCountError,
+        'page-limit',
+      )
+    }
+
+    const pages = await extractPagesSequentially(pdf, signal)
+    throwIfAborted(signal)
+    const pageTexts = pages.map((page) => page.text)
+    const text = pageTexts.join('\n\n')
+    const { info } = await pdf.getMetadata()
+    const metadata = (info || {}) as PdfMetadata
+    const diagnostics = analyzeExtractionEvidence(pages)
+
+    return {
+      pageCount: pdf.numPages,
+      text,
+      pageTexts,
+      pages,
+      metadata,
+      diagnostics,
+      warnings: diagnostics.signals
+        .filter((item) => item.status !== 'pass')
+        .map((item) => item.detected),
+    }
+  } catch (error) {
+    if (signal?.aborted || isAbortError(error)) {
+      throw new PdfAnalysisError('PDF analysis was cancelled.', 'cancelled')
+    }
+    if (error instanceof PdfAnalysisError) throw error
+    throw classifyPdfError(error)
+  } finally {
+    signal?.removeEventListener('abort', abortLoading)
+    try {
+      await pdf?.cleanup()
+      await pdf?.destroy()
+    } catch {
+      // PDF.js may already have released resources after a loading-task failure.
+    }
+    try {
+      await loadingTask.destroy()
+    } catch {
+      // Destruction is idempotent from the caller's perspective.
+    }
+  }
 }
 
-async function extractPageText(pdf: { getPage: (pageNumber: number) => Promise<PdfPage> }, pageNumber: number) {
-  const page = await pdf.getPage(pageNumber)
-  const content = await page.getTextContent()
-  return content.items.map(readTextItem).filter(Boolean).join(' ')
+async function extractPagesSequentially(pdf: PdfDocument, signal?: AbortSignal) {
+  const pages: PdfPageEvidence[] = []
+  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+    throwIfAborted(signal)
+    const page = await pdf.getPage(pageNumber)
+    try {
+      const content = await page.getTextContent()
+      pages.push(pageEvidence(content.items))
+    } finally {
+      page.cleanup?.()
+    }
+  }
+  return pages
 }
 
-function readTextItem(item: unknown) {
-  if (!item || typeof item !== 'object' || !('str' in item)) return ''
-  const value = (item as { str: unknown }).str
-  return typeof value === 'string' ? value.trim() : ''
+export function pageEvidence(items: unknown[]): PdfPageEvidence {
+  const positioned = items.map(readTextItem).filter((item): item is TextItem => Boolean(item?.text))
+  const lineGroups = new Map<number, TextItem[]>()
+  positioned.forEach((item) => {
+    const lineKey = Math.round(item.y / 3) * 3
+    lineGroups.set(lineKey, [...(lineGroups.get(lineKey) ?? []), item])
+  })
+  const orderedLines = [...lineGroups.entries()]
+    .sort(([left], [right]) => right - left)
+    .map(([, lineItems]) => lineItems
+      .sort((left, right) => left.x - right.x)
+      .map((item) => item.text)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim())
+    .filter(Boolean)
+  const fragmentedLineRatio = orderedLines.length
+    ? orderedLines.filter((line) => line.length < 20).length / orderedLines.length
+    : 0
+  const lineStarts = [...lineGroups.values()]
+    .map((lineItems) => Math.min(...lineItems.map((item) => item.x)))
+  const lowBand = lineStarts.filter((x) => x < 220).length
+  const highBand = lineStarts.filter((x) => x >= 220).length
+  const upwardJumps = positioned.slice(1).filter((item, index) => item.y > positioned[index].y + 8).length
+
+  return {
+    text: orderedLines.join('\n'),
+    lineCount: orderedLines.length,
+    itemCount: positioned.length,
+    fragmentedLineRatio,
+    possibleColumnOrder: (lowBand >= 3 && highBand >= 3) || upwardJumps >= 4,
+  }
+}
+
+function readTextItem(item: unknown): TextItem | null {
+  if (!item || typeof item !== 'object' || !('str' in item)) return null
+  const candidate = item as { str: unknown; transform?: unknown }
+  if (typeof candidate.str !== 'string' || !candidate.str.trim()) return null
+  const transform = Array.isArray(candidate.transform) ? candidate.transform : []
+  return {
+    text: candidate.str.trim(),
+    x: typeof transform[4] === 'number' ? transform[4] : 0,
+    y: typeof transform[5] === 'number' ? transform[5] : 0,
+  }
+}
+
+function classifyPdfError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  const name = error instanceof Error ? error.name : ''
+  if (/password|encrypted/i.test(`${name} ${message}`)) {
+    return new PdfAnalysisError(
+      'This PDF is encrypted or password-protected. Remove the password and export an unprotected copy before analysis.',
+      'encrypted',
+    )
+  }
+  if (/invalid pdf|missing pdf|unexpected response|xref|truncated|format/i.test(`${name} ${message}`)) {
+    return new PdfAnalysisError(
+      'CVForge could not read this PDF. It may be malformed, incomplete, or truncated.',
+      'malformed',
+    )
+  }
+  return new PdfAnalysisError(
+    'CVForge could not analyze this PDF. Re-export it as a standard, unprotected PDF and try again.',
+    'unsupported',
+  )
+}
+
+function throwIfAborted(signal?: AbortSignal) {
+  if (signal?.aborted) throw new DOMException('Aborted', 'AbortError')
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError'
+}
+
+interface TextItem {
+  text: string
+  x: number
+  y: number
 }
 
 interface PdfPage {
   getTextContent: () => Promise<{ items: unknown[] }>
+  cleanup?: () => void
+}
+
+interface PdfDocument {
+  numPages: number
+  getPage: (pageNumber: number) => Promise<PdfPage>
+  getMetadata: () => Promise<{ info?: unknown }>
+  cleanup: () => Promise<void>
+  destroy: () => Promise<void>
 }

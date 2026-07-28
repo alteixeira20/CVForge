@@ -2,6 +2,7 @@ import { type CVState } from '@/types/cv'
 import { type PdfExtractionResult, extractPdfText } from '@/lib/parser/pdfTextExtraction'
 import { type HeuristicResult, parseHeuristicResume } from '@/lib/parser/heuristicResumeParser'
 import { extractCVForgeAttachment } from '@/lib/parser/extractCVForgeAttachment'
+import { validateAnalysisFile } from './analysisFileValidation'
 
 export interface PdfImportAnalysis {
   extraction: PdfExtractionResult
@@ -18,11 +19,18 @@ export type PdfImportResult =
  * It first attempts to find an embedded CVForge session, falling back
  * to heuristic parsing if no session is found.
  */
-export async function analyzePdfImport(file: File): Promise<PdfImportResult> {
+export async function analyzePdfImport(
+  file: File,
+  options: { signal?: AbortSignal } = {},
+): Promise<PdfImportResult> {
   try {
+    const validationError = await validateAnalysisFile(file)
+    if (validationError) return { success: false, error: validationError }
+    if (options.signal?.aborted) return { success: false, error: 'PDF analysis was cancelled.' }
+
     const [extraction, embeddedState] = await Promise.all([
-      extractPdfText(file),
-      extractCVForgeAttachment(file)
+      extractPdfText(file, options),
+      extractCVForgeAttachment(file, options),
     ])
 
     // If we have an embedded state, we don't need to run heuristics for the primary import path
@@ -38,7 +46,7 @@ export async function analyzePdfImport(file: File): Promise<PdfImportResult> {
       }
     }
   } catch (err) {
-    console.error('PDF Import Analysis failed:', err)
+    if (!options.signal?.aborted) console.error('PDF Import Analysis failed:', err)
     return {
       success: false,
       error: err instanceof Error ? err.message : 'Failed to analyze PDF file.'

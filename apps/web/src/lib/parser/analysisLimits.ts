@@ -1,0 +1,3 @@
+export const MAX_ANALYSIS_FILE_BYTES = 15 * 1024 * 1024
+export const MAX_ANALYSIS_FILE_MEGABYTES = 15
+export const MAX_ANALYSIS_PAGES = 20

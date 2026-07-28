@@ -1,61 +1,91 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { analyzePdfImport } from '@/lib/parser/pdfImport'
-import { isSupportedAnalysisFile } from './analysisFileSupport'
+import { validateAnalysisFile } from './analysisFileSupport'
 import { type ParserDocument } from './parserTypes'
+import { isCurrentAnalysisRequest } from './analysisRequestGuard'
 
 export function useParserDocument() {
   const [document, setDocument] = useState<ParserDocument | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [announcement, setAnnouncement] = useState('')
+  const generationRef = useRef(0)
+  const controllerRef = useRef<AbortController | null>(null)
+  const objectUrlRef = useRef('')
+
+  const releaseObjectUrl = useCallback(() => {
+    if (!objectUrlRef.current) return
+    URL.revokeObjectURL(objectUrlRef.current)
+    objectUrlRef.current = ''
+  }, [])
 
   useEffect(() => () => {
-    if (document?.objectUrl) URL.revokeObjectURL(document.objectUrl)
-  }, [document?.objectUrl])
+    generationRef.current += 1
+    controllerRef.current?.abort()
+    releaseObjectUrl()
+  }, [releaseObjectUrl])
 
   const handleFile = async (file: File) => {
-    if (!isSupportedAnalysisFile(file)) {
-      return setDocument({
-        fileName: file.name,
-        objectUrl: '',
-        error: 'CVForge currently analyzes PDF files only. DOCX and plain-text analysis are not supported yet.',
-      })
+    const generation = generationRef.current + 1
+    generationRef.current = generation
+    controllerRef.current?.abort()
+    releaseObjectUrl()
+
+    const validationError = await validateAnalysisFile(file)
+    if (generation !== generationRef.current) return
+    if (validationError) {
+      setIsAnalyzing(false)
+      setDocument({ fileName: file.name, objectUrl: '', error: validationError })
+      setAnnouncement(`Analysis failed. ${validationError}`)
+      return
     }
 
+    const controller = new AbortController()
+    controllerRef.current = controller
     const objectUrl = URL.createObjectURL(file)
+    objectUrlRef.current = objectUrl
+    setDocument(null)
     setIsAnalyzing(true)
+    setAnnouncement(`Analysis started for ${file.name}.`)
+
     try {
-      const result = await analyzePdfImport(file)
+      const result = await analyzePdfImport(file, { signal: controller.signal })
+      if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) {
+        if (objectUrlRef.current === objectUrl) releaseObjectUrl()
+        return
+      }
       if (result.success) {
-        setDocument({
-          fileName: file.name,
-          objectUrl,
-          ...result.analysis,
-        })
+        setDocument({ fileName: file.name, objectUrl, ...result.analysis })
+        setAnnouncement(`Analysis completed for ${file.name}.`)
       } else {
-        setDocument({
-          fileName: file.name,
-          objectUrl,
-          error: result.error,
-        })
+        setDocument({ fileName: file.name, objectUrl, error: result.error })
+        setAnnouncement(`Analysis failed. ${result.error}`)
       }
     } catch (error) {
-      setDocument({
-        fileName: file.name,
-        objectUrl,
-        error: error instanceof Error
-          ? error.message
-          : 'CVForge could not analyze this PDF.',
-      })
+      if (!isCurrentAnalysisRequest(generation, generationRef.current, controller.signal)) return
+      const message = error instanceof Error
+        ? error.message
+        : 'CVForge could not analyze this PDF.'
+      setDocument({ fileName: file.name, objectUrl, error: message })
+      setAnnouncement(`Analysis failed. ${message}`)
     } finally {
-      setIsAnalyzing(false)
+      if (generation === generationRef.current) {
+        controllerRef.current = null
+        setIsAnalyzing(false)
+      }
     }
   }
 
   const clearDocument = () => {
-    if (document?.objectUrl) URL.revokeObjectURL(document.objectUrl)
+    generationRef.current += 1
+    controllerRef.current?.abort()
+    controllerRef.current = null
+    releaseObjectUrl()
+    setIsAnalyzing(false)
     setDocument(null)
+    setAnnouncement('PDF analysis cleared.')
   }
 
-  return { document, isAnalyzing, handleFile, clearDocument }
+  return { document, isAnalyzing, announcement, handleFile, clearDocument }
 }

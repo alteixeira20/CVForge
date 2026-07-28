@@ -52,15 +52,22 @@ export function ExtractionDiagnostics({ document }: { document: ParserDocument |
             Export a text-based PDF and try again; CVForge does not send the file to a cloud OCR service.
           </p>
         )}
-        {extraction?.warnings.map((warning) => (
-          <p
-            key={warning}
-            className="text-xs text-amber-200 font-medium"
-            hidden={!hasSelectableText && warning === 'No selectable text was found in this PDF.'}
-          >
-            {warning}
-          </p>
-        ))}
+        {extraction?.diagnostics.signals.some((signal) => signal.status !== 'pass') && (
+          <div className="space-y-2 pt-2" aria-label="Extraction warnings">
+            {extraction.diagnostics.signals
+              .filter((signal) => signal.status !== 'pass' && signal.id !== 'selectable-text')
+              .map((signal) => (
+                <div
+                  key={signal.id}
+                  className="rounded-lg border border-amber-400/15 bg-amber-400/5 p-3"
+                >
+                  <p className="text-xs font-medium text-amber-100">{signal.label}</p>
+                  <p className="mt-1 text-[10px] leading-relaxed text-ink-3">{signal.detected}</p>
+                  <p className="mt-1 text-[10px] leading-relaxed text-ink-4">{signal.suggestion}</p>
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     </WorkbenchSectionCard>
   )

@@ -25,7 +25,7 @@ export function ParserWorkbench() {
   const { state } = useCV()
   const searchParams = useSearchParams()
   const fromBuilder = searchParams.get('source') === 'builder'
-  const { document, isAnalyzing, handleFile, clearDocument } = useParserDocument()
+  const { document, isAnalyzing, announcement, handleFile, clearDocument } = useParserDocument()
   const analysis = resolveParserAnalysisTarget(state, document, fromBuilder)
 
   return (
@@ -38,6 +38,7 @@ export function ParserWorkbench() {
             document={document}
             isAnalyzing={isAnalyzing}
             analysis={analysis}
+            announcement={announcement}
             onFile={handleFile}
             onClearFile={clearDocument}
           />
@@ -55,11 +56,15 @@ function ParserAnalysisPanel(props: {
   document: ParserDocument | null
   isAnalyzing: boolean
   analysis: ParserAnalysisTarget
+  announcement: string
   onFile: (file: File) => void
   onClearFile: () => void
 }) {
   return (
     <div className="flex h-full min-h-0 flex-col" aria-busy={props.isAnalyzing}>
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {props.announcement}
+      </p>
       <div className="min-h-0 flex-1 overflow-y-auto">
         <WorkbenchHeader
           eyebrow="Workbench / Analyzer"
