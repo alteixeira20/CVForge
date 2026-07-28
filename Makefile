@@ -1,6 +1,7 @@
 .PHONY: help install dev check lint typecheck build audit audit-prod \
         start stop restart status logs logs-web web-start web-stop web-status \
-        clean clean-deps docker-build docker-up docker-down docker-status docker-logs docker-shell docker-clean docker-check
+        clean clean-deps docker-build docker-up docker-down docker-status docker-logs docker-shell docker-clean docker-check \
+        release-check preview-build preview-start preview-stop preview-status preview-logs
 
 # --- Configuration -----------------------------------------------------------
 
@@ -8,8 +9,10 @@ WEB_PORT ?= 3000
 WEB_HOST ?= 127.0.0.1
 WEB_URL  := http://localhost:$(WEB_PORT)
 SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),http://localhost:3000)
-DOCKER_PORT ?= 3000
+DOCKER_PORT ?= 3030
 DOCKER_URL := http://localhost:$(DOCKER_PORT)
+PREVIEW_PORT ?= 3030
+PRODUCTION_SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),https://cvforge.alexandreteixeira.dev)
 
 APP_NAME := cvforge
 IMAGE    := cvforge:latest
@@ -46,6 +49,12 @@ help:
 	@echo "  make docker-status Show Docker container status"
 	@echo "  make docker-logs   Follow Docker logs"
 	@echo "  make docker-check  Temporarily start Docker, check routes, then stop it"
+	@echo "  make release-check Run the complete safe production release gate"
+	@echo "  make preview-build Build and prepare standalone production output"
+	@echo "  make preview-start Start the prepared production preview on port 3030"
+	@echo "  make preview-stop  Stop only the preview process started by this project"
+	@echo "  make preview-status Show standalone preview status"
+	@echo "  make preview-logs  Follow standalone preview logs"
 	@echo ""
 	@echo "  make clean         Remove build artifacts"
 	@echo "  make clean-deps    Remove node_modules"
@@ -78,6 +87,9 @@ audit:
 
 audit-prod:
 	pnpm audit-prod
+
+release-check:
+	@bash scripts/release-check.sh
 
 # --- Background Web Process --------------------------------------------------
 
@@ -195,31 +207,28 @@ docker-logs:
 	docker compose logs -f
 
 docker-shell:
-	docker exec -it $(CONTAINER) /bin/sh
+	docker compose exec cvforge /bin/sh
 
 docker-clean:
 	docker compose down -v
 	docker rmi $(IMAGE) || true
 
-docker-check: docker-build
-	@set -eu; \
-	cleanup() { \
-		CVFORGE_PORT=$(DOCKER_PORT) docker compose down >/dev/null 2>&1 || true; \
-	}; \
-	trap cleanup EXIT INT TERM; \
-	echo "Starting temporary CVForge validation container..."; \
-	CVFORGE_PORT=$(DOCKER_PORT) docker compose up -d; \
-	echo "Waiting for CVForge on $(DOCKER_URL)..."; \
-	attempt=0; \
-	until node -e "fetch('$(DOCKER_URL)/').then((response) => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))"; do \
-		attempt=$$((attempt + 1)); \
-		if [ "$$attempt" -ge 30 ]; then \
-			echo "CVForge did not become ready within 30 seconds."; \
-			docker compose logs --tail 100; \
-			exit 1; \
-		fi; \
-		sleep 1; \
-	done; \
-	echo "Checking routes..."; \
-	node -e "const base='$(DOCKER_URL)'; const ok=['/','/builder','/analyzer','/robots.txt','/sitemap.xml','/site.webmanifest','/opengraph-image']; Promise.all(ok.map(async (path) => { const response=await fetch(base+path); if (!response.ok) throw new Error(path+' returned '+response.status); console.log(response.status,path); })).then(async () => { for (const [path,status,location] of [['/parser',308,'/analyzer'],['/resume-import',307,'/builder']]) { const response=await fetch(base+path,{redirect:'manual'}); if (response.status!==status || response.headers.get('location')!==location) throw new Error(path+' redirect mismatch'); console.log(response.status,path,'->',location); } }).catch((error) => { console.error(error); process.exit(1); })"; \
-	echo "Docker validation passed. Temporary container will now be stopped."
+docker-check:
+	@NEXT_PUBLIC_SITE_URL="$(SITE_URL)" DOCKER_PORT="$(DOCKER_PORT)" bash scripts/docker-check.sh
+
+# --- Standalone Production Preview -------------------------------------------
+
+preview-build:
+	@NEXT_PUBLIC_SITE_URL="$(PRODUCTION_SITE_URL)" PREVIEW_PORT="$(PREVIEW_PORT)" bash scripts/preview.sh build
+
+preview-start:
+	@NEXT_PUBLIC_SITE_URL="$(PRODUCTION_SITE_URL)" PREVIEW_PORT="$(PREVIEW_PORT)" bash scripts/preview.sh start
+
+preview-stop:
+	@NEXT_PUBLIC_SITE_URL="$(PRODUCTION_SITE_URL)" PREVIEW_PORT="$(PREVIEW_PORT)" bash scripts/preview.sh stop
+
+preview-status:
+	@NEXT_PUBLIC_SITE_URL="$(PRODUCTION_SITE_URL)" PREVIEW_PORT="$(PREVIEW_PORT)" bash scripts/preview.sh status
+
+preview-logs:
+	@NEXT_PUBLIC_SITE_URL="$(PRODUCTION_SITE_URL)" PREVIEW_PORT="$(PREVIEW_PORT)" bash scripts/preview.sh logs

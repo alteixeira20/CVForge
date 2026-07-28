@@ -1,5 +1,7 @@
 export const SITE_URL_ENV_VAR = 'NEXT_PUBLIC_SITE_URL'
-export const DEVELOPMENT_SITE_URL = 'http://localhost:3000'
+export const DEVELOPMENT_SITE_URL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:3000'
+  : 'https://cvforge.alexandreteixeira.dev'
 
 export const HOME_TITLE = 'CVForge — Local-First CV Builder & Analyzer'
 export const HOME_DESCRIPTION =
