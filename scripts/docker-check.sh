@@ -46,10 +46,16 @@ docker run --detach \
   "${IMAGE_NAME}" >/dev/null
 
 ready=0
+consecutive_ready=0
 for _attempt in $(seq 1 60); do
   if node -e "fetch('${BASE_URL}/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"; then
-    ready=1
-    break
+    consecutive_ready=$((consecutive_ready + 1))
+    if [[ "${consecutive_ready}" -ge 2 ]]; then
+      ready=1
+      break
+    fi
+  else
+    consecutive_ready=0
   fi
   sleep 1
 done
@@ -61,13 +67,29 @@ fi
 
 node - "${BASE_URL}" <<'NODE'
 const base = process.argv[2];
+
+async function fetchWithRetry(path, options) {
+  let lastError
+  for (let attempt = 1; attempt <= 5; attempt += 1) {
+    try {
+      const response = await fetch(base + path, options)
+      if (response.status < 500 || attempt === 5) return response
+      lastError = new Error(`${path} returned transient status ${response.status}`)
+    } catch (error) {
+      lastError = error
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250 * attempt))
+  }
+  throw lastError
+}
+
 (async () => {
   const ok = [
     '/', '/builder', '/analyzer', '/health', '/robots.txt', '/sitemap.xml',
     '/site.webmanifest', '/opengraph-image',
   ]
   for (const path of ok) {
-    const response = await fetch(base + path)
+    const response = await fetchWithRetry(path)
     if (!response.ok) throw new Error(`${path} returned ${response.status}`)
     console.log(response.status, path)
   }
@@ -75,7 +97,7 @@ const base = process.argv[2];
     ['/parser', 308, '/analyzer'],
     ['/resume-import', 307, '/builder'],
   ]) {
-    const response = await fetch(base + path, { redirect: 'manual' })
+    const response = await fetchWithRetry(path, { redirect: 'manual' })
     if (response.status !== status || response.headers.get('location') !== location) {
       throw new Error(`${path} redirect mismatch: ${response.status} ${response.headers.get('location')}`)
     }
