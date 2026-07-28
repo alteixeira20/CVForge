@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { useCV } from '@/context/CVContext'
 import { isEmptyCV } from '@/lib/cvState'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 import { Icon } from '@/components/ui/Icon'
-import { BrandMark } from '@/components/ui/BrandMark'
+import Image from 'next/image'
 import { ImportModal } from '@/features/import-export/ImportModal'
 
 interface BuilderEntryModalProps {
@@ -21,6 +22,7 @@ export function BuilderEntryModal({
   const { state, resetState } = useCV()
   const hasContent = !isEmptyCV(state)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const dialogRef = useDialogFocus(isOpen && !isImportModalOpen, onClose)
 
   const handleContinue = () => {
     onComplete()
@@ -44,15 +46,22 @@ export function BuilderEntryModal({
     <>
       <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
         <div
+          ref={dialogRef}
           className="modal"
           style={{ width: '460px' }}
           role="dialog"
           aria-modal="true"
           aria-labelledby="builder-entry-modal-title"
+          tabIndex={-1}
         >
           <div className="modal-head">
             <div className="ic plain">
-              <BrandMark variant="square" className="w-10 h-10" />
+              <Image
+                src="/brand/anvilary-logo-mark-square-48-white.png"
+                alt=""
+                width={24}
+                height={24}
+              />
             </div>
             <div className="text">
               <h2 id="builder-entry-modal-title">Welcome to CVForge</h2>

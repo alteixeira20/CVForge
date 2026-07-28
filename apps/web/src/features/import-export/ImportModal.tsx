@@ -8,6 +8,7 @@ import { ImportConfirmStep } from './ImportConfirmStep'
 import { PdfHeuristicReview } from './PdfHeuristicReview'
 import { type ImportModalProps } from './importModalTypes'
 import { useImportModalFlow } from './useImportModalFlow'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
   const {
@@ -22,6 +23,7 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
     openFileDialog,
     pendingState,
   } = useImportModalFlow({ onClose, onComplete })
+  const dialogRef = useDialogFocus(isOpen, onClose)
 
   if (!isOpen || typeof document === 'undefined') return null
 
@@ -31,11 +33,13 @@ export function ImportModal({ isOpen, onClose, onComplete }: ImportModalProps) {
   return createPortal((
     <div className="modal-scrim" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div
+        ref={dialogRef}
         className="modal"
         style={{ '--modal-width': modalWidth } as CSSProperties}
         role="dialog"
         aria-modal="true"
         aria-labelledby="import-modal-title"
+        tabIndex={-1}
       >
         <div className="modal-head">
           <div className="ic plain">

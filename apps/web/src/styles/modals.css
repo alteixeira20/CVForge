@@ -29,8 +29,8 @@
 /* --- Generic modal ---------------------------------------------------------- */
 .modal-scrim {
   position: fixed; inset: 0; z-index: 1000;
-  background: rgba(8,6,4,0.62);
-  backdrop-filter: blur(6px);
+  /* Strongly dimmed black backdrop - shared Anvilary dialog treatment. */
+  background: rgba(5, 5, 7, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,6 @@
   padding: 24px;
   animation: scrim-in 180ms ease-out;
 }
-[data-theme="light"] .modal-scrim { background: rgba(40,28,16,0.32); }
 @keyframes scrim-in { from { opacity: 0; } to { opacity: 1; } }
 
 .modal {
@@ -47,8 +46,12 @@
   max-height: calc(100dvh - 48px);
   overflow: hidden;
   margin: auto 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
+  /* Warm charcoal surface with a restrained top forge glow. */
+  background:
+    radial-gradient(420px 160px at 82% 0%, var(--forge-glow-1), transparent 66%),
+    var(--surface-overlay);
+  border: 1px solid var(--border-strong);
+  border-top-color: var(--accent-border-strong);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   animation: modal-in 240ms cubic-bezier(.2,.7,.2,1);
