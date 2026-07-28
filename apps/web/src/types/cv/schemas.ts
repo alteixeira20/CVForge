@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import { CURRENT_CV_SCHEMA_VERSION } from './version';
 
+// Keep schema evaluation compatible with the production CSP. This must run before
+// object schemas are created so Zod does not probe Function-based JIT compilation.
+z.config({ jitless: true });
+
 /**
  * ─── Resume Models ──────────────────────────────────────────────────────────
  */

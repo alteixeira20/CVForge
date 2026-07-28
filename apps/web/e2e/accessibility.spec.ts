@@ -20,8 +20,15 @@ async function expectNoSeriousViolations(page: Page) {
 test('homepage and Builder entry dialog have no serious or critical axe violations', async ({ page }) => {
   await page.goto('/')
   await expectNoSeriousViolations(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expectNoSeriousViolations(page)
+  await page.setViewportSize({ width: 1280, height: 720 })
   await page.locator('.hero').getByRole('button', { name: 'Build your CV' }).click()
-  await expect(page.getByRole('dialog', { name: 'Start with CVForge' })).toBeVisible()
+  const dialog = page.getByRole('dialog', { name: 'Start with CVForge' })
+  await expect(dialog).toBeVisible()
+  await dialog.evaluate((element) =>
+    Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)),
+  )
   await expectNoSeriousViolations(page)
 })
 
@@ -57,6 +64,10 @@ test('Analyzer empty and result states have no serious or critical axe violation
 test('Import review dialog has no serious or critical axe violations', async ({ page }) => {
   await page.goto('/builder')
   await page.getByRole('button', { name: 'Import' }).click()
-  await expect(page.getByRole('dialog', { name: 'Import CV Data' })).toBeVisible()
+  const dialog = page.getByRole('dialog', { name: 'Import CV Data' })
+  await expect(dialog).toBeVisible()
+  await dialog.evaluate((element) =>
+    Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)),
+  )
   await expectNoSeriousViolations(page)
 })

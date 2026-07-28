@@ -23,7 +23,7 @@ export function Brand({ href, className = 'brand' }: BrandProps) {
   )
 
   if (href) {
-    return <Link href={href} className={className}>{inner}</Link>
+    return <Link href={href} className={className} aria-label="CVForge home">{inner}</Link>
   }
 
   return <div className={className}>{inner}</div>
