@@ -8,9 +8,8 @@
   height: 100dvh;
   display: flex; flex-direction: column;
   overflow: hidden;
-  background:
-    radial-gradient(1000px 500px at 100% -10%, var(--lava-glow), transparent 60%),
-    var(--bg);
+  /* Ambient glow comes from the shared EmberBackground atmosphere layer. */
+  background: var(--bg);
 }
 .app-shell > :last-child {
   min-height: 0;
@@ -24,3 +23,6 @@
   height: calc(100vh - var(--header-h));
   height: calc(100dvh - var(--header-h));
 }
+/* Slightly translucent editor surface so the forge glow reads through the
+   outer shell; dense preview surfaces stay opaque for readability. */
+.workbench-panel-editor { background: var(--surface-dense); }

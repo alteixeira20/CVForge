@@ -31,7 +31,7 @@ export function WorkbenchShell({
       <div className={`workbench-grid flex-1 grid grid-cols-1 ${gridClass} overflow-hidden`}>
         {showLeft && (
           <WorkbenchPanel 
-            className="border-r border-border bg-bg h-full" 
+            className="workbench-panel-editor border-r border-border h-full"
             scroll={variant !== 'builder'}
           >
             {leftPanel}

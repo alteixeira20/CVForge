@@ -1,6 +1,7 @@
 'use client'
 
 import { AppHeader } from '@/components/layout/AppHeader'
+import { EmberBackground } from '@/components/ui/EmberBackground'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
 import { useCV } from '@/context/CVContext'
 import { BuilderEditorPanel } from './BuilderEditorPanel'
@@ -12,6 +13,7 @@ export function BuilderWorkbench() {
 
   return (
     <div className="app-shell h-screen overflow-hidden">
+      <EmberBackground subdued />
       <AppHeader title={profile.name || 'Untitled CV'} />
       <WorkbenchShell
         leftPanel={<BuilderEditorPanel />}

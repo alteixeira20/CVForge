@@ -1,8 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
-import { BrandMark } from '@/components/ui/BrandMark'
+import Image from 'next/image'
 
 interface AppHeaderProps {
   title?: string
@@ -13,8 +12,15 @@ export function AppHeader({
 }: AppHeaderProps) {
   return (
     <header className="app-header">
-      <Link href="/" className="brand-mini" style={{ cursor: 'pointer', textDecoration: 'none' }}>
-        <BrandMark variant="tight" style={{ width: '34px' }} />
+      <Link href="/" className="brand-mini">
+        <span className="brand-logo" aria-hidden="true">
+          <Image
+            src="/brand/anvilary-logo-mark-tight-white.png"
+            alt=""
+            width={24}
+            height={28}
+          />
+        </span>
         <span>CVForge</span>
       </Link>
 
@@ -38,7 +44,6 @@ export function AppHeader({
         <Link href="/parser" className="btn sm">
           Parser
         </Link>
-        <ThemeToggle />
       </div>
     </header>
   )
