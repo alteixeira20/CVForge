@@ -11,7 +11,7 @@ META_FILE="${PID_DIR}/preview.meta"
 LOG_FILE="${LOG_DIR}/preview.log"
 PREVIEW_PORT="${PREVIEW_PORT:-3030}"
 PREVIEW_HOST="${PREVIEW_HOST:-127.0.0.1}"
-SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://cvforge.alexandreteixeira.dev}"
+SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://cvforge.anvilary.tools}"
 PREVIEW_URL="http://${PREVIEW_HOST}:${PREVIEW_PORT}"
 
 process_start_time() {

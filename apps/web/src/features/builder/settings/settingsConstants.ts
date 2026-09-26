@@ -7,29 +7,12 @@ export const SECTION_LABELS: Record<string, string> = {
   customSections: 'Custom Sections',
 }
 
-export const FONT_FAMILY_GROUPS = [
-  {
-    category: 'Sans',
-    fonts: [
-      { value: 'Lexend', display: 'Lexend' },
-      { value: 'Inter', display: 'Inter' },
-      { value: 'Helvetica', display: 'Helvetica' },
-    ],
-  },
-  {
-    category: 'Serif',
-    fonts: [
-      { value: 'Times New Roman', display: 'Times' },
-      { value: 'Georgia', display: 'Georgia' },
-    ],
-  },
-  {
-    category: 'Mono',
-    fonts: [
-      { value: 'Courier New', display: 'Courier' },
-      { value: 'JetBrains Mono', display: 'JetBrains' },
-    ],
-  },
+// Only the PDF core fonts are offered, because the exported PDF does not
+// embed font files. Each option is exactly the family the PDF uses.
+export const FONT_FAMILY_OPTIONS = [
+  { value: 'Helvetica', display: 'Helvetica', category: 'Sans' },
+  { value: 'Times New Roman', display: 'Times', category: 'Serif' },
+  { value: 'Courier New', display: 'Courier', category: 'Mono' },
 ] as const
 
 export const THEME_COLORS = [

@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# Rejects Co-authored-by trailers and em dashes in commit messages.
+# Enable once per clone with: make hooks
+exec node "$(git rev-parse --show-toplevel)/tools/check-commit-messages.mjs" --file "$1"

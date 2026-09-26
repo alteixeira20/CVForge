@@ -1,7 +1,7 @@
 # Multi-stage build for CVForge (Next.js pnpm workspace)
 
 # 1. Pinned Node runtime base
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS node-base
+FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS node-base
 
 FROM node-base AS base
 ENV PNPM_HOME="/pnpm"

@@ -16,11 +16,16 @@ interface PreviewDockProps {
 
 export function PreviewDock({ actionSlot, zoom, fitMode, onZoomOut, onZoomIn, onFit }: PreviewDockProps) {
   return (
-    <div className="sticky w-full flex justify-center z-10 pointer-events-none" style={{ bottom: '8px' }}>
-      <div className="pointer-events-auto flex items-center gap-1 bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg">
+    <div className="sticky w-full flex justify-center z-10 pointer-events-none px-1" style={{ bottom: '8px' }}>
+      <div
+        role="toolbar"
+        aria-label="PDF preview controls"
+        className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-1 bg-bg-2/80 backdrop-blur-sm p-1.5 rounded-xl border border-border shadow-lg"
+      >
         {actionSlot}
         <DockSeparator />
         <button
+          type="button"
           onClick={onZoomOut}
           disabled={zoom <= MIN_ZOOM}
           title="Zoom out"
@@ -29,10 +34,11 @@ export function PreviewDock({ actionSlot, zoom, fitMode, onZoomOut, onZoomIn, on
         >
           -
         </button>
-        <span className="text-[11px] font-mono text-ink-3 min-w-[3.5rem] text-center select-none">
+        <span className="text-[11px] font-mono text-ink-3 min-w-[3rem] text-center select-none" role="status">
           {Math.round(zoom * 100)}%
         </span>
         <button
+          type="button"
           onClick={onZoomIn}
           disabled={zoom >= MAX_ZOOM}
           title="Zoom in"
@@ -42,6 +48,7 @@ export function PreviewDock({ actionSlot, zoom, fitMode, onZoomOut, onZoomIn, on
           +
         </button>
         <button
+          type="button"
           onClick={onFit}
           title="Fit PDF preview"
           aria-label="Fit PDF preview to panel"

@@ -140,7 +140,7 @@ function buildIssues(
         ? `A ${profile.summary.trim().length}-character summary is present.`
         : 'No professional summary was detected.',
       why: 'A concise summary gives the reader role context before detailed experience.',
-      suggestion: 'Write a focused 2–4 line summary that connects your experience to the roles you want.',
+      suggestion: 'Write a focused 2-4 line summary that connects your experience to the roles you want.',
       dimension: 'clarity',
       priority: 'medium',
       points: summaryScore,

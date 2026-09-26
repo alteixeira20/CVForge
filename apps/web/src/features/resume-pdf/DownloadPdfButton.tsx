@@ -8,6 +8,7 @@ import { ResumePdfDocument } from './ResumePdfDocument'
 import { resumePdfFileName } from './resumePdfFileName'
 import { embedCVStateAttachment } from './embedCVStateAttachment'
 import { announce } from '@/lib/accessibility/announce'
+import { downloadBlob } from '@/lib/downloadBlob'
 
 export function DownloadPdfButton({ state }: { state: CVState }) {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -22,12 +23,7 @@ export function DownloadPdfButton({ state }: { state: CVState }) {
       const modifiedBlob = await embedCVStateAttachment(blob, state)
       
       // 3. Trigger download
-      const url = URL.createObjectURL(modifiedBlob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = resumePdfFileName(state)
-      link.click()
-      URL.revokeObjectURL(url)
+      downloadBlob(modifiedBlob, resumePdfFileName(state))
       announce('PDF export completed.')
     } catch (error) {
       console.error('PDF generation failed:', error)

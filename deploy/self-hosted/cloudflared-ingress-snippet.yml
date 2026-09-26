@@ -1,0 +1,4 @@
+# Add this entry to the shared Cloudflared tunnel ingress list before its final
+# catch-all rule. Keep the existing cvforge.alexandreteixeira.dev entry.
+- hostname: cvforge.anvilary.tools
+  service: http://nginx:80

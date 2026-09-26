@@ -2,43 +2,31 @@
 
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { type CVState } from '@/types/cv'
 import { isEmptyCV } from '@/lib/cvState'
+import { unsupportedCharactersInCV } from '@/lib/pdfCharacterSupport'
 import { Icon } from '@/components/ui/Icon'
 import { PreviewCanvas } from '@/components/shared/workbench/PreviewCanvas'
 import { PdfCanvasPreview } from './PdfCanvasPreview'
 import { usePdfCanvasPreview } from './usePdfCanvasPreview'
+import { PreviewLoadingState } from './PreviewLoadingState'
+import { useCV } from '@/context/CVContext'
 
 const DownloadPdfButton = dynamic(
   () => import('@/features/resume-pdf/DownloadPdfButton').then((m) => m.DownloadPdfButton),
   { ssr: false, loading: () => <span className="btn sm justify-center opacity-60" aria-live="polite">Preparing PDF</span> },
 )
 
-const SPIN_VISIBLE_MS = 600
+const PAGE_WIDTH_POINTS = { A4: 595.28, Letter: 612 } as const
 
 export function BuilderPreviewPanel({ state }: { state: CVState }) {
+  const { persistence } = useCV()
   const [renderScale, setRenderScale] = useState(0)
-  const { pages, progress, error } = usePdfCanvasPreview(state, renderScale)
+  const preview = usePdfCanvasPreview(state, renderScale)
   const isEmpty = isEmptyCV(state)
-
-  // One-shot spin: each successful page swap increments spinKey (remounts the SVG,
-  // restarting the animation) and keeps the icon visible for SPIN_VISIBLE_MS.
-  const [spinKey, setSpinKey] = useState(0)
-  const [showSpin, setShowSpin] = useState(false)
-  const spinTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    if (pages.length === 0) return
-    if (spinTimerRef.current !== null) clearTimeout(spinTimerRef.current)
-    setSpinKey(k => k + 1)
-    setShowSpin(true)
-    spinTimerRef.current = setTimeout(() => setShowSpin(false), SPIN_VISIBLE_MS)
-  }, [pages])
-
-  useEffect(() => () => {
-    if (spinTimerRef.current !== null) clearTimeout(spinTimerRef.current)
-  }, [])
+  const isLoadingSavedCV = persistence.status === 'loading'
+  const hasPages = preview.pages.length > 0
 
   const actionSlot = (
     <>
@@ -49,56 +37,78 @@ export function BuilderPreviewPanel({ state }: { state: CVState }) {
       >
         <Icon name="search" size={13} />
         <span className="hidden sm:inline">Analyze</span>
+        <span className="sr-only sm:hidden">Analyze</span>
       </Link>
     </>
   )
 
   return (
-    <div className="relative h-full w-full">
-      <PreviewCanvas>
-        {isEmpty && <EmptyPdfPreview />}
-        {!isEmpty && (
-          <PdfCanvasPreview
-            pages={pages}
-            error={error}
-            progress={progress}
-            actionSlot={actionSlot}
-            onRenderScaleChange={setRenderScale}
+    <div className="relative flex h-full w-full flex-col">
+      {!isEmpty && <PdfCharacterNotice state={state} />}
+      <div className="relative min-h-0 flex-1">
+        <PreviewCanvas>
+          {isLoadingSavedCV && <PreviewLoadingState progress={null} />}
+          {!isLoadingSavedCV && isEmpty && <EmptyPdfPreview />}
+          {!isLoadingSavedCV && !isEmpty && (
+            <PdfCanvasPreview
+              pages={preview.pages}
+              error={preview.error}
+              progress={preview.progress}
+              fallbackBaseWidth={PAGE_WIDTH_POINTS[state.settings.documentSize]}
+              actionSlot={actionSlot}
+              onRetry={preview.retry}
+              onRenderScaleChange={setRenderScale}
+            />
+          )}
+        </PreviewCanvas>
+        {!isEmpty && hasPages && (
+          <PreviewStatus
+            isUpdating={preview.isPending || preview.isRendering}
+            error={preview.error}
+            onRetry={preview.retry}
           />
         )}
-      </PreviewCanvas>
-      {!isEmpty && showSpin && <SpinIcon spinKey={spinKey} />}
+      </div>
     </div>
   )
 }
 
-// Appears for SPIN_VISIBLE_MS after each valid render lands. No text, no labels.
-// key={spinKey} remounts the SVG each time so the animation restarts cleanly.
-function SpinIcon({ spinKey }: { spinKey: number }) {
+// The PDF uses standard fonts (no embedded font files), which cover Western
+// European text only. Other characters would appear garbled, so say so.
+function PdfCharacterNotice({ state }: { state: CVState }) {
+  const unsupported = useMemo(() => unsupportedCharactersInCV(state), [state])
+  if (unsupported.length === 0) return null
+
   return (
-    <div className="absolute top-3 right-3 z-20 pointer-events-none">
-      <svg
-        key={spinKey}
-        className="animate-spin text-ink-4/50"
-        style={{
-          animationIterationCount: 1,
-          animationDuration: '550ms',
-          animationTimingFunction: 'ease-in-out',
-        }}
-        width="14"
-        height="14"
-        viewBox="0 0 14 14"
-        fill="none"
-        aria-hidden="true"
-      >
-        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.5" strokeOpacity="0.2" />
-        <path
-          d="M7 1.5A5.5 5.5 0 0 1 12.5 7"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-        />
-      </svg>
+    <div className="pdf-character-notice" role="status" aria-live="polite">
+      <strong>Some characters cannot be shown in the PDF:</strong>{' '}
+      <span className="pdf-character-list" lang="und">{unsupported.join(' ')}</span>
+      <span className="block">
+        The PDF uses standard fonts that support Western European languages only. These
+        characters appear incorrectly in the preview and the downloaded file.
+      </span>
+    </div>
+  )
+}
+
+// Non-blocking status shown over existing pages. The current pages stay
+// visible while an update is pending, rendering, or has failed.
+function PreviewStatus({ isUpdating, error, onRetry }: {
+  isUpdating: boolean
+  error: string
+  onRetry: () => void
+}) {
+  return (
+    <div className="preview-status">
+      <div role="status" aria-live="polite" aria-atomic="true">
+        {error && <span className="preview-status-chip preview-status-error">Preview could not be updated</span>}
+        {!error && isUpdating && <span className="preview-status-chip">Updating preview</span>}
+      </div>
+      {error && (
+        <button type="button" className="btn sm preview-status-retry" onClick={onRetry}>
+          Retry preview
+        </button>
+      )}
     </div>
   )
 }

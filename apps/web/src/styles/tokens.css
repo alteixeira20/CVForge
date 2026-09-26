@@ -61,7 +61,7 @@
   --radius-lg: 14px;
   --radius-xl: 20px;
 
-  /* Font families - variables set by next/font in layout.tsx */
+  /* Font families: self-hosted @font-face rules in fonts.css */
   --font-sans: var(--font-lexend, 'Lexend'), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: var(--font-lexend, 'Lexend'), serif;
   --font-mono: var(--font-jetbrains-mono, 'JetBrains Mono'), ui-monospace, Menlo, monospace;

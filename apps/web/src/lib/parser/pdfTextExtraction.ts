@@ -1,3 +1,5 @@
+import type { PDFDocumentProxy, PDFPageProxy } from 'pdfjs-dist'
+import { findPhantomJoins, isReactPdfProducer, repairPhantomSpaces } from './phantomSpaces'
 import { validateAnalysisPageCount } from './analysisFileValidation'
 import {
   analyzeExtractionEvidence,
@@ -51,14 +53,14 @@ export async function extractPdfText(
     data: new Uint8Array(await file.arrayBuffer()),
     stopAtErrors: true,
   })
-  let pdf: PdfDocument | null = null
+  let pdf: PDFDocumentProxy | null = null
   const abortLoading = () => {
     void loadingTask.destroy()
   }
   signal?.addEventListener('abort', abortLoading, { once: true })
 
   try {
-    pdf = await loadingTask.promise as PdfDocument
+    pdf = await loadingTask.promise
     throwIfAborted(signal)
     const pageCountError = validateAnalysisPageCount(pdf.numPages)
     if (pageCountError) {
@@ -68,11 +70,12 @@ export async function extractPdfText(
       )
     }
 
-    const pages = await extractPagesSequentially(pdf, signal)
+    const { info } = await pdf.getMetadata()
+    const repairPhantoms = isReactPdfProducer(info) ? pdfjs.OPS : null
+    const pages = await extractPagesSequentially(pdf, repairPhantoms, signal)
     throwIfAborted(signal)
     const pageTexts = pages.map((page) => page.text)
     const text = pageTexts.join('\n\n')
-    const { info } = await pdf.getMetadata()
     const metadata = (info || {}) as PdfMetadata
     const diagnostics = analyzeExtractionEvidence(pages)
 
@@ -97,10 +100,10 @@ export async function extractPdfText(
     signal?.removeEventListener('abort', abortLoading)
     try {
       await pdf?.cleanup()
-      await pdf?.destroy()
     } catch {
       // PDF.js may already have released resources after a loading-task failure.
     }
+    // PDF.js 6 removed PDFDocumentProxy.destroy(); the loading task owns the document.
     try {
       await loadingTask.destroy()
     } catch {
@@ -109,19 +112,33 @@ export async function extractPdfText(
   }
 }
 
-async function extractPagesSequentially(pdf: PdfDocument, signal?: AbortSignal) {
+type PdfOps = typeof import('pdfjs-dist').OPS
+
+// `phantomOps` is set only for react-pdf and CVForge documents, whose older
+// exports contain phantom spaces inside words (see phantomSpaces.ts).
+async function extractPagesSequentially(pdf: PDFDocumentProxy, phantomOps: PdfOps | null, signal?: AbortSignal) {
   const pages: PdfPageEvidence[] = []
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     throwIfAborted(signal)
     const page = await pdf.getPage(pageNumber)
     try {
       const content = await page.getTextContent()
-      pages.push(pageEvidence(content.items))
+      const evidence = pageEvidence(content.items)
+      if (phantomOps) evidence.text = repairPhantomSpaces(evidence.text, await phantomJoins(page, phantomOps))
+      pages.push(evidence)
     } finally {
       page.cleanup?.()
     }
   }
   return pages
+}
+
+async function phantomJoins(page: PDFPageProxy, ops: PdfOps) {
+  const list = await page.getOperatorList()
+  const runs = list.fnArray.flatMap((fn, index) => (
+    fn === ops.showText || fn === ops.showSpacedText ? [list.argsArray[index][0]] : []
+  ))
+  return findPhantomJoins(runs)
 }
 
 export function pageEvidence(items: unknown[]): PdfPageEvidence {
@@ -205,15 +222,3 @@ interface TextItem {
   y: number
 }
 
-interface PdfPage {
-  getTextContent: () => Promise<{ items: unknown[] }>
-  cleanup?: () => void
-}
-
-interface PdfDocument {
-  numPages: number
-  getPage: (pageNumber: number) => Promise<PdfPage>
-  getMetadata: () => Promise<{ info?: unknown }>
-  cleanup: () => Promise<void>
-  destroy: () => Promise<void>
-}

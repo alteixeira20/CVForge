@@ -41,6 +41,12 @@ cd "${REPOSITORY_ROOT}"
 CURRENT_STEP="frozen dependency install"
 pnpm install --frozen-lockfile
 
+CURRENT_STEP="em dash policy"
+pnpm check:em-dash
+
+CURRENT_STEP="commit message policy"
+pnpm check:commits
+
 CURRENT_STEP="lint"
 pnpm lint
 

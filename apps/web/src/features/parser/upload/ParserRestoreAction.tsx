@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useCV } from '@/context/CVContext'
+import { markCVImported } from '@/features/builder/workbench/importExpansion'
 import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { type CVState } from '@/types/cv'
 
@@ -12,6 +13,7 @@ export function ParserRestoreAction({ embeddedState }: { embeddedState: CVState 
   const handleRestore = () => {
     if (window.confirm('Replace the current CV with the session found in this PDF?')) {
       replaceState(embeddedState)
+      markCVImported(embeddedState)
       alert('Session restored.')
     }
   }

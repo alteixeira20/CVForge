@@ -34,7 +34,7 @@ export function analyzeExtractionEvidence(pages: PdfPageEvidence[]): PdfExtracti
   const columnOrderPages = pages.filter((page) => page.possibleColumnOrder).length
   const replacementCount = (text.match(/\uFFFD/g) ?? []).length
   const nonWhitespace = text.match(/\S/g)?.length ?? 0
-  const noiseCount = (text.match(/[^\p{L}\p{N}\s.,;:!?%€$£@/()&+_'’"“”\-–—]/gu) ?? []).length
+  const noiseCount = (text.match(/[^\p{L}\p{N}\s.,;:!?%€$£@/()&+_'’"“”\-\u2013\u2014]/gu) ?? []).length
   const noiseRatio = nonWhitespace ? noiseCount / nonWhitespace : 0
 
   return {

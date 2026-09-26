@@ -1,4 +1,4 @@
-import { type SectionKey, type DetectedSection, type CurrentSection } from './heuristicTypes'
+import { type SectionKey, type DetectedSection, type CurrentSection, type EntryLine } from './heuristicTypes'
 import { extractDateRange } from './dateParsing'
 
 export const SECTION_DEFINITIONS: Array<{ key: SectionKey; label: string; pattern: RegExp }> = [
@@ -24,20 +24,30 @@ export function normalizeLines(text: string) {
     .filter((line, index, lines) => lines.findIndex((candidate) => candidate.toLowerCase() === line.toLowerCase()) === index)
 }
 
+// Lines before the first recognized section heading (name, contacts, and
+// often an unheaded summary).
+export function preambleLines(text: string) {
+  const lines = normalizeLines(text)
+  const firstHeading = lines.findIndex((line) => Boolean(sectionForHeading(line)))
+  return firstHeading === -1 ? [] : lines.slice(0, firstHeading)
+}
+
 export function sectionForHeading(line: string) {
   const normalized = line.replace(/:$/, '').trim()
   if (normalized.length > 40) return null
   return SECTION_DEFINITIONS.find((section) => section.pattern.test(normalized)) ?? null
 }
 
+// Section content keeps the original lines, including bullet markers, so
+// entry parsing can tell bullets from headings.
 export function detectSections(text: string): DetectedSection[] {
-  const lines = normalizeLines(text)
+  const lines = text.replace(/\r/g, '\n').split(/\n+/).map((line) => line.trim()).filter(Boolean)
   const sections: DetectedSection[] = []
   let current: CurrentSection | null = null
   const preamble: string[] = []
 
   lines.forEach((line) => {
-    const heading = sectionForHeading(line)
+    const heading = sectionForHeading(line.replace(/\s+/g, ' '))
     if (heading) {
       pushCurrentSection(sections, current)
       current = { ...heading, lines: [] }
@@ -65,14 +75,49 @@ function pushCurrentSection(sections: DetectedSection[], current: CurrentSection
   })
 }
 
-export function splitSectionEntries(content: string) {
-  const lines = normalizeLines(content)
-  const chunks: string[][] = []
-  let current: string[] = []
+const BULLET_MARKER = /^[\u2022\u00b7\u25aa\u25e6\u2023*-]\s*/
+// A bullet wrapped onto the next line fills most of the width and has no
+// closing punctuation; the continuation usually starts in lower case.
+const WRAPPED_LINE_MIN_LENGTH = 70
 
-  lines.forEach((line) => {
-    const startsNewEntry = current.length > 0 && (Boolean(extractDateRange(line)) || isLikelyEntryHeading(line, current))
-    if (startsNewEntry) {
+// Splits a section into lines while keeping which lines are bullets, and
+// joins wrapped bullet lines back onto their bullet.
+export function entryLines(content: string): EntryLine[] {
+  const result: EntryLine[] = []
+  for (const rawLine of content.replace(/\r/g, '\n').split(/\n+/)) {
+    const line = rawLine.trim().replace(/\s+/g, ' ')
+    if (line.length <= 1) continue
+    const bullet = BULLET_MARKER.test(line) && line.replace(BULLET_MARKER, '').length > 1
+    const text = bullet ? line.replace(BULLET_MARKER, '') : line
+    const previous = result[result.length - 1]
+    if (!bullet && previous?.bullet && isWrappedContinuation(previous.text, text)) {
+      previous.text = `${previous.text} ${text}`
+      continue
+    }
+    result.push({ text, bullet })
+  }
+  return result
+}
+
+function isWrappedContinuation(previous: string, line: string) {
+  if (sectionForHeading(line)) return false
+  if (startsLowerCase(line)) return true
+  return previous.length >= WRAPPED_LINE_MIN_LENGTH && !/[.!?:;]$/.test(previous) && !extractDateRange(line)
+}
+
+function startsLowerCase(line: string) {
+  return /^\p{Ll}/u.test(line)
+}
+
+// Groups section lines into entries. Bullets and wrapped lines never start an
+// entry; a heading line after an entry's bullets, or after a complete
+// title-and-date header, does.
+export function splitSectionEntries(content: string): EntryLine[][] {
+  const chunks: EntryLine[][] = []
+  let current: EntryLine[] = []
+
+  entryLines(content).forEach((line) => {
+    if (current.length > 0 && startsNewEntry(line, current)) {
       chunks.push(current)
       current = []
     }
@@ -80,7 +125,33 @@ export function splitSectionEntries(content: string) {
   })
 
   if (current.length) chunks.push(current)
-  return chunks.filter((chunk) => chunk.some(isMeaningfulLine))
+  return chunks.filter((chunk) => chunk.some((line) => isMeaningfulLine(line.text)))
+}
+
+function startsNewEntry(line: EntryLine, current: EntryLine[]) {
+  if (line.bullet || startsLowerCase(line.text)) return false
+  if (current.some((candidate) => candidate.bullet)) return true
+  const headers = current.map((candidate) => candidate.text)
+  const hasDate = headers.some((header) => Boolean(extractDateRange(header)))
+  if (!hasDate) return false
+  if (extractDateRange(line.text)) return true
+  // Without bullets, a header is complete once it names both a title and an
+  // organization (two lines, or one "Role at Company" line) and has a date.
+  const titleWeight = headers
+    .map(withoutDate)
+    .filter(isStrongLine)
+    .reduce((total, header) => total + (COMBINED_TITLE.test(header) ? 2 : 1), 0)
+  return titleWeight >= 2 && isStrongLine(line.text)
+}
+
+const COMBINED_TITLE = /\s+at\s+|\s+[|\u2013\u2014-]\s+/i
+
+// Removes the date range (and separators around it) from a header line, for
+// example "Senior Engineer | Jan 2020 - Present" -> "Senior Engineer".
+export function withoutDate(line: string) {
+  const date = extractDateRange(line)
+  const text = date ? line.replace(date.raw, ' ') : line
+  return text.replace(/\s*[|,\u2013\u2014-]\s*$/, '').replace(/^\s*[|,\u2013\u2014-]\s*/, '').replace(/\s+/g, ' ').trim()
 }
 
 export function extractUrl(line: string) {
@@ -116,7 +187,8 @@ export function isDegreeLine(line: string) {
 }
 
 export function isLikelyLocation(line: string) {
-  return /^(Remote|Hybrid)$/i.test(line.trim()) || /^[A-Z][A-Za-z .'-]+,\s*[A-Z][A-Za-z .'-]+$/.test(line.trim())
+  const value = line.trim()
+  return /^(Remote|Hybrid)$/i.test(value) || /^\p{Lu}[\p{L} .'-]+,\s*\p{Lu}[\p{L} .'-]+$/u.test(value)
 }
 
 export function isLikelyName(line: string) {
@@ -124,9 +196,5 @@ export function isLikelyName(line: string) {
     && !line.includes('@')
     && !extractUrl(line)
     && !sectionForHeading(line)
-    && /^[A-Z][A-Za-z'.-]+(?:\s+[A-Z][A-Za-z'.-]+){1,3}$/.test(line)
-}
-
-export function isLikelyEntryHeading(line: string, current: string[]) {
-  return isStrongLine(line) && current.some((candidate) => Boolean(extractDateRange(candidate)) || isBulletLike(candidate))
+    && /^\p{Lu}[\p{L}'.-]+(?:\s+\p{Lu}[\p{L}'.-]+){1,3}$/u.test(line)
 }

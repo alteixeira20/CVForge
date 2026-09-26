@@ -71,7 +71,7 @@ The owner-facing release gate uses the confirmed production origin and an isolat
 script with strict error handling:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
 DOCKER_PORT=3030 \
 make release-check
 ```
@@ -88,7 +88,7 @@ Build metadata for the real production origin, then run the standalone server lo
 without Docker:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make preview-build
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make preview-build
 make preview-start
 make preview-status
 make preview-logs
@@ -112,8 +112,8 @@ explicitly for auditable releases.
 CVForge includes a pinned multi-stage, non-root standalone image with a health check:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make docker-build
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev DOCKER_PORT=3030 make docker-up
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make docker-build
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools DOCKER_PORT=3030 make docker-up
 make docker-status
 make docker-logs
 DOCKER_PORT=3030 make docker-down
@@ -123,7 +123,7 @@ The service is available at `http://localhost:3030`. For an isolated validation 
 does not affect Compose or unrelated containers:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
 DOCKER_PORT=3030 \
 make docker-check
 ```

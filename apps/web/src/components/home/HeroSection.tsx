@@ -11,8 +11,8 @@ export function HeroSection({ onCreateClick }: HeroSectionProps) {
   return (
     <section className="hero container" aria-labelledby="home-title">
       <h1 id="home-title">
-        Build, analyze, and improve your CV{' '}
-        <span className="accent">— locally.</span>
+        Build, analyze, and improve your CV,{' '}
+        <span className="accent">locally.</span>
       </h1>
       <p className="lede">
         Create a structured CV with browser autosave, reliable backup, and PDF

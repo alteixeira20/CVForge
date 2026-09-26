@@ -34,8 +34,8 @@ test('homepage and Builder entry dialog have no serious or critical axe violatio
 
 test('populated Builder and mobile navigation have no serious or critical axe violations', async ({ page }) => {
   await page.goto('/builder')
-  await page.getByLabel('Full Name').fill('João Gonçalves')
-  await page.getByLabel('Professional Summary').fill('Engenheiro de produto focado em experiências acessíveis e fiáveis.')
+  await page.getByLabel('Full Name').fill('Zoë Brontë-Smith')
+  await page.getByLabel('Professional Summary').fill('Product engineer focused on accessible and reliable experiences.')
   await expectNoSeriousViolations(page)
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(page.locator('.workbench-mobile-nav').getByRole('button').first()).toBeVisible()

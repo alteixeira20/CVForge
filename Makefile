@@ -1,4 +1,4 @@
-.PHONY: help install dev check lint typecheck build audit audit-prod \
+.PHONY: help install dev check em-dash hooks lint typecheck build audit audit-prod \
         start stop restart status logs logs-web web-start web-stop web-status \
         clean clean-deps docker-build docker-up docker-down docker-status docker-logs docker-shell docker-clean docker-check \
         release-check preview-build preview-start preview-stop preview-status preview-logs
@@ -12,7 +12,7 @@ SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),http://localhost:3000)
 DOCKER_PORT ?= 3030
 DOCKER_URL := http://localhost:$(DOCKER_PORT)
 PREVIEW_PORT ?= 3030
-PRODUCTION_SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),https://cvforge.alexandreteixeira.dev)
+PRODUCTION_SITE_URL ?= $(or $(NEXT_PUBLIC_SITE_URL),https://cvforge.anvilary.tools)
 
 APP_NAME := cvforge
 IMAGE    := cvforge:latest
@@ -28,7 +28,8 @@ help:
 	@echo "Usage:"
 	@echo "  make install       Install dependencies"
 	@echo "  make dev           Run Next.js frontend in the foreground"
-	@echo "  make check         Run linting, typechecking, and production build"
+	@echo "  make check         Run em dash check, linting, typechecking, and production build"
+	@echo "  make hooks         Enable the versioned commit-msg hook for this clone"
 	@echo "  make audit         Run dependency security audit"
 	@echo "  make audit-prod    Run production dependency security audit"
 	@echo ""
@@ -80,7 +81,14 @@ typecheck:
 build:
 	pnpm build
 
-check: lint typecheck build
+check: em-dash lint typecheck build
+
+em-dash:
+	pnpm check:em-dash
+
+# Installs the versioned commit-msg hook (rejects Co-authored-by trailers and em dashes).
+hooks:
+	git config core.hooksPath .githooks
 
 audit:
 	pnpm audit

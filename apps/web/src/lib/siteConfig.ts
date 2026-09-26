@@ -1,9 +1,14 @@
 export const SITE_URL_ENV_VAR = 'NEXT_PUBLIC_SITE_URL'
 export const DEVELOPMENT_SITE_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3000'
-  : 'https://cvforge.alexandreteixeira.dev'
+  : 'https://cvforge.anvilary.tools'
 
-export const HOME_TITLE = 'CVForge — Local-First CV Builder & Analyzer'
+// Hostnames that served CVForge before the move to the current origin. Saved
+// CVs live in each origin's own browser storage, so visitors there are shown
+// how to move their CV instead of being redirected.
+export const LEGACY_HOSTNAMES: readonly string[] = ['cvforge.alexandreteixeira.dev']
+
+export const HOME_TITLE = 'CVForge: Local-First CV Builder & Analyzer'
 export const HOME_DESCRIPTION =
   'Build, back up, export, and improve a CV or resume locally with a structured editor and transparent ATS-style PDF analysis.'
 export const BUILDER_TITLE = 'Free CV Builder with PDF Export | CVForge'

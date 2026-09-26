@@ -1,8 +1,10 @@
 import { BuilderSectionList } from './BuilderSectionList'
+import { useImportVersion } from './importExpansion'
 import { ImportExportActions } from '@/features/import-export/ImportExportActions'
 import { WorkbenchHeader } from '@/components/shared/workbench/WorkbenchHeader'
 
 export function BuilderEditorPanel() {
+  const importVersion = useImportVersion()
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
@@ -14,7 +16,7 @@ export function BuilderEditorPanel() {
         />
 
         <div className="p-5 lg:p-8 pt-6 pb-20">
-          <BuilderSectionList />
+          <BuilderSectionList key={importVersion} />
         </div>
       </div>
     </div>

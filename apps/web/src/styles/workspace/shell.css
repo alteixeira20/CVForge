@@ -20,8 +20,8 @@
   min-height: 0;
 }
 .workbench-grid {
-  height: calc(100vh - var(--header-h));
-  height: calc(100dvh - var(--header-h));
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
 }
 /* Slightly translucent editor surface so the forge glow reads through the
    outer shell; dense preview surfaces stay opaque for readability. */

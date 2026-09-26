@@ -22,3 +22,33 @@
   overflow: hidden;
 }
 
+
+/* --- Preview status --------------------------------------------------------- */
+.preview-status {
+  position: absolute; top: 10px; right: 12px; z-index: 20;
+  display: flex; align-items: center; gap: 6px;
+  pointer-events: none;
+}
+.preview-status-chip {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 11px; line-height: 1.4;
+  color: var(--ink-2);
+  background: color-mix(in srgb, var(--bg-2) 92%, transparent);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.25));
+}
+.preview-status-error { color: #fecaca; border-color: rgba(248,113,113,0.45); }
+.preview-status-retry { pointer-events: auto; }
+
+/* --- PDF character notice ---------------------------------------------------- */
+.pdf-character-notice {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  font-size: 12px; line-height: 1.5;
+  color: var(--ink-2);
+  background: var(--bg-2);
+  border-bottom: 1px solid rgba(217,116,66,0.40);
+}
+.pdf-character-notice strong { color: var(--ink); font-weight: 600; }
+.pdf-character-list { font-family: var(--font-mono); color: var(--ink); overflow-wrap: anywhere; }

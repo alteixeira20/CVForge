@@ -1,0 +1,22 @@
+# CVForge release candidate on the shared Docker host.
+# The image is built from the reviewed commit beforehand (see README.md) and
+# joins the external `edge` network used by the shared Nginx and Cloudflared
+# containers. No host port is published.
+name: cvforge-rc
+
+services:
+  cvforge-rc:
+    image: cvforge:${CVFORGE_RELEASE:?Set CVFORGE_RELEASE to the reviewed release tag}
+    container_name: cvforge-rc
+    restart: unless-stopped
+    user: "1001:1001"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - edge
+
+networks:
+  edge:
+    external: true

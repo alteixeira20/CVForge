@@ -1,44 +1,39 @@
+import type { PDFDocumentLoadingTask, PDFDocumentProxy } from 'pdfjs-dist'
 import { type CVState, parseCVState } from '@/types/cv'
 import { migrateCVState } from '@/lib/cvMigrations'
+
+export const CVFORGE_ATTACHMENT_NAME = 'cvforge-state.json'
+
+type AttachmentSource = Pick<PDFDocumentProxy, 'getAttachments' | 'getAttachmentContent'>
 
 export async function extractCVForgeAttachment(
   file: File,
   options: { signal?: AbortSignal } = {},
 ): Promise<CVState | null> {
-  let loadingTask: { promise: Promise<unknown>; destroy: () => Promise<void> } | null = null
-  let pdf: PdfAttachmentDocument | null = null
+  let loadingTask: PDFDocumentLoadingTask | null = null
+  const abortLoading = () => {
+    void loadingTask?.destroy()
+  }
   try {
     if (options.signal?.aborted) return null
     const pdfjs = await import('pdfjs-dist')
     pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
 
     loadingTask = pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) })
-    const abortLoading = () => {
-      void loadingTask?.destroy()
-    }
     options.signal?.addEventListener('abort', abortLoading, { once: true })
-    pdf = await loadingTask.promise as PdfAttachmentDocument
-    options.signal?.removeEventListener('abort', abortLoading)
-    if (!pdf || options.signal?.aborted) return null
-    
-    // Check for attachments (embedded files)
-    const attachments = await pdf.getAttachments()
-    if (!attachments || !attachments['cvforge-state.json']) return null
-    
-    const attachment = attachments['cvforge-state.json']
-    const jsonString = new TextDecoder().decode(attachment.content)
-    const parsed = JSON.parse(jsonString)
-    
+    const pdf = await loadingTask.promise
+    if (options.signal?.aborted) return null
+
+    const content = await readCVForgeAttachment(pdf)
+    if (!content) return null
+    const parsed = JSON.parse(new TextDecoder().decode(content))
     return parseCVState(migrateCVState(parsed))
   } catch (error) {
     if (!options.signal?.aborted) console.warn('Failed to extract CVForge attachment:', error)
     return null
   } finally {
-    try {
-      await pdf?.destroy()
-    } catch {
-      // The loading task may already have released the document.
-    }
+    options.signal?.removeEventListener('abort', abortLoading)
+    // PDF.js 6 releases the document through its loading task only.
     try {
       await loadingTask?.destroy()
     } catch {
@@ -47,7 +42,16 @@ export async function extractCVForgeAttachment(
   }
 }
 
-interface PdfAttachmentDocument {
-  getAttachments: () => Promise<Record<string, { content: Uint8Array }> | null>
-  destroy: () => Promise<void>
+// PDF.js 6 returns attachments as a Map keyed by the embedded-file name, and
+// usually omits the bytes, which are then fetched on demand.
+export async function readCVForgeAttachment(pdf: AttachmentSource): Promise<Uint8Array | null> {
+  const attachments = await pdf.getAttachments()
+  if (!attachments) return null
+
+  for (const [id, attachment] of attachments) {
+    const isCVForgeState = id === CVFORGE_ATTACHMENT_NAME || attachment.filename === CVFORGE_ATTACHMENT_NAME
+    if (!isCVForgeState) continue
+    return attachment.content ?? await pdf.getAttachmentContent(id) ?? null
+  }
+  return null
 }

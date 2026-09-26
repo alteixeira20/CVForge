@@ -1,33 +1,39 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { type RenderedPage } from './pdfPreviewTypes'
 
+// Bounds for the manual zoom buttons.
 export const MIN_ZOOM = 0.5
 export const MAX_ZOOM = 2.5
+// Fit may go below the manual minimum so a page always fits narrow panels.
+const MIN_FIT_ZOOM = 0.2
 const ZOOM_STEP = 0.15
-// Standard A4 page width in PDF points at scale 1.
-// Used to estimate fit zoom before the first render completes.
-const PDF_BASE_WIDTH = 595
 
 export function clamp(v: number, lo: number, hi: number) {
   return Math.min(Math.max(v, lo), hi)
 }
 
-export function useZoomControl(pages: RenderedPage[]) {
+function fitZoomFor(containerWidth: number, baseWidth: number) {
+  return clamp(containerWidth / baseWidth, MIN_FIT_ZOOM, MAX_ZOOM)
+}
+
+// fallbackBaseWidth is the page width in PDF points for the selected document
+// size, used to fit correctly before the first render arrives.
+export function useZoomControl(pages: RenderedPage[], fallbackBaseWidth: number) {
   const [zoom, setZoom] = useState(1.0)
   const [fitMode, setFitMode] = useState(true)
   const fitModeRef = useRef(true)
   fitModeRef.current = fitMode
-  const pagesRef = useRef<RenderedPage[]>([])
-  pagesRef.current = pages
+  const baseWidth = pages.length > 0 ? pages[0].baseWidth : fallbackBaseWidth
+  const baseWidthRef = useRef(baseWidth)
+  baseWidthRef.current = baseWidth
   const containerWidthRef = useRef(0)
 
   const applyFitZoom = useCallback(() => {
     if (!fitModeRef.current || containerWidthRef.current === 0) return
-    const baseWidth = pagesRef.current.length > 0 ? pagesRef.current[0].baseWidth : PDF_BASE_WIDTH
-    setZoom(clamp(containerWidthRef.current / baseWidth, MIN_ZOOM, MAX_ZOOM))
+    setZoom(fitZoomFor(containerWidthRef.current, baseWidthRef.current))
   }, [])
 
-  useEffect(() => { applyFitZoom() }, [pages, applyFitZoom])
+  useEffect(() => { applyFitZoom() }, [baseWidth, applyFitZoom])
 
   const reportContainerWidth = useCallback((w: number) => {
     containerWidthRef.current = w
@@ -38,10 +44,9 @@ export function useZoomControl(pages: RenderedPage[]) {
   const zoomIn = () => { setFitMode(false); setZoom(z => clamp(z + ZOOM_STEP, MIN_ZOOM, MAX_ZOOM)) }
   const fit = () => {
     setFitMode(true)
-    if (pagesRef.current.length > 0 && containerWidthRef.current > 0) {
-      setZoom(clamp(containerWidthRef.current / pagesRef.current[0].baseWidth, MIN_ZOOM, MAX_ZOOM))
-    }
+    fitModeRef.current = true
+    applyFitZoom()
   }
 
-  return { zoom, fitMode, fitModeRef, zoomOut, zoomIn, fit, reportContainerWidth }
+  return { zoom, fitMode, zoomOut, zoomIn, fit, reportContainerWidth }
 }

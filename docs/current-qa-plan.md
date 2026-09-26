@@ -30,7 +30,7 @@ bash scripts/cross-browser-check.sh
 Run the complete production gate:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
 DOCKER_PORT=3030 \
 make release-check
 ```
@@ -130,7 +130,7 @@ reduced motion, and 200% zoom. Record any assistive technology and version used.
 ## Local Production and Rollback Checks
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make preview-build
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make preview-build
 make preview-start
 make preview-status
 make preview-stop
