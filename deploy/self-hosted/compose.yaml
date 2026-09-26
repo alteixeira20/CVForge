@@ -9,6 +9,10 @@ services:
     image: cvforge:${CVFORGE_RELEASE:?Set CVFORGE_RELEASE to the reviewed release tag}
     container_name: cvforge-rc
     restart: unless-stopped
+    # Match Docker release validation: Next.js listens on all interfaces so
+    # the localhost health check and shared Nginx can reach the server.
+    environment:
+      HOSTNAME: "0.0.0.0"
     user: "1001:1001"
     security_opt:
       - no-new-privileges:true
