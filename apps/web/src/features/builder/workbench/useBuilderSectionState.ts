@@ -1,8 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { type RepeatableSectionKey } from '@/context/CVContext'
+import { clearImportedSections, peekImportedSections } from './importExpansion'
 
 export function useBuilderSectionState() {
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(() => new Set(['profile']))
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(
+    () => new Set(['profile', ...(peekImportedSections() ?? [])]),
+  )
+  useEffect(() => clearImportedSections(), [])
   const [focusVersions, setFocusVersions] = useState<Partial<Record<RepeatableSectionKey, number>>>({})
 
   const toggleSection = (id: string) => {

@@ -26,6 +26,7 @@ function buildSignature(state: CVState, renderScale: number): string {
 export function usePdfCanvasPreview(state: CVState, renderScale: number) {
   const [pages, setPages] = useState<RenderedPage[]>([])
   const [isRendering, setIsRendering] = useState(false)
+  const [isPending, setIsPending] = useState(false)
   const [progress, setProgress] = useState<RenderProgress | null>(null)
   const [error, setError] = useState('')
 
@@ -64,7 +65,7 @@ export function usePdfCanvasPreview(state: CVState, renderScale: number) {
       setError('')
     } catch (err) {
       console.error('PDF canvas render error:', err)
-      if (!isCancelled()) setError('PDF preview could not be generated.')
+      if (!isCancelled()) setError('Preview could not be updated.')
     } finally {
       if (!isCancelled()) {
         setIsRendering(false)
@@ -73,14 +74,23 @@ export function usePdfCanvasPreview(state: CVState, renderScale: number) {
     }
   }, [])
 
-  const scheduleRefresh = useCallback((immediate: boolean) => {
+  // Drops any scheduled or in-flight render without touching current pages.
+  const cancelWork = useCallback(() => {
+    generationRef.current += 1
     if (pendingTimeoutRef.current !== null) {
       clearTimeout(pendingTimeoutRef.current)
       pendingTimeoutRef.current = null
     }
+    setIsPending(false)
+    setIsRendering(false)
+    setProgress(null)
+  }, [])
+
+  const scheduleRefresh = useCallback((immediate: boolean) => {
+    cancelWork()
     if (isEmptyCV(stateRef.current)) return
-    // renderScale=0 means the preview container has not been measured yet.
-    // Skip generation until the correct fit-zoom renderScale is known.
+    // renderScale=0 means the preview container is unmeasured or hidden
+    // (inactive mobile panel). Pause until it has a real size again.
     if (renderScaleRef.current <= 0) return
 
     generationRef.current += 1
@@ -94,32 +104,40 @@ export function usePdfCanvasPreview(state: CVState, renderScale: number) {
       return
     }
 
+    setIsPending(true)
     pendingTimeoutRef.current = setTimeout(() => {
       pendingTimeoutRef.current = null
+      setIsPending(false)
       setIsRendering(true)
       void runGeneration(genId, capturedState)
     }, AUTO_UPDATE_DELAY_MS)
-  }, [runGeneration])
+  }, [runGeneration, cancelWork])
 
   // Re-render whenever CV content or renderScale (rounded) changes.
   // Immediate on first load; debounced on subsequent changes.
   useEffect(() => {
     if (isEmptyCV(state)) {
-      generationRef.current += 1
-      if (pendingTimeoutRef.current !== null) {
-        clearTimeout(pendingTimeoutRef.current)
-        pendingTimeoutRef.current = null
-      }
-      setIsRendering(false)
-      setProgress(null)
+      cancelWork()
       setError('')
       setPages([])
       lastRenderedSignatureRef.current = ''
       return
     }
+    // Nothing visible changed (for example resizing away and back, or
+    // returning to a hidden panel): keep the current pages.
+    if (renderSignature === lastRenderedSignatureRef.current) {
+      cancelWork()
+      setError('')
+      return
+    }
     scheduleRefresh(!lastRenderedSignatureRef.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [renderSignature])
+
+  const retry = useCallback(() => {
+    lastRenderedSignatureRef.current = ''
+    scheduleRefresh(true)
+  }, [scheduleRefresh])
 
   useEffect(() => {
     return () => {
@@ -131,5 +149,5 @@ export function usePdfCanvasPreview(state: CVState, renderScale: number) {
     }
   }, [])
 
-  return { pages, isRendering, isPreviewStale, progress, error }
+  return { pages, isRendering, isPending, isPreviewStale, progress, error, retry }
 }

@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { AppHeader } from '@/components/layout/AppHeader'
 import { EmberBackground } from '@/components/ui/EmberBackground'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
+import { WorkbenchNotices } from '@/features/import-export/WorkbenchNotices'
 import { useCV } from '@/context/CVContext'
 import { ExtractionDiagnostics } from '../diagnostics/ExtractionDiagnostics'
 import { TextPreview } from '../diagnostics/TextPreview'
@@ -47,6 +48,7 @@ export function ParserWorkbench() {
         leftLabel="Analysis"
         rightLabel="Source"
         variant="builder"
+        notice={<WorkbenchNotices />}
       />
     </div>
   )

@@ -7,12 +7,12 @@ no database, account system, upload endpoint, or server-side CV store.
 ## Release Prerequisites
 
 - Review and deploy only the intended release commit.
-- Use Node.js 20 and pnpm 10.5.2 through Corepack.
+- Use Node.js 22 (22.13 or newer) and pnpm 10.5.2 through Corepack.
 - Keep Docker available for the final container gate.
 - Do not deploy until the following command passes:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
 DOCKER_PORT=3030 \
 make release-check
 ```
@@ -23,7 +23,7 @@ rewrite already-generated canonical metadata.
 ## Local Production Preview
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev make preview-build
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make preview-build
 make preview-start
 make preview-status
 make preview-logs
@@ -42,7 +42,7 @@ Build and tag the exact reviewed commit:
 ```bash
 git rev-parse --short=12 HEAD
 docker build \
-  --build-arg NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+  --build-arg NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
   --build-arg RELEASE_ID="$(git rev-parse --short=12 HEAD)" \
   --tag cvforge:"$(git rev-parse --short=12 HEAD)" \
   .
@@ -61,7 +61,7 @@ docker run -d \
 Or use Compose:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.alexandreteixeira.dev \
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
 NEXT_PUBLIC_RELEASE_ID="$(git rev-parse --short=12 HEAD)" \
 CVFORGE_PORT=3030 \
 docker compose up --build -d
@@ -78,10 +78,14 @@ traffic to `http://127.0.0.1:3030`. Preserve the original `Host` and forwarding 
 use HTTP/1.1 or newer, and configure a graceful upstream timeout long enough for normal
 page and generated-image responses.
 
-For Cloudflare Tunnel, point the tunnel service at `http://127.0.0.1:3030` and map the
-public hostname `cvforge.alexandreteixeira.dev` in the existing Cloudflare configuration.
-Do not expose port 3030 publicly. This repository intentionally does not create or
-modify tunnels, DNS, TLS, WAF, or Cloudflare settings.
+The production host runs CVForge on the shared Docker network `edge`, behind the shared
+Nginx container and Cloudflare Tunnel, with no published host port. The controlled rollout
+for `cvforge.anvilary.tools` (local preview, Access-protected QA, public launch, and
+keeping the previous hostname `cvforge.alexandreteixeira.dev` available for CV export) is
+in [`deploy/self-hosted/README.md`](../deploy/self-hosted/README.md). For a standalone
+host without that proxy, point the tunnel at `http://127.0.0.1:3030` and never expose the
+port publicly. This repository does not change tunnels, DNS, TLS, WAF, or Cloudflare
+settings by itself.
 
 ## Production Smoke
 
@@ -94,8 +98,8 @@ node -e "fetch('http://127.0.0.1:3030/health').then(async r=>{console.log(r.stat
 From a trusted external machine after routing is enabled:
 
 ```bash
-node -e "Promise.all(['/', '/builder', '/analyzer', '/robots.txt', '/sitemap.xml', '/site.webmanifest', '/opengraph-image'].map(async p=>{const r=await fetch('https://cvforge.alexandreteixeira.dev'+p);console.log(r.status,p);if(!r.ok)process.exitCode=1}))"
-node -e "fetch('https://cvforge.alexandreteixeira.dev/parser',{redirect:'manual'}).then(r=>{console.log(r.status,r.headers.get('location'));if(r.status!==308)process.exit(1)})"
+node -e "Promise.all(['/', '/builder', '/analyzer', '/robots.txt', '/sitemap.xml', '/site.webmanifest', '/opengraph-image'].map(async p=>{const r=await fetch('https://cvforge.anvilary.tools'+p);console.log(r.status,p);if(!r.ok)process.exitCode=1}))"
+node -e "fetch('https://cvforge.anvilary.tools/parser',{redirect:'manual'}).then(r=>{console.log(r.status,r.headers.get('location'));if(r.status!==308)process.exit(1)})"
 ```
 
 Also complete the manual flow matrix in `docs/current-qa-plan.md`. The health endpoint

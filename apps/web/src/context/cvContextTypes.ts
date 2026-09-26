@@ -1,8 +1,10 @@
 import { type CVState, type FeaturedSkill, type Profile, type Settings } from '@/types/cv'
 import { type MoveDirection, type RepeatableSectionKey } from './cvActions'
+import { type CVPersistence } from './useCVPersistence'
 
 export interface CVContextValue {
   state: CVState
+  persistence: CVPersistence
   updateProfileField: (field: keyof Profile, value: string) => void
   updateSettingsField: <K extends keyof Settings>(field: K, value: Settings[K]) => void
   addSectionItem: (sectionKey: RepeatableSectionKey) => void

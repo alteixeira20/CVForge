@@ -12,6 +12,12 @@ function compareVersions(a: string, b: string): number {
   return 0
 }
 
+export function isNewerSchemaVersion(input: unknown): boolean {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) return false
+  const version = (input as Record<string, unknown>).schemaVersion
+  return typeof version === 'string' && compareVersions(version, CURRENT_CV_SCHEMA_VERSION) > 0
+}
+
 /**
  * Runs before parseCVState/Zod validation on any externally-sourced CV state
  * (localStorage restore, JSON import, PDF attachment restore).

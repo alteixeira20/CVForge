@@ -40,14 +40,6 @@ export function SiteHeader({ onBuilderClick }: SiteHeaderProps) {
           >
             Analyzer
           </Link>
-          <a
-            href="https://github.com/alteixeira20/CVForge"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="nav-link nav-source"
-          >
-            Source
-          </a>
         </nav>
 
         <span className="spacer" />

@@ -40,7 +40,7 @@ export default defineConfig({
     },
     {
       name: 'firefox-smoke',
-      testMatch: /cross-browser-smoke\.spec\.ts/,
+      testMatch: /(cross-browser-smoke|privacy)\.spec\.ts/,
       use: {
         ...devices['Desktop Firefox'],
         viewport: { width: 1280, height: 800 },
@@ -48,7 +48,7 @@ export default defineConfig({
     },
     {
       name: 'webkit-smoke',
-      testMatch: /cross-browser-smoke\.spec\.ts/,
+      testMatch: /(cross-browser-smoke|privacy)\.spec\.ts/,
       use: {
         ...devices['Desktop Safari'],
         viewport: { width: 1280, height: 800 },

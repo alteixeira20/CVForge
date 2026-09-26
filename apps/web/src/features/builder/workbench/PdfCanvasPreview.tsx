@@ -1,8 +1,8 @@
 'use client'
 
-import { type ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { type RenderedPage, type RenderProgress } from './pdfPreviewTypes'
-import { useZoomControl, MIN_ZOOM, MAX_ZOOM, clamp } from './useZoomControl'
+import { useZoomControl } from './useZoomControl'
 import { useDevicePixelRatio } from './useDevicePixelRatio'
 import { PreviewDock } from './PreviewDock'
 import { PreviewErrorState } from './PreviewErrorState'
@@ -10,98 +10,53 @@ import { PreviewLoadingState } from './PreviewLoadingState'
 
 const MAX_RENDER_SCALE = 4
 const WIDE_SIDE_PADDING = 20
-// Max fraction a fit-mode page may exceed the container before switching to
-// the blocking loading screen on resize (avoids showing a stretched/wrong-position page).
-const OVERFLOW_TOLERANCE = 0.02
-
-// --- Main component ---
 
 interface PdfCanvasPreviewProps {
   pages: RenderedPage[]
   error: string
   progress: RenderProgress | null
+  fallbackBaseWidth: number
   actionSlot: ReactNode
+  onRetry: () => void
   onRenderScaleChange: (scale: number) => void
 }
 
+// Pages are always displayed at the current zoom. When the zoom or the panel
+// width changes, the existing bitmaps are scaled with CSS until sharper pages
+// arrive, so valid pages are never replaced by the loading state.
 export function PdfCanvasPreview({
   pages,
   error,
   progress,
+  fallbackBaseWidth,
   actionSlot,
+  onRetry,
   onRenderScaleChange,
 }: PdfCanvasPreviewProps) {
-  const { zoom, fitMode, fitModeRef, zoomOut, zoomIn, fit, reportContainerWidth } = useZoomControl(pages)
-  const [containerWidth, setContainerWidth] = useState(0)
+  const { zoom, fitMode, zoomOut, zoomIn, fit, reportContainerWidth } = useZoomControl(pages, fallbackBaseWidth)
+  const containerWidth = useContainerWidth(reportContainerWidth)
   const dpr = useDevicePixelRatio()
-  const [renderedZoom, setRenderedZoom] = useState(0)
-  // fitMode captured when the current pages were rendered.
-  // Distinguishes intentional overflow (user zoomed in) from unintended overflow (container shrank).
-  const fitModeAtRenderRef = useRef(true)
-
-  const renderScale = containerWidth > 0 ? Math.min(zoom * dpr, MAX_RENDER_SCALE) : 0
-  const containerRef = useRef<HTMLDivElement>(null)
-  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([])
+  const containerRef = containerWidth.ref
   const hasPages = pages.length > 0
 
-  // Single stable observer on one persistent div — no hasPages dep.
-  // Eliminates the DOM-swap measurement gap that caused first-load wrong-position renders.
-  useEffect(() => {
-    const el = containerRef.current
-    if (!el) return
-    const report = () => {
-      const w = el.offsetWidth
-      setContainerWidth(w)
-      reportContainerWidth(w)
-    }
-    report()
-    const ro = new ResizeObserver(report)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [reportContainerWidth])
+  // A hidden panel measures 0 px; a zero scale pauses rendering.
+  const renderScale = containerWidth.value > 0 ? Math.min(zoom * dpr, MAX_RENDER_SCALE) : 0
 
   useEffect(() => {
     onRenderScaleChange(renderScale)
   }, [renderScale, onRenderScaleChange])
 
-  // useLayoutEffect: fires before paint so renderedZoom is already correct when the
-  // browser commits the frame — no extra paint cycle with a stale zoom value.
-  // dpr intentionally excluded: keeping stale renderedZoom until new pages arrive is correct.
-  useLayoutEffect(() => {
-    if (pages.length === 0) { setRenderedZoom(0); return }
-    fitModeAtRenderRef.current = fitModeRef.current
-    const rz = pages[0].canvas.width / (pages[0].baseWidth * dpr)
-    setRenderedZoom(clamp(rz, MIN_ZOOM, MAX_ZOOM))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pages])
-
-  // useLayoutEffect: canvas pixels must be written before the browser paints to avoid blank frames.
-  useLayoutEffect(() => {
-    canvasRefs.current.length = pages.length
-    pages.forEach((page, i) => {
-      const el = canvasRefs.current[i]
-      if (!el) return
-      if (el.width !== page.canvas.width) el.width = page.canvas.width
-      if (el.height !== page.canvas.height) el.height = page.canvas.height
-      const ctx = el.getContext('2d')
-      if (ctx) ctx.drawImage(page.canvas, 0, 0)
-    })
-  }, [pages])
-
-  const displayZoom = renderedZoom > 0 ? renderedZoom : zoom
-  const visualPageWidth = hasPages ? pages[0].baseWidth * displayZoom : 0
-  const pagesOverflow = containerWidth > 0 && hasPages && visualPageWidth > containerWidth * (1 + OVERFLOW_TOLERANCE)
-  const overflowIsUnintended = pagesOverflow && fitModeAtRenderRef.current
-
-  // Mode A: blocking — no valid pages yet, or current pages are layout-invalid (resize overflow).
-  // Mode B: background — valid pages shown, new render happening silently in the hook.
-  const isBlocking = !hasPages || overflowIsUnintended
-  const isWider = !isBlocking && containerWidth > 0 && visualPageWidth > containerWidth
+  const visualPageWidth = hasPages ? pages[0].baseWidth * zoom : 0
+  // Sub-pixel tolerance: at Fit, width * zoom can exceed the container by a
+  // rounding error, which must not switch to the wide (scrolling) layout.
+  const isWider = hasPages && containerWidth.value > 0 && visualPageWidth > containerWidth.value + 0.5
 
   return (
-    <div ref={containerRef} className={isBlocking ? 'w-full h-full' : 'w-full'}>
-      {isBlocking && (error ? <PreviewErrorState message={error} /> : <PreviewLoadingState progress={progress} />)}
-      {!isBlocking && (
+    <div ref={containerRef} className={hasPages ? 'w-full min-w-0' : 'w-full min-w-0 h-full'}>
+      {!hasPages && (error
+        ? <PreviewErrorState message={error} onRetry={onRetry} />
+        : <PreviewLoadingState progress={progress} />)}
+      {hasPages && (
         <div
           style={{
             display: 'flex',
@@ -114,16 +69,7 @@ export function PdfCanvasPreview({
           }}
         >
           {pages.map((page, i) => (
-            <div
-              key={i}
-              className="bg-white border border-border shadow-lg rounded-sm overflow-hidden flex-shrink-0"
-              style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom }}
-            >
-              <canvas
-                ref={(el) => { canvasRefs.current[i] = el }}
-                style={{ width: page.baseWidth * displayZoom, height: page.baseHeight * displayZoom, display: 'block' }}
-              />
-            </div>
+            <PreviewPage key={i} page={page} zoom={zoom} />
           ))}
         </div>
       )}
@@ -139,4 +85,52 @@ export function PdfCanvasPreview({
       )}
     </div>
   )
+}
+
+function useContainerWidth(onWidth: (width: number) => void) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const report = () => {
+      const width = el.offsetWidth
+      setValue(width)
+      onWidth(width)
+    }
+    report()
+    const observer = new ResizeObserver(report)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [onWidth])
+
+  return { ref, value }
+}
+
+function PreviewPage({ page, zoom }: { page: RenderedPage, zoom: number }) {
+  // A callback ref paints whenever a canvas element attaches or the page
+  // bitmap changes, so a remounted canvas is never left blank.
+  const paint = useCallback((el: HTMLCanvasElement | null) => {
+    if (el) copyBitmap(el, page.canvas)
+  }, [page])
+  const width = page.baseWidth * zoom
+  const height = page.baseHeight * zoom
+
+  return (
+    <div
+      className="bg-white border border-border shadow-lg rounded-sm overflow-hidden flex-shrink-0"
+      style={{ width, height }}
+      data-preview-page
+    >
+      <canvas ref={paint} style={{ width: '100%', height: '100%', display: 'block' }} />
+    </div>
+  )
+}
+
+function copyBitmap(target: HTMLCanvasElement, source: HTMLCanvasElement) {
+  if (target.width !== source.width) target.width = source.width
+  if (target.height !== source.height) target.height = source.height
+  const ctx = target.getContext('2d')
+  if (ctx) ctx.drawImage(source, 0, 0)
 }

@@ -1,5 +1,16 @@
 import { expect, test, type Page } from '@playwright/test'
-import { PDFDocument } from 'pdf-lib'
+import { readFile } from 'node:fs/promises'
+import { PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFString } from 'pdf-lib'
+
+function embeddedFileNames(pdf: PDFDocument) {
+  const names = pdf.catalog.lookupMaybe(PDFName.of('Names'), PDFDict)
+  const embedded = names?.lookupMaybe(PDFName.of('EmbeddedFiles'), PDFDict)
+  const entries = embedded?.lookupMaybe(PDFName.of('Names'), PDFArray)
+  if (!entries) return []
+  return entries.asArray()
+    .filter((entry): entry is PDFString | PDFHexString => entry instanceof PDFString || entry instanceof PDFHexString)
+    .map((entry) => entry.decodeText())
+}
 
 async function expectNoOverflow(page: Page) {
   await expect.poll(() => page.evaluate(
@@ -67,7 +78,26 @@ test('critical JSON restore and PDF export work', async ({ page }) => {
   await page.getByRole('button', { name: /Replace current CV/ }).click()
   await expect(name).toHaveValue('Cross Browser Owner')
 
+  const backupDownload = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Export' }).click()
+  const backupBytes = await readFile((await (await backupDownload).path())!, 'utf8')
+  expect(JSON.parse(backupBytes).resume.profile.name).toBe('Cross Browser Owner')
+
   const download = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download' }).click()
-  expect((await download).suggestedFilename()).toMatch(/\.pdf$/)
+  const pdfDownload = await download
+  expect(pdfDownload.suggestedFilename()).toMatch(/\.pdf$/)
+  const pdfBytes = await readFile((await pdfDownload.path())!)
+  const pdf = await PDFDocument.load(pdfBytes)
+  expect(pdf.getPageCount()).toBeGreaterThanOrEqual(1)
+  expect(embeddedFileNames(pdf)).toContain('cvforge-state.json')
+
+  await name.fill('Before Embedded Restore')
+  await page.getByRole('button', { name: 'Import' }).click()
+  const pdfChooser = page.waitForEvent('filechooser')
+  await page.getByRole('button', { name: 'Choose File' }).click()
+  await (await pdfChooser).setFiles({ name: 'cross-browser.pdf', mimeType: 'application/pdf', buffer: pdfBytes })
+  await expect(page.getByText('CVForge Session Detected')).toBeVisible({ timeout: 20_000 })
+  await page.getByRole('button', { name: 'Restore Embedded Session' }).click()
+  await expect(name).toHaveValue('Cross Browser Owner')
 })

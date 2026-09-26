@@ -28,6 +28,9 @@ const blocked = [
   'https://cvforge.example.com',
 ]
 if (allowInvalid !== '1') blocked.push('https://cvforge.example.invalid')
+// The retired origin must never ship as a URL (the bare hostname is allowed
+// for the moved-site notice in LEGACY_HOSTNAMES).
+if (!siteUrl.includes('cvforge.alexandreteixeira.dev')) blocked.push('https://cvforge.alexandreteixeira.dev')
 if (!siteUrl) throw new Error('NEXT_PUBLIC_SITE_URL is required for artifact assertions.')
 
 let expectedOriginFound = false

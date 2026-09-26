@@ -45,10 +45,10 @@ describe('CV data integrity', () => {
       .toBe('zhwah-ow')
   })
 
-  it('round-trips long Portuguese Unicode, order, visibility, and theme through JSON import', async () => {
+  it('round-trips long accented Unicode, order, visibility, and theme through JSON import', async () => {
     const input = fixture()
-    input.resume.profile.name = 'João Gonçalves'
-    input.resume.profile.summary = 'Experiência em plataformas fiáveis, acessíveis e mensuráveis. '.repeat(80)
+    input.resume.profile.name = 'Zoë Brontë-Smith'
+    input.resume.profile.summary = 'Naïve café résumé experience across reliable, accessible, measurable platforms. '.repeat(80)
     input.settings.sectionOrder = ['skills', 'workExperience', 'education', 'projects', 'languages', 'customSections']
     input.settings.visibleSections.projects = false
     input.settings.themeColor = '#7a3218'

@@ -19,3 +19,21 @@
 .readonly-banner .who b { color: var(--ink); font-weight: 600; }
 .readonly-banner .spacer { flex: 1; }
 
+
+/* --- Saved data notice ------------------------------------------------------ */
+.saved-data-notice {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;
+  padding: 12px 24px;
+  background: var(--bg-2);
+  border-bottom: 1px solid rgba(217,116,66,0.40);
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.saved-data-notice-text { flex: 1 1 320px; min-width: 0; }
+.saved-data-notice-text h2 { color: var(--ink); font-size: 14px; font-weight: 600; }
+.saved-data-notice-text p { margin-top: 4px; line-height: 1.5; }
+.saved-data-notice-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.saved-data-notice-confirm { flex-basis: 100%; color: var(--ink); }
+@media (max-width: 639px) {
+  .saved-data-notice { padding: 10px 16px; }
+}

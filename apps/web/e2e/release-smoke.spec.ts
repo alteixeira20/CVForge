@@ -37,7 +37,7 @@ test('homepage loads without console errors and exposes one strong builder path'
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Build, analyze, and improve your CV')
   await expect(page.locator('.site-header').getByRole('link', { name: 'Builder' })).toBeVisible()
   await expect(page.locator('.site-header').getByRole('link', { name: 'Analyzer' })).toBeVisible()
-  await expect(page.locator('.site-header').getByRole('link', { name: 'Source' })).toBeVisible()
+  await expect(page.locator('.site-header').getByRole('link', { name: 'Source', exact: true })).toHaveCount(0)
   await expect(page.locator('.site-header').getByRole('link', { name: /Open GitHub to star/ })).toBeVisible()
   await expect(page.locator('.site-header').getByRole('button', { name: 'Build your CV' })).toBeVisible()
   await expect(page.locator('.site-header-inner')).toHaveCSS('max-width', '1120px')
@@ -81,7 +81,7 @@ test('desktop header is constrained and exposes the complete navigation and acti
 
   await expect(header.getByRole('link', { name: 'Builder' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'Analyzer' })).toHaveAttribute('href', '/analyzer')
-  await expect(header.getByRole('link', { name: 'Source' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Source', exact: true })).toHaveCount(0)
   const star = header.getByRole('link', { name: /Open GitHub to star/ })
   await expect(star).toHaveAttribute('href', 'https://github.com/alteixeira20/CVForge')
   await expect(star).toHaveAttribute('target', '_blank')

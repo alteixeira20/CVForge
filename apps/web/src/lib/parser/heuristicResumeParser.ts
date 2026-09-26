@@ -5,7 +5,7 @@ import {
 } from '@/types/cv'
 import { type SectionKey, type DetectedSection, type ParserStats } from './heuristic/heuristicTypes'
 import { detectSections, normalizeLines, uniqueValues } from './heuristic/sectionDetection'
-import { extractProfile } from './heuristic/profileExtraction'
+import { extractProfile, findUnheadedSummary } from './heuristic/profileExtraction'
 import {
   buildWorkEntries,
   buildEducationEntries,
@@ -54,8 +54,11 @@ export function parseHeuristicResume(text: string): HeuristicResult | null {
   const summary = sections.find((section) => section.key === 'summary')
   if (summary && !draft.resume.profile.summary) {
     draft.resume.profile.summary = normalizeLines(summary.content).slice(0, 3).join(' ')
-    if (draft.resume.profile.summary) detectedFields.push('Summary')
   }
+  if (!draft.resume.profile.summary) {
+    draft.resume.profile.summary = findUnheadedSummary(text, draft.resume.profile.name)
+  }
+  if (draft.resume.profile.summary) detectedFields.push('Summary')
 
   const workSections = sections.filter((section) => section.key === 'experience')
   draft.resume.workExperience = workSections.flatMap((section) => buildWorkEntries(section.content, stats))

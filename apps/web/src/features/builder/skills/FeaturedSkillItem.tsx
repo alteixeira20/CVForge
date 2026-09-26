@@ -1,6 +1,5 @@
 'use client'
 
-import { NumberInput } from '@/components/shared/form/NumberInput'
 import { TextInput } from '@/components/shared/form/TextInput'
 import { Icon } from '@/components/ui/Icon'
 import { type FeaturedSkill } from '@/types/cv'
@@ -17,17 +16,14 @@ interface FeaturedSkillItemProps {
 
 export function FeaturedSkillItem({ index, item, isFirst, isLast, onUpdate, onRemove, onMove }: FeaturedSkillItemProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-[1fr_60px_auto] gap-2 items-center border-b border-border-faint py-2 last:border-none">
+    // A stored rating is kept for compatibility but not edited or rendered:
+    // skill meters would break the ATS-safe PDF rules.
+    <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2 items-center border-b border-border-faint py-2 last:border-none">
       <TextInput
         placeholder="e.g. React"
+        aria-label={`Featured skill ${index + 1}`}
         value={item.skill}
         onChange={(event) => onUpdate(index, { skill: event.target.value })}
-      />
-      <NumberInput
-        min={0}
-        max={5}
-        value={item.rating ?? 0}
-        onChange={(value) => onUpdate(index, { rating: value })}
       />
       <FeaturedSkillActions index={index} isFirst={isFirst} isLast={isLast} onMove={onMove} onRemove={onRemove} />
     </div>

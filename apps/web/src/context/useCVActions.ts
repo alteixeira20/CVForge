@@ -2,7 +2,7 @@ import { useMemo, type Dispatch } from 'react'
 import { type CVAction } from './cvActions'
 import { type CVContextValue } from './cvContextTypes'
 
-type CVActions = Omit<CVContextValue, 'state'>
+type CVActions = Omit<CVContextValue, 'state' | 'persistence'>
 
 export function useCVActions(dispatch: Dispatch<CVAction>) {
   return useMemo(() => createCVActions(dispatch), [dispatch])

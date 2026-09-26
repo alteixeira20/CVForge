@@ -12,12 +12,12 @@ export function SectionReorderControls({ index, total, onMoveUp, onMoveDown }: P
   const canMoveDown = index < total - 1
 
   return (
-    <div className="flex flex-col -ml-1 mr-1">
+    <div className="flex flex-row items-center -ml-1 mr-1">
       <button
         type="button"
         onClick={onMoveUp}
         disabled={!canMoveUp}
-        className={`inline-flex h-9 w-9 items-center justify-center rounded transition-colors ${canMoveUp ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
+        className={`inline-flex h-8 w-7 items-center justify-center rounded transition-colors ${canMoveUp ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section up"
         aria-label="Move section up"
       >
@@ -27,7 +27,7 @@ export function SectionReorderControls({ index, total, onMoveUp, onMoveDown }: P
         type="button"
         onClick={onMoveDown}
         disabled={!canMoveDown}
-        className={`inline-flex h-9 w-9 items-center justify-center rounded transition-colors ${canMoveDown ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
+        className={`inline-flex h-8 w-7 items-center justify-center rounded transition-colors ${canMoveDown ? 'text-ink-4 hover:text-ember' : 'text-border cursor-not-allowed'}`}
         title="Move section down"
         aria-label="Move section down"
       >

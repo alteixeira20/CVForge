@@ -38,3 +38,8 @@ export interface ParserStats {
   customSections: number
   unmappedLines: number
 }
+
+export interface EntryLine {
+  text: string
+  bullet: boolean
+}

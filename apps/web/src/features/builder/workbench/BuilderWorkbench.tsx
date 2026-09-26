@@ -3,6 +3,7 @@
 import { AppHeader } from '@/components/layout/AppHeader'
 import { EmberBackground } from '@/components/ui/EmberBackground'
 import { WorkbenchShell } from '@/components/shared/workbench/WorkbenchShell'
+import { WorkbenchNotices } from '@/features/import-export/WorkbenchNotices'
 import { useCV } from '@/context/CVContext'
 import { BuilderEditorPanel } from './BuilderEditorPanel'
 import { BuilderPreviewPanel } from './BuilderPreviewPanel'
@@ -21,6 +22,7 @@ export function BuilderWorkbench() {
         leftLabel="Edit"
         rightLabel="Preview"
         variant="builder"
+        notice={<WorkbenchNotices />}
       />
     </div>
   )

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCV } from '@/context/CVContext'
+import { markCVImported } from '@/features/builder/workbench/importExpansion'
 import { Icon } from '@/components/ui/Icon'
 import { WorkbenchSectionCard } from '@/components/shared/workbench/WorkbenchSectionCard'
 import { ImportReviewTable } from '@/features/import-export/ImportReviewTable'
@@ -16,6 +17,7 @@ export function ParserHeuristicAction({ result }: { result: HeuristicResult }) {
   const handleImport = () => {
     if (window.confirm('Create an editable draft from this PDF? Current builder data will be replaced.')) {
       replaceState(result.draft)
+      markCVImported(result.draft)
       alert('Draft created. You have been switched to the Builder view.')
       router.push('/builder')
     }

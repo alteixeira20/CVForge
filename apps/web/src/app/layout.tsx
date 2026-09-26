@@ -1,23 +1,9 @@
 import type { Metadata } from 'next'
-import { Lexend, JetBrains_Mono } from 'next/font/google'
+import { preload } from 'react-dom'
 import { CVProvider } from '@/context/CVContext'
 import { LiveAnnouncements } from '@/components/accessibility/LiveAnnouncements'
 import { siteConfig } from '@/lib/siteConfig'
 import './globals.css'
-
-const lexend = Lexend({
-  subsets: ['latin'],
-  variable: '--font-lexend',
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  weight: ['400', '500'],
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -63,7 +49,7 @@ export const metadata: Metadata = {
       url: '/opengraph-image',
       width: 1200,
       height: 630,
-      alt: 'CVForge — build and analyze your CV locally',
+      alt: 'CVForge: build and analyze your CV locally',
     }],
   },
   twitter: {
@@ -88,8 +74,9 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  preload('/fonts/lexend-latin.woff2', { as: 'font', type: 'font/woff2', crossOrigin: 'anonymous' })
   return (
-    <html lang="en" className={`${lexend.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en">
       <body>
         <CVProvider>
           {children}

@@ -6,8 +6,5 @@
   .workbench-shell {
     padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   }
-  .workbench-grid {
-    height: calc(100dvh - var(--header-h) - 76px - env(safe-area-inset-bottom, 0px));
-  }
 }
 

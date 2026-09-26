@@ -1,4 +1,4 @@
-import { Document, Page, View } from '@react-pdf/renderer'
+import { Document, Font, Page, View } from '@react-pdf/renderer'
 import { type CVState } from '@/types/cv'
 import { ResumePdfCustomSections } from './ResumePdfCustomSections'
 import { ResumePdfEducationSection } from './ResumePdfEducationSection'
@@ -8,6 +8,10 @@ import { ResumePdfProjectSection } from './ResumePdfProjectSection'
 import { hasPdfSkills, ResumePdfSkills } from './ResumePdfSkills'
 import { ResumePdfWorkSection } from './ResumePdfWorkSection'
 import { createResumePdfStyles } from './resumePdfStyles'
+import { hyphenateForPdf } from './pdfHyphenation'
+
+// Applies to the preview and the download, which both render this document.
+Font.registerHyphenationCallback(hyphenateForPdf)
 
 export function ResumePdfDocument({ state }: { state: CVState }) {
   const { resume, settings } = state
