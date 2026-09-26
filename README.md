@@ -1,74 +1,209 @@
 # CVForge
 
-CVForge is a local-first CV Builder and ATS-style CV Analyzer built with Next.js, React, TypeScript, Tailwind CSS, and Zod.
+CVForge by [Anvilary](https://anvilary.tools) is a local-first CV builder and ATS-style
+CV analyzer. Create and refine a structured CV, see its PDF preview as you edit,
+export portable backups, and analyze PDF resumes without creating an account.
 
-The current app focuses on structured CV editing, browser persistence, JSON backup/import, PDF export with session embedding, CVForge PDF session restore, and transparent local analysis in a shared workbench UI.
+**Production origin:** [cvforge.anvilary.tools](https://cvforge.anvilary.tools)
 
-## Product Principles
+> [!IMPORTANT]
+> CVForge stores CV data in your browser, not in a hosted account or database.
+> **Export a JSON backup** after meaningful changes and keep it somewhere you
+> control. Clearing site data, changing browsers or devices, or losing access to
+> a browser profile can remove your local CV.
+>
+> Browser storage is also specific to each website. If you used
+> `cvforge.alexandreteixeira.dev`, export your CV as JSON there and import it at
+> `cvforge.anvilary.tools`. Changing the hostname does not transfer saved CVs.
+>
+> The hosted instance is a convenient way to use the tool, not a cloud-backup
+> service or a guarantee of permanent data availability. You can also
+> [self-host CVForge](deploy/self-hosted/README.md).
 
-- **Local-Only Privacy**: CVForge does not use a database, account system, or server-side persistence. Your data remains in your browser's `localStorage`.
-- **Transparent Analysis**: Analyzer scoring uses deterministic local checks across completeness, structure, clarity, impact, and ATS-style compatibility. Parseability is added only for an uploaded PDF. These are improvement signals, not a hiring outcome guarantee or an exact simulation of every ATS.
-- **Reliable Portability**: Validated JSON export/import is the simplest reliable way to move or back up your full session data. CVForge-generated PDFs can also include an embedded session attachment for restoration when that attachment is present.
+CVForge is open source under the [MIT License](LICENSE).
 
-## Current Status
+## Product contract
 
-Implemented:
-- Next.js app foundation under `apps/web`.
-- Zod CV data contract exposed through `apps/web/src/types/cv.ts`, with schemas in `apps/web/src/types/cv/schemas.ts`.
-- Reducer-based CV state in `apps/web/src/context/CVContext.tsx`.
-- Browser `localStorage` persistence through `apps/web/src/lib/storage.ts`.
-- Responsive shared workbench shell.
-- Builder editors for profile, settings, work experience, education, projects, skills, custom sections, and languages.
-- PDF.js canvas preview pipeline for the current builder state, providing sharp, flicker-free rendering with zoom/fit controls.
-- Polished Workbench UI with repeatable item cards, hold-to-delete, inline editable section titles, and 10 professional color presets.
-- Section reordering (up/down arrow controls), per-section visibility toggles, and inline title editing.
-- Advanced PDF layout settings: theme color, font family/size, page size, section heading weight, top accent bar, per-section gaps, and compact mode.
-- JSON backup export and validated JSON restore.
-- PDF download generated from current CV data with embedded session metadata.
-- Section visibility and bullet visibility controls.
-- Local PDF upload, source preview, text extraction, and CV analysis.
-- Direct Builder-to-Analyzer analysis for the current local Builder CV without exporting or uploading a file.
-- CVForge-generated PDF detection and embedded session restore.
-- Best-effort external PDF draft review and import that must be checked before use.
-- Local scoring method v3 with documented weights, contextual impact detection, English and Portuguese (Portugal) diagnostics, PDF extraction signals, prioritized issues, detected evidence summaries, explanations, and concrete suggestions.
-- Safe PDF analysis limits (15 MB and 20 pages), signature validation, sequential extraction, cancellation, and stale-upload protection.
-- Automated accessibility checks, Chromium coverage, and critical Firefox/WebKit smoke coverage.
-- Standalone production preview, self-cleaning Docker validation, and a single production release gate.
+CVForge deliberately keeps its data model and operating requirements small:
 
-Planned (Pinned Future Slices):
-- Drag-and-drop section reordering (arrow-based reordering is shipped).
-- PDF font embedding (Geist Sans / Geist Mono as real PDF assets).
-- Photo support and photo-layout PDF template.
-- Richer parser extraction and Analyzer checks.
+- **Local first.** Build and analyze CVs in the browser, without accounts, a database,
+  server-side CV storage, or an external analysis API.
+- **Portable.** Validated JSON is the primary full-fidelity backup and restore format.
+  CVForge-generated PDFs can also carry an embedded session for restoration.
+- **Live preview.** The Builder renders the current CV through the same PDF document
+  model used for downloads, with zoom and Fit controls.
+- **Explainable analysis.** Scoring is deterministic and computed locally, with
+  visible evidence, priorities, and actionable suggestions.
+- **Review before replacement.** Importing an external PDF creates a best-effort
+  draft that must be reviewed before it replaces Builder data.
+- **Recoverable.** Unreadable saved data is protected from silent overwrite, and
+  conflicting changes from another browser tab pause automatic saving.
+- **Straightforward to self-host.** The standalone web application needs no
+  application database or user-account infrastructure.
 
-## Development Workflow
+CVForge is not a commercial applicant-tracking system, an AI hiring assessor,
+or a service that predicts recruiter decisions. Its ATS-style checks are
+practical improvement signals, not acceptance or hiring guarantees.
 
-CVForge uses a `Makefile` to simplify common commands.
+## Builder and Analyzer
 
-### Local Setup
+CVForge has two modes in one responsive workbench.
+
+### Builder
+
+- Edit your profile, work experience, projects, education, skills, languages,
+  and custom sections.
+- Reorder and hide sections, edit section titles, and choose layout settings,
+  including A4 or US Letter, color, typography, spacing, and compact mode.
+- See a PDF-backed canvas preview that updates as you work. Resize, zoom, and
+  switch mobile workbench panels without discarding the current preview.
+- Download a PDF, export a JSON backup, or restore a previously saved CV.
+- Open a CVForge-generated PDF with an embedded session to recover its
+  structured content when that attachment is present.
+
+### Analyzer
+
+- Analyze the current Builder CV directly, or select a PDF from your device.
+- Inspect extraction and parseability warnings separately from CV quality
+  findings.
+- Review weighted scores for completeness, structure, clarity, impact,
+  ATS-style compatibility, and PDF parseability when applicable.
+- See detected evidence, prioritized issues, explanations, and suggested
+  improvements.
+- Review an external PDF's best-effort structured draft before importing it
+  into the Builder.
+
+PDF analysis supports files up to **15 MB and 20 pages**. English and
+Portuguese (Portugal) have explicit language-aware diagnostics; other
+languages receive language-neutral fallback checks.
+
+## Data ownership and formats
+
+The canonical CV state lives in browser `localStorage`. There is no account
+sync, automatic cross-device transfer, or hosted copy of your CV.
+
+| Format | Purpose | Important boundary |
+| --- | --- | --- |
+| JSON | Full-fidelity backup and validated import | Recommended for reliable recovery and device migration |
+| CVForge PDF | Printable export with an optional embedded CV session | Session restore works only when the attachment is present |
+| External PDF | Local extraction, analysis, and reviewed draft import | Parsing is heuristic and may miss or misidentify fields |
+
+Keep exported files private. CVs can contain contact details, employment
+history, and other personal information. The app's local-first design does
+not protect an exported file once you share or upload it elsewhere.
+
+If stored data is corrupt or was written by a newer CVForge schema, the
+Builder must not silently replace it. Download the available recovery
+data before starting fresh or rolling back an application version.
+
+## Stack
+
+| Layer | Technology |
+| --- | --- |
+| Application | Next.js App Router, React, TypeScript |
+| Interface | Tailwind CSS and shared Anvilary workbench components |
+| State and validation | React reducer, Zod schemas and migrations |
+| Persistence | Browser `localStorage` |
+| PDF generation | `@react-pdf/renderer` and `pdf-lib` |
+| PDF preview and extraction | `pdfjs-dist`, running in the browser |
+| Tests | Vitest, Playwright and axe |
+| Workspace | pnpm and Make |
+| Deployment | Standalone Node.js image, Docker Compose, Nginx and Cloudflare Tunnel |
+
+No application backend, account service, or database is required.
+
+## Local development
+
+Reference toolchain:
+
+- Node.js **22.13 or newer, below 23**
+- pnpm **10.5.2** through Corepack
+- Docker and Docker Compose for container and complete release validation
 
 ```bash
-make install
+git clone https://github.com/alteixeira20/CVForge.git
+cd CVForge
+corepack enable
+corepack prepare pnpm@10.5.2 --activate
+pnpm install --frozen-lockfile
+make dev
 ```
 
-### Common Commands
+Open `http://127.0.0.1:3000`.
 
-- `make dev`: Start the development server with hot-reloading.
-- `make build`: Build the production application.
-- `make start`: Run the production build locally.
-- `make check`: Run linting, type-checking, and a production build.
-- `pnpm test:unit`: Run deterministic scoring, PDF validation, and data-integrity tests.
-- `pnpm test:e2e:chromium`: Run the full Chromium and axe release suite against the standalone production server.
-- `pnpm test:e2e:cross-browser`: Run critical Firefox and WebKit smoke checks.
-- `make preview-build`: Build and assemble the standalone production preview.
-- `make preview-start`: Start the already-built preview on port 3030.
-- `make docker-check`: Build, run, poll, validate, and remove an isolated production container.
-- `make clean`: Clear build artifacts.
+Useful lifecycle commands:
 
-## Production Release Gate
+```bash
+make help
+make check
+make status
+make logs
+make stop
+```
 
-The owner-facing release gate uses the confirmed production origin and an isolated Bash
-script with strict error handling:
+To inspect the standalone production build locally:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make preview-build
+make preview-start
+make preview-status
+make preview-stop
+```
+
+The default preview address is `http://127.0.0.1:3030`. This address is
+only for local testing; canonical metadata uses the production origin
+supplied at build time.
+
+## Architecture
+
+CV data and PDF processing stay in the browser:
+
+```text
+Builder
+  structured CV state -> browser localStorage -> validated JSON backup
+                      -> PDF document -> canvas preview
+                                      -> PDF download + optional session
+
+Analyzer
+  current Builder state ----------------------> local scoring
+  selected PDF -> local extraction + validation -> local scoring
+                                             -> reviewed import draft
+```
+
+The maintained data contract is defined by the Zod schemas in
+`apps/web/src/types/cv/`. Import validation and schema migrations protect
+the stored format, and external PDF parsing never silently replaces the
+Builder's current CV.
+
+The public web server serves the application, static assets, metadata,
+and health information. Normal Builder and Analyzer workflows do not
+upload CV contents to it.
+
+## Privacy and PDF safety
+
+- PDF parsing and scoring run locally. The PDF.js worker is served from
+  the same origin as the application.
+- Uploaded-file validation checks PDF signature, extension, available
+  MIME information, size, and page count before analysis.
+- Processing includes cancellation and stale-result protection so an
+  older PDF cannot replace a newer analysis result.
+- A production Content Security Policy and other response headers are
+  part of the standalone application.
+- Image-only or scanned PDFs need selectable text for analysis; CVForge
+  does not send documents to cloud OCR.
+
+A local-first application still depends on the safety of the browser,
+device, and any copies you export. Do not put real CV data or private
+PDFs in public bug reports.
+
+## Self-hosting and operations
+
+The production origin is configured with `NEXT_PUBLIC_SITE_URL` at
+**build time**. It determines canonical links, Open Graph and JSON-LD
+URLs, `robots.txt`, and `sitemap.xml`. Setting a different runtime
+variable does not rewrite an existing build.
+
+Run the complete release gate against your intended HTTPS origin:
 
 ```bash
 NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
@@ -76,132 +211,86 @@ DOCKER_PORT=3030 \
 make release-check
 ```
 
-It performs a frozen install, lint, TypeScript, production build and artifact assertions,
-production dependency audit, unit tests, Chromium plus axe validation, Firefox/WebKit
-critical smoke, and self-cleaning Docker validation. It rejects localhost, placeholder
-origins, and `.invalid` origins outside the explicitly configured CI path. Ordinary
-`make check` remains suitable for local development and does not require a public domain.
+The gate includes a frozen dependency install, lint, type checking,
+production build, dependency audit, unit tests, Chromium and axe checks,
+critical Firefox/WebKit tests, and Docker validation.
 
-## Local Production Preview
+A maintained deployment example under
+[`deploy/self-hosted`](deploy/self-hosted/README.md) uses a shared Docker
+network behind Nginx and Cloudflare Tunnel, without publishing the
+application's container port. Deployments should terminate HTTPS at a
+trusted edge, configure the appropriate security headers, retain a
+previous validated image for rollback, and monitor application health
+at `/health`.
 
-Build metadata for the real production origin, then run the standalone server locally
-without Docker:
+See the [deployment runbook](docs/deployment.md) for standalone Docker,
+reverse-proxy configuration, smoke tests, backup considerations, and
+rollback.
 
-```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make preview-build
-make preview-start
-make preview-status
-make preview-logs
-make preview-stop
-```
+## Known boundaries
 
-The default test URL is `http://127.0.0.1:3030`. `preview-start` never rebuilds, refuses
-an occupied port, records the process identity, and stops only the process it started.
-Set `PREVIEW_PORT` to use another free port. The canonical origin remains the build-time
-production URL; the local preview URL is only where the owner exercises that build.
+These are explicit product limitations, not implied guarantees:
 
-## Deployment and Self-Hosting
+- Local browser data is not synchronized or backed up by the hosted site.
+- The Analyzer accepts PDF only. DOCX, plain-text input, and OCR are not
+  currently supported.
+- External PDF extraction is best effort, especially for scans,
+  protected files, complex layouts, and unusual reading order.
+- The built-in PDF fonts do not cover every writing system. The Builder
+  warns when text contains characters its PDF export cannot reliably
+  render.
+- The current Editor uses section move controls rather than drag-and-drop
+  reordering. Photo-layout templates are not yet included.
+- Scoring is a documented, rule-based assessment rather than a
+  reproduction of a proprietary ATS.
+- The legacy and new CVForge hostnames have separate browser storage;
+  users must export and import to migrate their saved CVs.
 
-`NEXT_PUBLIC_SITE_URL` is a build-time input and the source for canonical links, Open
-Graph URLs, JSON-LD URLs, `robots.txt`, and `sitemap.xml`. Production builds default to
-the confirmed CVForge origin, while development uses localhost. Supply the value
-explicitly for auditable releases.
+See [product scope](docs/product-scope.md) for implemented and planned
+features.
 
-### Docker
+## Contributing
 
-CVForge includes a pinned multi-stage, non-root standalone image with a health check:
-
-```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools make docker-build
-NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools DOCKER_PORT=3030 make docker-up
-make docker-status
-make docker-logs
-DOCKER_PORT=3030 make docker-down
-```
-
-The service is available at `http://localhost:3030`. For an isolated validation that
-does not affect Compose or unrelated containers:
+Keep changes focused and include tests for behavior that users depend
+on, especially persistence, PDF output, responsive preview, import, and
+privacy. Run the relevant checks before opening a pull request:
 
 ```bash
-NEXT_PUBLIC_SITE_URL=https://cvforge.anvilary.tools \
-DOCKER_PORT=3030 \
-make docker-check
-```
-
-See [`docs/deployment.md`](docs/deployment.md) for reverse-proxy, Cloudflare Tunnel
-origin, production smoke, backup, branch-protection, deployment, and rollback guidance.
-
-## Anvilary Product Family
-
-CVForge follows the hierarchy Anvilary Labs → Anvilary Tools → CVForge. It shares the dark forge palette, interaction primitives, responsive hierarchy, and ember atmosphere used across the Anvilary product family.
-
-Interface rules:
-- Keep screens minimal, organized, and task-focused.
-- Do not add filler sections, decorative empty blocks, or oversized containers without a job.
-- Every visible block should help the user understand the current state or complete a task.
-- Keep density useful without making the page feel cluttered.
-- Make mobile, tablet, and desktop layouts feel like the same app, not separate products.
-
-Builder and Analyzer use the same workbench pattern:
-- Builder left panel: editing workbench.
-- Builder right panel: generated CV/PDF preview.
-- Analyzer left panel: local analysis and import controls (implemented internally by parser modules).
-- Analyzer right panel: uploaded/source PDF preview.
-
-Switching between Builder and Analyzer should feel like changing modes inside one tool.
-
-## Analyzer, Routes, and Supported Formats
-
-- `/analyzer` is the canonical user-facing Analyzer route.
-- `/parser` is a permanent compatibility redirect to `/analyzer`.
-- `/resume-import` retains its compatibility redirect to `/builder`.
-- PDF is the only supported Analyzer input format in this release.
-- DOCX and plain-text analysis are not implemented or advertised.
-- Selectable PDF text is extracted locally with `pdfjs-dist`.
-- Uploaded PDFs are limited to 15 MB and 20 pages and must pass extension, available
-  MIME, and PDF signature checks.
-- Image-only, scanned, malformed, truncated, encrypted, or protected PDFs receive
-  specific local recovery guidance; CVForge does not use OCR.
-- English and Portuguese from Portugal are the explicitly supported diagnostic
-  languages. Other languages receive language-neutral fallback checks and are not
-  penalized merely for lacking English headings or action verbs.
-- JSON remains the most reliable structured restore path. A CVForge PDF may restore an embedded session, while an external PDF produces a best-effort draft that must be reviewed.
-
-## SEO Architecture
-
-- `apps/web/src/lib/siteConfig.ts` owns the site URL and page copy constants.
-- App Router metadata provides unique titles, descriptions, canonicals, Open Graph, and Twitter tags for `/`, `/builder`, and `/analyzer`.
-- `robots.ts` and `sitemap.ts` include only the three canonical, indexable pages.
-- `/parser` and `/resume-import` are redirect-only and absent from the sitemap.
-- `opengraph-image.tsx` generates the shared 1200×630 social image.
-- Homepage JSON-LD describes the factual `WebSite`, `SoftwareApplication`, and Anvilary Labs relationship.
-
-## Validation Commands
-
-```bash
+pnpm check:em-dash
+pnpm check:commits
 pnpm lint
 pnpm typecheck
-pnpm build
 pnpm test:unit
 pnpm test:e2e:chromium
-pnpm test:e2e:cross-browser
+bash scripts/cross-browser-check.sh
 ```
 
-Install managed browsers with `pnpm --filter web exec playwright install chromium firefox webkit`.
-On Linux hosts missing WebKit runtime libraries, `scripts/cross-browser-check.sh` retries
-the critical suite in the version-matched official Playwright container. Analyzer
-results are local rule-based signals, not commercial ATS equivalence, acceptance
-guarantees, or recruiter-outcome predictions.
+Enable the repository's versioned commit-message hook with `make hooks`.
+Please do not attach real CVs, contact details, or private PDFs to
+public issues.
 
-## Clean-Room Rebuild
+CVForge is a clean-room rebuild. Contributors must not copy source
+from OpenResume-derived codebases or quarantined reference material.
+Read the [clean-room rules](docs/clean-room.md) before contributing.
 
-CVForge is a clean-room rebuild. Comparable features may be rebuilt from scratch, but code must not be copied from OpenResume-derived sources or old fork sources. The local `tmp/` directory is treated as quarantined reference material and must not be imported from or committed.
+## Release evidence and documentation
 
-## More Documentation
+A green historical build does not certify later changes. Release
+candidates need the full gate on the exact source revision, followed by
+deployment-specific and manual browser checks.
 
-- `docs/product-scope.md`: product scope, implemented status, and planned work.
-- `docs/clean-room.md`: clean-room rules, folder structure, and state/storage notes.
-- `docs/implementation-plan.md`: implementation plan and validation expectations.
-- `docs/current-qa-plan.md`: automated and manual release QA matrix.
-- `docs/deployment.md`: production build, reverse proxy, Cloudflare Tunnel, smoke,
-  backup, and rollback runbook.
+Start with:
+
+- [Product scope](docs/product-scope.md)
+- [Release QA checklist](docs/current-qa-plan.md)
+- [Deployment and rollback](docs/deployment.md)
+- [Shared-host deployment](deploy/self-hosted/README.md)
+- [Release-readiness audit](docs/audits/cvforge-release-readiness-2026-09-26.md)
+- [Test evidence](docs/audits/cvforge-test-evidence.md)
+- [Implementation plan](docs/implementation-plan.md)
+- [Clean-room rules](docs/clean-room.md)
+
+## License
+
+CVForge is maintained by Alexandre Teixeira and distributed under the
+[MIT License](LICENSE).
