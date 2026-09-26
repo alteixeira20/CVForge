@@ -12,9 +12,8 @@ export portable backups, and analyze PDF resumes without creating an account.
 > control. Clearing site data, changing browsers or devices, or losing access to
 > a browser profile can remove your local CV.
 >
-> Browser storage is also specific to each website. If you used
-> `cvforge.alexandreteixeira.dev`, export your CV as JSON there and import it at
-> `cvforge.anvilary.tools`. Changing the hostname does not transfer saved CVs.
+> To move a CV between browsers or devices, export your JSON backup and
+> import it into the new browser. CVForge does not synchronize local data.
 >
 > The hosted instance is a convenient way to use the tool, not a cloud-backup
 > service or a guarantee of permanent data availability. You can also
@@ -243,8 +242,8 @@ These are explicit product limitations, not implied guarantees:
   reordering. Photo-layout templates are not yet included.
 - Scoring is a documented, rule-based assessment rather than a
   reproduction of a proprietary ATS.
-- The legacy and new CVForge hostnames have separate browser storage;
-  users must export and import to migrate their saved CVs.
+- Browser profiles and website origins have separate local storage;
+  use JSON export and import when moving a CV between them.
 
 See [product scope](docs/product-scope.md) for implemented and planned
 features.
