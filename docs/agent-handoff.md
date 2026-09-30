@@ -104,7 +104,7 @@
 - `apps/web/src/components/shared/form/FormField.tsx`
 - `apps/web/src/components/shared/sections/RepeatableSectionEditor.tsx`
 - `apps/web/src/components/shared/sections/SectionItemHeader.tsx`
-- `apps/web/src/components/shared/sections/HoldDeleteButton.tsx`
+- `apps/web/src/components/shared/sections/ConfirmDeleteButton.tsx`
 
 ### Branding and Atmosphere
 - `apps/web/src/components/ui/Brand.tsx`

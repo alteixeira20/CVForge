@@ -47,6 +47,28 @@ export function RepeatableSectionEditor<T extends { id: string }>({
     setExpandedIds(new Set([lastId]))
   }, [focusLatestVersion])
 
+  // Prune deleted item IDs from expandedIds so deleted cards do not linger in local state
+  useEffect(() => {
+    const validIds = new Set(items.map((item) => item.id))
+    setExpandedIds((prev) => {
+      let hasStale = false
+      for (const id of prev) {
+        if (!validIds.has(id)) {
+          hasStale = true
+          break
+        }
+      }
+      if (!hasStale) return prev
+      const next = new Set<string>()
+      for (const id of prev) {
+        if (validIds.has(id)) {
+          next.add(id)
+        }
+      }
+      return next
+    })
+  }, [items])
+
   return (
     <div className="space-y-2">
       {items.length === 0 && <EmptySectionState>{emptyLabel}</EmptySectionState>}
