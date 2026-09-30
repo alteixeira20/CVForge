@@ -13,6 +13,7 @@ export function SpacingSettings() {
       <div className="grid grid-cols-2 gap-2">
         <SettingControl label="Section" unit="px">
           <NumberInput
+            aria-label="Section Spacing"
             value={sectionSpacing}
             onChange={(val) => updateSettingsField('sectionSpacing', val)}
             min={0}
@@ -22,6 +23,7 @@ export function SpacingSettings() {
 
         <SettingControl label="Profile" unit="px">
           <NumberInput
+            aria-label="Profile Spacing"
             value={profileSpacing}
             onChange={(val) => updateSettingsField('profileSpacing', val)}
             min={0}

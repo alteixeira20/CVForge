@@ -1,7 +1,13 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { type Settings } from '@/types/cv'
 import { resolveDateFont, resolvePdfFont } from './resumePdfFontHelpers'
-import { compact, scaleSpacing } from './resumePdfLayoutHelpers'
+import {
+  compact,
+  MAX_PDF_LINE_HEIGHT,
+  MIN_PDF_LINE_HEIGHT,
+  scaleBulletRowMargin,
+  scaleSpacing,
+} from './resumePdfLayoutHelpers'
 
 export const PAGE_PADDING_VERTICAL = 34
 export const PAGE_PADDING_HORIZONTAL = 50
@@ -13,9 +19,9 @@ export function createResumePdfStyles(settings: Settings) {
   const contactSize = compact(bodySize, -1, 8, 10.5)
   const dateSize = compact(bodySize, -1.5, 8, 10)
   const headingSize = compact(settings.sectionHeadingSize, -1.5, 8.5, 11)
-  const lineHeight = compact(settings.lineHeight, -0.08, 1.28, 1.48)
-  const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 8, 16)
-  const profileSpacing = scaleSpacing(settings.profileSpacing, 0.8, 5, 10)
+  const lineHeight = compact(settings.lineHeight, 0, MIN_PDF_LINE_HEIGHT, MAX_PDF_LINE_HEIGHT)
+  const sectionSpacing = scaleSpacing(settings.sectionSpacing, 0.6, 0, 30)
+  const profileSpacing = scaleSpacing(settings.profileSpacing, 0.8, 0, 32)
 
   const topBarHeight = settings.topBarHeight ?? 3
   const contactGap = settings.contactGap ?? 14
@@ -25,7 +31,9 @@ export function createResumePdfStyles(settings: Settings) {
   const workEntryGap = settings.workEntryGap ?? 8
   const educationEntryGap = settings.educationEntryGap ?? 8
   const projectEntryGap = settings.projectEntryGap ?? 8
-  const languageLineHeight = settings.languageLineHeight ?? Math.min(lineHeight + 0.13, 1.6)
+  const languageLineHeight = compact(settings.languageLineHeight ?? lineHeight, 0, MIN_PDF_LINE_HEIGHT, MAX_PDF_LINE_HEIGHT)
+  const bulletRowMarginBottom = scaleBulletRowMargin(lineHeight)
+  const bulletMarkerMarginTop = Math.max(3, Math.min(6, Math.round(bodySize * lineHeight * 0.35)))
 
   return StyleSheet.create({
     page: {
@@ -87,7 +95,7 @@ export function createResumePdfStyles(settings: Settings) {
     summary: {
       fontSize: bodySize,
       color: '#3D4250',
-      lineHeight: Math.min(lineHeight + 0.03, 1.5),
+      lineHeight,
       marginTop: summaryGap,
     },
     section: { marginTop: sectionSpacing },
@@ -131,7 +139,7 @@ export function createResumePdfStyles(settings: Settings) {
       color: '#111418',
       flexGrow: 1,
       flexShrink: 1,
-      lineHeight: 1.3,
+      lineHeight: compact(lineHeight, -0.2, MIN_PDF_LINE_HEIGHT, 1.6),
     },
     entryOrg: {
       fontWeight: 400,
@@ -147,7 +155,7 @@ export function createResumePdfStyles(settings: Settings) {
     entrySubtitle: {
       fontSize: contactSize,
       color: '#6B7280',
-      lineHeight: 1.35,
+      lineHeight: compact(lineHeight, -0.15, MIN_PDF_LINE_HEIGHT, 1.6),
       marginTop: titleMetaGap,
       marginBottom: 3,
     },
@@ -157,25 +165,25 @@ export function createResumePdfStyles(settings: Settings) {
     bulletRow: {
       flexDirection: 'row',
       gap: 6,
-      marginBottom: 1,
+      marginBottom: bulletRowMarginBottom,
     },
     bulletMarker: {
       width: 4,
       height: 1,
       backgroundColor: '#6B7280',
-      marginTop: 6,
+      marginTop: bulletMarkerMarginTop,
       flexShrink: 0,
     },
     bulletText: {
       flexGrow: 1,
       flexShrink: 1,
       color: '#111418',
-      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+      lineHeight,
     },
     paragraph: {
       marginTop: descriptionGap,
       color: '#111418',
-      lineHeight: Math.max(lineHeight - 0.02, 1.35),
+      lineHeight,
     },
     skillRow: {
       flexDirection: 'row',

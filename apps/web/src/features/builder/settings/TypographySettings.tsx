@@ -2,11 +2,17 @@
 
 import { useCV } from '@/context/CVContext'
 import { NumberInput } from '@/components/shared/form/NumberInput'
+import {
+  lineHeightToLineSpacing,
+  lineSpacingToLineHeight,
+} from '@/features/resume-pdf/resumePdfLayoutHelpers'
 import { SettingControl } from './SettingControl'
 
 export function TypographySettings() {
   const { state, updateSettingsField } = useCV()
   const { fontSize, nameFontSize, sectionHeadingSize, lineHeight } = state.settings
+
+  const lineSpacingDisplay = lineHeightToLineSpacing(lineHeight)
 
   return (
     <div className="py-2 space-y-2">
@@ -40,13 +46,15 @@ export function TypographySettings() {
           />
         </SettingControl>
 
-        <SettingControl label="Line Height">
+        <SettingControl label="Line Spacing">
           <NumberInput
-            value={lineHeight}
-            onChange={(val) => updateSettingsField('lineHeight', val)}
-            step={0.1}
-            min={1}
-            max={2}
+            aria-label="Line Spacing (0 = tight)"
+            title="0 = tight, 0.5 = default, 1 = loose"
+            value={lineSpacingDisplay}
+            onChange={(val) => updateSettingsField('lineHeight', lineSpacingToLineHeight(val))}
+            step={0.05}
+            min={0}
+            max={1}
           />
         </SettingControl>
       </div>
