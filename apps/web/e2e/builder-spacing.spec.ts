@@ -155,13 +155,13 @@ test('Builder Typography control is renamed to Line Spacing and supports 0 densi
   await expect(page.getByLabel('Section Spacing')).toHaveValue('0')
   await expect(page.getByLabel('Profile Spacing')).toHaveValue('0')
 
-  // Verify JSON export reflects internal lineHeight 0.85 and zero spacings
+  // Verify JSON export reflects internal lineHeight 0.7 and zero spacings
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Export' }).click()
   const download = await downloadPromise
   const backupBuffer = await readFile((await download.path())!)
   const exported = JSON.parse(backupBuffer.toString('utf-8'))
-  expect(exported.settings.lineHeight).toBe(0.85)
+  expect(exported.settings.lineHeight).toBe(0.7)
   expect(exported.settings.sectionSpacing).toBe(0)
   expect(exported.settings.profileSpacing).toBe(0)
 

@@ -1,4 +1,5 @@
-export const MIN_PDF_LINE_HEIGHT = 0.85
+export const MIN_PDF_LINE_HEIGHT = 0.7
+export const ZERO_GAP_PDF_LINE_HEIGHT = MIN_PDF_LINE_HEIGHT
 export const DEFAULT_PDF_LINE_HEIGHT = 1.5
 export const MAX_PDF_LINE_HEIGHT = 2.0
 export const DEFAULT_BULLET_ROW_MARGIN = 1.0
@@ -12,9 +13,9 @@ export function scaleSpacing(value: number, factor: number, min: number, max: nu
 }
 
 /**
- * Maps user-facing extra line spacing (0.00 to 1.00) to internal lineHeight ratio (0.85 to 2.00).
+ * Maps user-facing extra line spacing (0.00 to 1.00) to internal lineHeight ratio (0.70 to 2.00).
  * Piecewise linear mapping:
- * - 0.00 -> 0.85 (maximum safe visual compression, lines glued together without collision)
+ * - 0.00 -> 0.70 (optical zero gap, lines begin immediately after previous line ends)
  * - 0.50 -> 1.50 (historical default appearance)
  * - 1.00 -> 2.00 (maximum open leading)
  */
@@ -29,9 +30,9 @@ export function lineSpacingToLineHeight(lineSpacing: number): number {
 }
 
 /**
- * Maps internal lineHeight ratio (0.85 to 2.00) back to user-facing line spacing (0.00 to 1.00).
+ * Maps internal lineHeight ratio (0.70 to 2.00) back to user-facing line spacing (0.00 to 1.00).
  * Inverts lineSpacingToLineHeight:
- * - 0.85 -> 0.00
+ * - 0.70 -> 0.00
  * - 1.50 -> 0.50
  * - 2.00 -> 1.00
  */
@@ -47,7 +48,7 @@ export function lineHeightToLineSpacing(lineHeight: number): number {
 
 /**
  * Computes bulletRow marginBottom based on internal lineHeight.
- * - Line Spacing 0.00 (lineHeight = 0.85) -> 0.0pt (no extra gap between bullets)
+ * - Line Spacing 0.00 (lineHeight = 0.70) -> 0.0pt (no extra gap between bullets)
  * - Line Spacing 0.50 (lineHeight = 1.50) -> 1.0pt (historical default)
  * - Line Spacing 1.00 (lineHeight = 2.00) -> 2.0pt
  */

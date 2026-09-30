@@ -135,6 +135,7 @@ export function createResumePdfStyles(settings: Settings) {
       gap: 12,
     },
     entryTitle: {
+      fontSize: bodySize,
       fontWeight: 600,
       color: '#111418',
       flexGrow: 1,
@@ -175,12 +176,14 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     bulletText: {
+      fontSize: bodySize,
       flexGrow: 1,
       flexShrink: 1,
       color: '#111418',
       lineHeight,
     },
     paragraph: {
+      fontSize: bodySize,
       marginTop: descriptionGap,
       color: '#111418',
       lineHeight,
@@ -205,12 +208,14 @@ export function createResumePdfStyles(settings: Settings) {
       letterSpacing: 0.2,
     },
     skillValues: {
+      fontSize: bodySize,
       flexGrow: 1,
       flexShrink: 1,
       color: '#111418',
       lineHeight,
     },
     languageText: {
+      fontSize: bodySize,
       color: '#111418',
       lineHeight: languageLineHeight,
     },
