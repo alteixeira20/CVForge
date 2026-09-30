@@ -10,6 +10,7 @@ import {
   lineSpacingToLineHeight,
   scaleBulletRowMargin,
   MIN_PDF_LINE_HEIGHT,
+  ZERO_GAP_PDF_LINE_HEIGHT,
   DEFAULT_PDF_LINE_HEIGHT,
   MAX_PDF_LINE_HEIGHT,
 } from '@/features/resume-pdf/resumePdfLayoutHelpers'
@@ -23,32 +24,35 @@ describe('Typography and spacing freedom', () => {
   })
 
   describe('A. Mapping and conversion behavior', () => {
-    it('maps user-facing Line Spacing 0 to validated MIN_PDF_LINE_HEIGHT (0.85)', () => {
-      expect(MIN_PDF_LINE_HEIGHT).toBe(0.85)
+    it('maps user-facing Line Spacing 0 to validated MIN_PDF_LINE_HEIGHT (0.7)', () => {
+      expect(MIN_PDF_LINE_HEIGHT).toBe(0.7)
+      expect(ZERO_GAP_PDF_LINE_HEIGHT).toBe(0.7)
       expect(DEFAULT_PDF_LINE_HEIGHT).toBe(1.5)
       expect(MAX_PDF_LINE_HEIGHT).toBe(2.0)
-      expect(lineSpacingToLineHeight(0)).toBe(0.85)
+      expect(lineSpacingToLineHeight(0)).toBe(0.7)
     })
 
     it('interpolates intermediate and default values smoothly', () => {
-      expect(lineSpacingToLineHeight(0.1)).toBe(0.98)
-      expect(lineSpacingToLineHeight(0.25)).toBe(1.175)
+      expect(lineSpacingToLineHeight(0.05)).toBe(0.78)
+      expect(lineSpacingToLineHeight(0.1)).toBe(0.86)
+      expect(lineSpacingToLineHeight(0.25)).toBe(1.1)
       expect(lineSpacingToLineHeight(0.5)).toBe(1.5)
       expect(lineSpacingToLineHeight(0.75)).toBe(1.75)
       expect(lineSpacingToLineHeight(1.0)).toBe(2.0)
     })
 
     it('inverts internal lineHeight values back to user-facing Line Spacing', () => {
-      expect(lineHeightToLineSpacing(0.85)).toBe(0)
-      expect(lineHeightToLineSpacing(0.98)).toBe(0.1)
-      expect(lineHeightToLineSpacing(1.175)).toBe(0.25)
+      expect(lineHeightToLineSpacing(0.7)).toBe(0)
+      expect(lineHeightToLineSpacing(0.78)).toBe(0.05)
+      expect(lineHeightToLineSpacing(0.86)).toBe(0.1)
+      expect(lineHeightToLineSpacing(1.1)).toBe(0.25)
       expect(lineHeightToLineSpacing(1.5)).toBe(0.5)
       expect(lineHeightToLineSpacing(1.75)).toBe(0.75)
       expect(lineHeightToLineSpacing(2.0)).toBe(1.0)
     })
 
     it('defensively clamps out-of-range or non-finite inputs', () => {
-      expect(lineSpacingToLineHeight(-0.5)).toBe(0.85)
+      expect(lineSpacingToLineHeight(-0.5)).toBe(0.7)
       expect(lineSpacingToLineHeight(1.5)).toBe(2.0)
       expect(lineSpacingToLineHeight(Number.NaN)).toBe(1.5)
 
@@ -58,8 +62,10 @@ describe('Typography and spacing freedom', () => {
     })
 
     it('handles legacy and transitional lineHeight values gracefully', () => {
-      // Transitional 1.0 maps to ~0.12 in UI
-      expect(lineHeightToLineSpacing(1.0)).toBe(0.12)
+      // Legacy minimum 0.85 maps smoothly to ~0.09 in UI
+      expect(lineHeightToLineSpacing(0.85)).toBe(0.09)
+      // Transitional 1.0 maps to ~0.19 in UI
+      expect(lineHeightToLineSpacing(1.0)).toBe(0.19)
       // Historical default 1.5 maps to exactly 0.5
       expect(lineHeightToLineSpacing(1.5)).toBe(0.5)
     })
@@ -67,8 +73,8 @@ describe('Typography and spacing freedom', () => {
 
   describe('B. Bullet spacing scaling', () => {
     it('scales bullet margin smoothly from 0pt at tightest to 1pt at default', () => {
-      expect(scaleBulletRowMargin(0.85)).toBe(0)
-      expect(scaleBulletRowMargin(1.175)).toBe(0.5)
+      expect(scaleBulletRowMargin(0.7)).toBe(0)
+      expect(scaleBulletRowMargin(1.1)).toBe(0.5)
       expect(scaleBulletRowMargin(1.5)).toBe(1.0)
       expect(scaleBulletRowMargin(1.75)).toBe(1.5)
       expect(scaleBulletRowMargin(2.0)).toBe(2.0)
@@ -98,29 +104,35 @@ describe('Typography and spacing freedom', () => {
     })
   })
 
-  describe('D. PDF style behavior with internal lineHeight 0.85', () => {
-    it('allows page, bullets, paragraphs, and multi-line text to reach 0.85 without hidden floors', () => {
+  describe('D. PDF style behavior with internal lineHeight 0.7', () => {
+    it('allows page, bullets, paragraphs, and multi-line text to reach 0.7 without hidden floors', () => {
       const styles = createResumePdfStyles({
         ...defaultSettings,
-        lineHeight: 0.85,
-        languageLineHeight: 0.85,
+        lineHeight: 0.7,
+        languageLineHeight: 0.7,
       })
 
-      expect(styles.page.lineHeight).toBe(0.85)
-      expect(styles.bulletText.lineHeight).toBe(0.85)
-      expect(styles.paragraph.lineHeight).toBe(0.85)
-      expect(styles.summary.lineHeight).toBe(0.85)
-      expect(styles.skillLabel.lineHeight).toBe(0.85)
-      expect(styles.skillValues.lineHeight).toBe(0.85)
-      expect(styles.entryTitle.lineHeight).toBe(0.85)
-      expect(styles.entrySubtitle.lineHeight).toBe(0.85)
-      expect(styles.languageText.lineHeight).toBe(0.85)
+      expect(styles.page.lineHeight).toBe(0.7)
+      expect(styles.bulletText.lineHeight).toBe(0.7)
+      expect(styles.bulletText.fontSize).toBe(10.5)
+      expect(styles.paragraph.lineHeight).toBe(0.7)
+      expect(styles.paragraph.fontSize).toBe(10.5)
+      expect(styles.summary.lineHeight).toBe(0.7)
+      expect(styles.summary.fontSize).toBe(10.5)
+      expect(styles.skillLabel.lineHeight).toBe(0.7)
+      expect(styles.skillValues.lineHeight).toBe(0.7)
+      expect(styles.skillValues.fontSize).toBe(10.5)
+      expect(styles.entryTitle.lineHeight).toBe(0.7)
+      expect(styles.entryTitle.fontSize).toBe(10.5)
+      expect(styles.entrySubtitle.lineHeight).toBe(0.7)
+      expect(styles.languageText.lineHeight).toBe(0.7)
+      expect(styles.languageText.fontSize).toBe(10.5)
     })
 
     it('sets bulletRow marginBottom to 0 at Line Spacing 0', () => {
       const styles = createResumePdfStyles({
         ...defaultSettings,
-        lineHeight: 0.85,
+        lineHeight: 0.7,
       })
 
       expect(styles.bulletRow.marginBottom).toBe(0)
@@ -129,7 +141,7 @@ describe('Typography and spacing freedom', () => {
     it('adjusts bullet marker offset at compressed lineHeight to maintain alignment', () => {
       const tightStyles = createResumePdfStyles({
         ...defaultSettings,
-        lineHeight: 0.85,
+        lineHeight: 0.7,
       })
       const defaultStyles = createResumePdfStyles({
         ...defaultSettings,
@@ -211,14 +223,14 @@ describe('Typography and spacing freedom', () => {
       })
 
       const customState = JSON.parse(JSON.stringify(defaultCVState)) as CVState
-      customState.settings.lineHeight = lineSpacingToLineHeight(0) // tightest spacing (0.85)
+      customState.settings.lineHeight = lineSpacingToLineHeight(0) // tightest optical-zero spacing (0.7)
       customState.settings.sectionSpacing = 0
       customState.settings.profileSpacing = 0
 
       expect(storage.setCVState(customState)).toBe(true)
       const restored = storage.getCVState()
       expect(restored).not.toBeNull()
-      expect(restored!.settings.lineHeight).toBe(0.85)
+      expect(restored!.settings.lineHeight).toBe(0.7)
       expect(lineHeightToLineSpacing(restored!.settings.lineHeight)).toBe(0)
       expect(restored!.settings.sectionSpacing).toBe(0)
       expect(restored!.settings.profileSpacing).toBe(0)
@@ -226,7 +238,7 @@ describe('Typography and spacing freedom', () => {
       const imported = await importCVState({
         text: async () => JSON.stringify(customState),
       })
-      expect(imported.settings.lineHeight).toBe(0.85)
+      expect(imported.settings.lineHeight).toBe(0.7)
       expect(lineHeightToLineSpacing(imported.settings.lineHeight)).toBe(0)
       expect(imported.settings.sectionSpacing).toBe(0)
       expect(imported.settings.profileSpacing).toBe(0)
