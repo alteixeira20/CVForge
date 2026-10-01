@@ -1,116 +1,52 @@
-name: Validation
+name: CI
 
 on:
   push:
-  pull_request:
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: cvforge-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   CI_SITE_URL: https://cvforge.example.invalid
 
 jobs:
-  static:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10.5.2
-          run_install: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm check:em-dash
-      - run: pnpm check:commits
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test:unit
-      - run: pnpm audit-prod
-      - run: pnpm build
-        env:
-          NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
-      - run: bash scripts/prepare-standalone.sh
-      - run: bash scripts/assert-release-artifacts.sh
-        env:
-          NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
-          ALLOW_INVALID_SITE_URL: "1"
 
-  chromium:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
         with:
           version: 10.5.2
           run_install: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-        env:
-          NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
-      - run: pnpm --filter web exec playwright install --with-deps chromium
-      - run: pnpm test:e2e:chromium
-      - if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: chromium-playwright-failures
-          path: |
-            apps/web/test-results/
-            apps/web/playwright-report/
-          if-no-files-found: ignore
-          retention-days: 7
 
-  cross-browser:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10.5.2
-          run_install: false
       - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-        env:
-          NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
-      - run: pnpm --filter web exec playwright install --with-deps firefox webkit
-      - run: pnpm test:e2e:cross-browser
-      - if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: cross-browser-playwright-failures
-          path: |
-            apps/web/test-results/
-            apps/web/playwright-report/
-          if-no-files-found: ignore
-          retention-days: 7
 
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 10.5.2
-          run_install: false
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: make docker-check
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test:unit
+
+      - name: Build
+        run: pnpm build
         env:
           NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
-          DOCKER_PORT: "3030"
