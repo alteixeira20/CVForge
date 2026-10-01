@@ -73,6 +73,7 @@ export const defaultSettings: Settings = {
     projects: 'bullets' as const,
     customSections: 'bullets' as const,
   },
+  languageLayout: 'inline',
   topBarHeight: 3,
   contactGap: 14,
   summaryGap: 8,

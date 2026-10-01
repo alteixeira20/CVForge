@@ -1,7 +1,7 @@
 'use client'
 
 import { useCV } from '@/context/CVContext'
-import { type DescriptionMode } from '@/types/cv'
+import { type DescriptionMode, type LanguageLayout } from '@/types/cv'
 
 const CONTENT_SECTIONS = [
   { key: 'workExperience' as const, label: 'Work' },
@@ -12,10 +12,14 @@ const CONTENT_SECTIONS = [
 
 export function ContentRenderingSettings() {
   const { state, updateSettingsField } = useCV()
-  const { descriptionMode, bulletVisibility } = state.settings
+  const { descriptionMode, bulletVisibility, languageLayout } = state.settings
 
   function setMode(section: typeof CONTENT_SECTIONS[number]['key'], mode: DescriptionMode) {
     updateSettingsField('descriptionMode', { ...descriptionMode, [section]: mode })
+  }
+
+  function setLanguageLayout(layout: LanguageLayout) {
+    updateSettingsField('languageLayout', layout)
   }
 
   function toggleBullets(section: typeof CONTENT_SECTIONS[number]['key']) {
@@ -65,6 +69,27 @@ export function ContentRenderingSettings() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-2 border-t border-border/70 pt-2 px-1">
+        <div className="flex items-center gap-2">
+          <span className="flex-1 text-[11px] text-ink-2">Languages</span>
+          <div className="flex shrink-0 rounded overflow-hidden border border-border">
+            <ModeButton
+              active={languageLayout === 'inline'}
+              onClick={() => setLanguageLayout('inline')}
+            >
+              Same row
+            </ModeButton>
+            <span className="w-px bg-border shrink-0" />
+            <ModeButton
+              active={languageLayout === 'rows'}
+              onClick={() => setLanguageLayout('rows')}
+            >
+              Separate rows
+            </ModeButton>
+          </div>
+        </div>
       </div>
     </div>
   )

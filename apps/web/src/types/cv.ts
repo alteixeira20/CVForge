@@ -6,6 +6,7 @@ import {
   type DocumentSizeSchema,
   type EducationSchema,
   type FeaturedSkillSchema,
+  type LanguageLayoutSchema,
   type LanguageSchema,
   type LocalePresetSchema,
   type ProfileSchema,
@@ -29,6 +30,7 @@ export {
   DocumentSizeSchema,
   EducationSchema,
   FeaturedSkillSchema,
+  LanguageLayoutSchema,
   LanguageSchema,
   LocalePresetSchema,
   ProfileSchema,
@@ -46,6 +48,7 @@ export type WorkExperience = z.infer<typeof WorkExperienceSchema>;
 export type Education = z.infer<typeof EducationSchema>;
 export type Project = z.infer<typeof ProjectSchema>;
 export type Language = z.infer<typeof LanguageSchema>;
+export type LanguageLayout = z.infer<typeof LanguageLayoutSchema>;
 export type FeaturedSkill = z.infer<typeof FeaturedSkillSchema>;
 export type Skills = z.infer<typeof SkillsSchema>;
 export type CustomSection = z.infer<typeof CustomSectionSchema>;

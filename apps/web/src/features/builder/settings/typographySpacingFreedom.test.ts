@@ -245,3 +245,35 @@ describe('Typography and spacing freedom', () => {
     })
   })
 })
+
+
+describe('Language layout and header contact distribution', () => {
+  it('keeps languages inline by default and backfills the setting for older saved CVs', () => {
+    expect(defaultSettings.languageLayout).toBe('inline')
+
+    const legacy = JSON.parse(JSON.stringify(defaultCVState)) as Record<string, unknown>
+    const settings = legacy.settings as Record<string, unknown>
+    delete settings.languageLayout
+
+    const parsed = parseCVState(legacy)
+    expect(parsed).not.toBeNull()
+    expect(parsed!.settings.languageLayout).toBe('inline')
+  })
+
+  it('preserves an explicit separate-row language layout', () => {
+    const savedCV = JSON.parse(JSON.stringify(defaultCVState)) as CVState
+    savedCV.settings.languageLayout = 'rows'
+
+    const parsed = parseCVState(savedCV)
+    expect(parsed).not.toBeNull()
+    expect(parsed!.settings.languageLayout).toBe('rows')
+  })
+
+  it('distributes header contacts across the full printable width', () => {
+    const styles = createResumePdfStyles(defaultSettings)
+
+    expect(styles.contactWrap.width).toBe('100%')
+    expect(styles.contactWrap.justifyContent).toBe('space-between')
+    expect(styles.contactItem.flexShrink).toBe(0)
+  })
+})

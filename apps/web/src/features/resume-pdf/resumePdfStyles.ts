@@ -64,14 +64,17 @@ export function createResumePdfStyles(settings: Settings) {
       marginBottom: 8,
     },
     contactWrap: {
+      width: '100%',
       flexDirection: 'row',
       flexWrap: 'wrap',
+      justifyContent: 'space-between',
       rowGap: 3,
       columnGap: contactGap,
     },
     contactItem: {
       flexDirection: 'row',
       alignItems: 'center',
+      flexShrink: 0,
       gap: 5,
       fontSize: contactSize,
       color: '#3D4250',
@@ -213,6 +216,10 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 1,
       color: '#111418',
       lineHeight,
+    },
+    languageList: {
+      flexDirection: 'column',
+      gap: 0,
     },
     languageText: {
       fontSize: bodySize,

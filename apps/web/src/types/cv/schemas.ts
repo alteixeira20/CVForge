@@ -108,6 +108,7 @@ export const BulletVisibilitySchema = z.object({
 });
 
 export const DescriptionModeSchema = z.enum(['bullets', 'paragraph']);
+export const LanguageLayoutSchema = z.enum(['inline', 'rows']);
 
 export const SectionTitlesSchema = z.object({
   workExperience: z.string().default('Work Experience'),
@@ -161,6 +162,7 @@ export const SettingsSchema = z.object({
     projects: 'bullets',
     customSections: 'bullets',
   }),
+  languageLayout: LanguageLayoutSchema.default('inline'),
   topBarHeight: z.number().default(3),
   contactGap: z.number().default(14),
   summaryGap: z.number().default(8),
