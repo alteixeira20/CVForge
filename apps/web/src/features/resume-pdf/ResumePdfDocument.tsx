@@ -31,16 +31,18 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
 
         <View style={styles.contentBounds}>
           {settings.sectionOrder.map((sectionId) => {
-          const isVisible = settings.visibleSections[sectionId as keyof typeof settings.visibleSections]
-          if (!isVisible) return null
+            const isVisible = settings.visibleSections[sectionId as keyof typeof settings.visibleSections]
+            if (!isVisible) return null
 
-          switch (sectionId) {
+            switch (sectionId) {
               case 'workExperience':
                 return <ResumePdfWorkSection key={sectionId} state={state} styles={styles} />
               case 'projects':
                 return <ResumePdfProjectSection key={sectionId} state={state} styles={styles} />
               case 'skills':
-                return hasPdfSkills(resume.skills) ? <ResumePdfSkills key={sectionId} skills={resume.skills} styles={styles} title={settings.sectionTitles.skills} /> : null
+                return hasPdfSkills(resume.skills)
+                  ? <ResumePdfSkills key={sectionId} skills={resume.skills} styles={styles} title={settings.sectionTitles.skills} />
+                  : null
               case 'education':
                 return <ResumePdfEducationSection key={sectionId} state={state} styles={styles} />
               case 'languages':
@@ -49,7 +51,7 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
                 return <ResumePdfCustomSections key={sectionId} items={resume.customSections} styles={styles} settings={settings} />
               default:
                 return null
-          }
+            }
           })}
         </View>
       </Page>
