@@ -33,7 +33,7 @@ function SkillRow({ label, values, styles, isLast }: { label: string; values: st
   return (
     <View style={isLast ? styles.skillRowLast : styles.skillRow}>
       <Text style={styles.skillLabel}>{label}</Text>
-      <Text style={styles.skillValues}>{values.join(', ')}</Text>
+      <Text style={styles.skillValues} wrap>{values.join(', ')}</Text>
     </View>
   )
 }

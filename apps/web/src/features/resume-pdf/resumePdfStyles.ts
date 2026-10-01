@@ -101,7 +101,6 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     contactValue: {
-      maxWidth: '100%',
       minWidth: 0,
       flexShrink: 1,
       fontSize: contactSize,
@@ -175,6 +174,7 @@ export function createResumePdfStyles(settings: Settings) {
       gap: 12,
     },
     entryTitle: {
+      width: 0,
       fontSize: bodySize,
       fontWeight: 600,
       color: '#111418',
@@ -229,7 +229,7 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     bulletText: {
-      maxWidth: '100%',
+      width: 0,
       minWidth: 0,
       flexBasis: 0,
       fontSize: bodySize,
@@ -274,7 +274,7 @@ export function createResumePdfStyles(settings: Settings) {
       letterSpacing: 0.2,
     },
     skillValues: {
-      maxWidth: '100%',
+      width: 0,
       minWidth: 0,
       flexBasis: 0,
       fontSize: bodySize,
