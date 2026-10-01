@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { cvPayload, LONG_URL, openBuilderWithCV, waitForFirstPreview } from './support/previewFixtures'
+import { cvPayload, LONG_URL, openBuilderWithCV, previewCanvases, waitForFirstPreview } from './support/previewFixtures'
 import { downloadBuilderPdf, extractPdf, joinWrapped, type ExtractedPdf } from './support/pdfText'
 import { PAGE_PADDING_HORIZONTAL } from '../src/features/resume-pdf/resumePdfGeometry'
 
@@ -146,6 +146,7 @@ for (const documentSize of ['A4', 'Letter'] as const) {
       await waitForFirstPreview(page)
 
       await expect(page.getByRole('status').filter({ hasText: 'Preview could not be updated' })).toHaveCount(0)
+      expect(await previewCanvases(page).count()).toBe(1)
 
       const pdf = await extractPdf(await downloadBuilderPdf(page))
       expect(joinWrapped(pdf.lines)).toContain('Requirements discovery')
@@ -159,6 +160,17 @@ test('a long unbroken Skills token wraps inside the printable A4 bounds', async 
   const token = 'repo-' + 'A1b2C3d4E5f6G7h8'.repeat(10)
 
   await openBuilderWithCV(page, denseSkillsPayload('A4', 'Lexend', token))
+  await waitForFirstPreview(page)
+
+  const pdf = await extractPdf(await downloadBuilderPdf(page))
+  expect(joinWrapped(pdf.lines)).toContain(token)
+  expectInsidePrintableBounds(pdf)
+})
+
+test('a long unbroken Skills token wraps inside the printable Letter bounds', async ({ page }) => {
+  const token = 'repo-' + 'A1b2C3d4E5f6G7h8'.repeat(10)
+
+  await openBuilderWithCV(page, denseSkillsPayload('Letter', 'Lexend', token))
   await waitForFirstPreview(page)
 
   const pdf = await extractPdf(await downloadBuilderPdf(page))
