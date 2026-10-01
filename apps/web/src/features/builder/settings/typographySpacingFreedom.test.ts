@@ -274,6 +274,9 @@ describe('Language layout and header contact distribution', () => {
 
     expect(styles.contactWrap.width).toBe('100%')
     expect(styles.contactWrap.justifyContent).toBe('space-between')
-    expect(styles.contactItem.flexShrink).toBe(0)
+    expect(styles.contactItem.flexShrink).toBe(1)
+    expect(styles.contactItem.minWidth).toBe(0)
+    expect(styles.contactValue.flexShrink).toBe(1)
+    expect(styles.contactValue.minWidth).toBe(0)
   })
 })
