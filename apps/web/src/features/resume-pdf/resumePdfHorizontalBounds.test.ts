@@ -6,7 +6,6 @@ describe('PDF horizontal layout invariants', () => {
   it('bounds the page content and all shared horizontal rows to printable width', () => {
     const styles = createResumePdfStyles(defaultSettings)
 
-    expect(styles.pageContent).toMatchObject({ width: '100%', maxWidth: '100%', minWidth: 0 })
     expect(styles.contentBounds).toMatchObject({ width: '100%', maxWidth: '100%', minWidth: 0 })
     expect(styles.section).toMatchObject({ width: '100%', maxWidth: '100%', minWidth: 0 })
     expect(styles.entryRow).toMatchObject({ width: '100%', maxWidth: '100%', minWidth: 0 })

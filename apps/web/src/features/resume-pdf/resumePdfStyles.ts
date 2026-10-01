@@ -44,11 +44,6 @@ export function createResumePdfStyles(settings: Settings) {
       lineHeight,
       color: '#111418',
     },
-    pageContent: {
-      width: '100%',
-      maxWidth: '100%',
-      minWidth: 0,
-    },
     contentBounds: {
       width: '100%',
       maxWidth: '100%',
