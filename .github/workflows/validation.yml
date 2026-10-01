@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - fix/pdf-horizontal-bounds
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,7 @@ env:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
 
@@ -50,3 +51,11 @@ jobs:
         run: pnpm build
         env:
           NEXT_PUBLIC_SITE_URL: ${{ env.CI_SITE_URL }}
+
+      - name: Install Chromium for PDF bounds regression
+        if: github.ref_name == 'fix/pdf-horizontal-bounds'
+        run: pnpm --filter web exec playwright install --with-deps chromium
+
+      - name: PDF horizontal bounds regression
+        if: github.ref_name == 'fix/pdf-horizontal-bounds'
+        run: pnpm --filter web exec playwright test e2e/pdf-text.spec.ts --project=chromium
