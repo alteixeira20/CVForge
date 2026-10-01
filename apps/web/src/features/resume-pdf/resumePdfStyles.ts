@@ -1,5 +1,6 @@
 import { StyleSheet } from '@react-pdf/renderer'
 import { type Settings } from '@/types/cv'
+import { PAGE_PADDING_HORIZONTAL, PAGE_PADDING_VERTICAL } from './resumePdfGeometry'
 import { resolveDateFont, resolvePdfFont } from './resumePdfFontHelpers'
 import {
   compact,
@@ -8,9 +9,6 @@ import {
   scaleBulletRowMargin,
   scaleSpacing,
 } from './resumePdfLayoutHelpers'
-
-export const PAGE_PADDING_VERTICAL = 34
-export const PAGE_PADDING_HORIZONTAL = 50
 
 export function createResumePdfStyles(settings: Settings) {
   const fontFamily = resolvePdfFont(settings.fontFamily)
@@ -46,6 +44,16 @@ export function createResumePdfStyles(settings: Settings) {
       lineHeight,
       color: '#111418',
     },
+    pageContent: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
+    },
+    contentBounds: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
+    },
     accentRule: {
       height: topBarHeight,
       backgroundColor: settings.themeColor,
@@ -54,8 +62,16 @@ export function createResumePdfStyles(settings: Settings) {
       marginBottom: PAGE_PADDING_VERTICAL - topBarHeight,
       marginLeft: -PAGE_PADDING_HORIZONTAL,
     },
-    header: { marginBottom: profileSpacing },
+    header: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
+      marginBottom: profileSpacing,
+    },
     name: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       fontSize: nameSize,
       fontWeight: 600,
       color: '#111418',
@@ -65,6 +81,8 @@ export function createResumePdfStyles(settings: Settings) {
     },
     contactWrap: {
       width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       flexWrap: 'wrap',
       justifyContent: 'space-between',
@@ -72,9 +90,11 @@ export function createResumePdfStyles(settings: Settings) {
       columnGap: contactGap,
     },
     contactItem: {
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       alignItems: 'center',
-      flexShrink: 0,
+      flexShrink: 1,
       gap: 5,
       fontSize: contactSize,
       color: '#3D4250',
@@ -86,6 +106,9 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     contactValue: {
+      maxWidth: '100%',
+      minWidth: 0,
+      flexShrink: 1,
       fontSize: contactSize,
       color: '#3D4250',
       textDecoration: 'none',
@@ -96,13 +119,24 @@ export function createResumePdfStyles(settings: Settings) {
       textDecoration: 'none',
     },
     summary: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       fontSize: bodySize,
       color: '#3D4250',
       lineHeight,
       marginTop: summaryGap,
     },
-    section: { marginTop: sectionSpacing },
+    section: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
+      marginTop: sectionSpacing,
+    },
     sectionHeader: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
@@ -115,6 +149,8 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     sectionTitleText: {
+      minWidth: 0,
+      flexShrink: 1,
       fontSize: headingSize,
       color: '#111418',
       fontWeight: 600,
@@ -123,15 +159,21 @@ export function createResumePdfStyles(settings: Settings) {
     },
     sectionRule: {
       height: 0.5,
+      minWidth: 0,
+      flexBasis: 0,
       flexGrow: 1,
+      flexShrink: 1,
       backgroundColor: '#D6D9DE',
       marginLeft: 4,
     },
-    workEntryGroup: { marginBottom: workEntryGap },
-    educationEntryGroup: { marginBottom: educationEntryGap },
-    projectEntryGroup: { marginBottom: projectEntryGap },
-    entry: {},
+    workEntryGroup: { width: '100%', maxWidth: '100%', minWidth: 0, marginBottom: workEntryGap },
+    educationEntryGroup: { width: '100%', maxWidth: '100%', minWidth: 0, marginBottom: educationEntryGap },
+    projectEntryGroup: { width: '100%', maxWidth: '100%', minWidth: 0, marginBottom: projectEntryGap },
+    entry: { width: '100%', maxWidth: '100%', minWidth: 0 },
     entryRow: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'baseline',
@@ -141,6 +183,8 @@ export function createResumePdfStyles(settings: Settings) {
       fontSize: bodySize,
       fontWeight: 600,
       color: '#111418',
+      minWidth: 0,
+      flexBasis: 0,
       flexGrow: 1,
       flexShrink: 1,
       lineHeight: compact(lineHeight, -0.2, MIN_PDF_LINE_HEIGHT, 1.6),
@@ -150,13 +194,18 @@ export function createResumePdfStyles(settings: Settings) {
       color: '#3D4250',
     },
     entryDates: {
+      maxWidth: '35%',
+      minWidth: 0,
       fontFamily: resolveDateFont(fontFamily),
       fontSize: dateSize,
       color: '#6B7280',
-      flexShrink: 0,
+      flexShrink: 1,
       lineHeight: 1.25,
     },
     entrySubtitle: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       fontSize: contactSize,
       color: '#6B7280',
       lineHeight: compact(lineHeight, -0.15, MIN_PDF_LINE_HEIGHT, 1.6),
@@ -164,9 +213,15 @@ export function createResumePdfStyles(settings: Settings) {
       marginBottom: 3,
     },
     bulletList: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       marginTop: descriptionGap,
     },
     bulletRow: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       gap: 6,
       marginBottom: bulletRowMarginBottom,
@@ -179,6 +234,9 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 0,
     },
     bulletText: {
+      maxWidth: '100%',
+      minWidth: 0,
+      flexBasis: 0,
       fontSize: bodySize,
       flexGrow: 1,
       flexShrink: 1,
@@ -186,22 +244,32 @@ export function createResumePdfStyles(settings: Settings) {
       lineHeight,
     },
     paragraph: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       fontSize: bodySize,
       marginTop: descriptionGap,
       color: '#111418',
       lineHeight,
     },
     skillRow: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       gap: 10,
       marginBottom: 4,
     },
     skillRowLast: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'row',
       gap: 10,
     },
     skillLabel: {
       width: 110,
+      minWidth: 0,
       flexShrink: 0,
       fontSize: contactSize,
       fontWeight: 500,
@@ -211,6 +279,9 @@ export function createResumePdfStyles(settings: Settings) {
       letterSpacing: 0.2,
     },
     skillValues: {
+      maxWidth: '100%',
+      minWidth: 0,
+      flexBasis: 0,
       fontSize: bodySize,
       flexGrow: 1,
       flexShrink: 1,
@@ -218,10 +289,16 @@ export function createResumePdfStyles(settings: Settings) {
       lineHeight,
     },
     languageList: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       flexDirection: 'column',
       gap: 0,
     },
     languageText: {
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
       fontSize: bodySize,
       color: '#111418',
       lineHeight: languageLineHeight,

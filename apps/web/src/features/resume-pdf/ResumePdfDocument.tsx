@@ -27,10 +27,11 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
       keywords="cvforge,resume,cv"
     >
       <Page size={settings.documentSize === 'Letter' ? 'LETTER' : 'A4'} style={styles.page}>
-        <ResumePdfHeader profile={resume.profile} settings={settings} styles={styles} />
+        <View style={styles.pageContent}>
+          <ResumePdfHeader profile={resume.profile} settings={settings} styles={styles} />
 
-        <View>
-          {settings.sectionOrder.map((sectionId) => {
+          <View style={styles.contentBounds}>
+            {settings.sectionOrder.map((sectionId) => {
             const isVisible = settings.visibleSections[sectionId as keyof typeof settings.visibleSections]
             if (!isVisible) return null
 
@@ -50,7 +51,8 @@ export function ResumePdfDocument({ state }: { state: CVState }) {
               default:
                 return null
             }
-          })}
+            })}
+          </View>
         </View>
       </Page>
     </Document>
