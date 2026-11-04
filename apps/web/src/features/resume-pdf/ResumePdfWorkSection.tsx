@@ -19,6 +19,7 @@ export function ResumePdfWorkSection({ state, styles }: { state: CVState; styles
         <View key={item.id} style={index === items.length - 1 ? undefined : styles.workEntryGroup}>
           <ResumePdfEntry
             title={cleanText(item.role)}
+            titleLink={item.link}
             organization={cleanText(item.company)}
             subtitle={joinNonEmpty([item.location])}
             dates={formatDateRange(item.startDate, item.endDate, item.isCurrent)}

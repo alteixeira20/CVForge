@@ -19,6 +19,7 @@ export function ResumePdfProjectSection({ state, styles }: { state: CVState; sty
         <View key={item.id} style={index === items.length - 1 ? undefined : styles.projectEntryGroup}>
           <ResumePdfEntry
             title={cleanText(item.name)}
+            titleLink={item.link}
             subtitle={cleanText(item.link)}
             dates={formatDateRange(item.startDate, item.endDate)}
             styles={styles}

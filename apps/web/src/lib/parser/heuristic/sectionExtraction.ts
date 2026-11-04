@@ -32,6 +32,7 @@ export function buildWorkEntries(content: string, stats: ParserStats) {
       id: `heuristic-work-${index + 1}`,
       role,
       company,
+      link: '',
       location: entry.location,
       startDate: entry.date?.startDate ?? '',
       endDate: entry.date?.endDate ?? '',

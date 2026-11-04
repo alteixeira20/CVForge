@@ -184,6 +184,11 @@ export function createResumePdfStyles(settings: Settings) {
       flexShrink: 1,
       lineHeight: compact(lineHeight, -0.2, MIN_PDF_LINE_HEIGHT, 1.6),
     },
+    entryTitleLink: {
+      fontWeight: 600,
+      color: settings.themeColor,
+      textDecoration: 'none',
+    },
     entryOrg: {
       fontWeight: 400,
       color: '#3D4250',

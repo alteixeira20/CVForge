@@ -204,6 +204,7 @@ function workEntry(bullet: string) {
     id: 'work-1',
     company: 'Anvilary',
     role: 'Product Engineer',
+    link: '',
     location: 'Lisbon',
     startDate: '2020',
     endDate: '',

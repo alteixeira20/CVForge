@@ -24,6 +24,7 @@ export const WorkExperienceSchema = z.object({
   id: z.string(),
   company: z.string().default(''),
   role: z.string().default(''),
+  link: z.string().default(''),
   location: z.string().default(''),
   startDate: z.string().default(''),
   endDate: z.string().default(''),

@@ -21,6 +21,7 @@ function createPopulatedCVState(): CVState {
       id: 'work-1',
       company: 'Babbage Engine Lab',
       role: 'Lead Analyst',
+      link: '',
       location: 'London',
       startDate: '1842-01',
       endDate: '1843-12',
