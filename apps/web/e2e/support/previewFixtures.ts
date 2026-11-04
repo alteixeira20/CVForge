@@ -12,6 +12,7 @@ function workItem(index: number) {
     id: `work-${index}`,
     company: `Example Organization ${index}`,
     role: 'Senior Software Engineer',
+    link: '',
     location: 'London, United Kingdom',
     startDate: '2019-01',
     endDate: '2023-06',

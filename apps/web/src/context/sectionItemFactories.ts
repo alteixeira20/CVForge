@@ -15,7 +15,7 @@ export function createSectionItem(sectionKey: RepeatableSectionKey): RepeatableS
 
   switch (sectionKey) {
     case 'workExperience':
-      return { id, company: '', role: '', location: '', startDate: '', endDate: '', isCurrent: false, bullets: [] }
+      return { id, company: '', role: '', link: '', location: '', startDate: '', endDate: '', isCurrent: false, bullets: [] }
     case 'education':
       return { id, school: '', degree: '', location: '', startDate: '', endDate: '', details: [] }
     case 'projects':

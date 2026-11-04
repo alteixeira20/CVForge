@@ -20,6 +20,7 @@ function makeWork(id: string, company = 'Acme'): WorkExperience {
     id,
     company,
     role: 'Engineer',
+    link: '',
     location: 'Remote',
     startDate: '2020-01',
     endDate: '2021-01',
